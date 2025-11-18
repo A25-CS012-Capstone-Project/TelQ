@@ -4,8 +4,7 @@ Folder ini adalah area kerja khusus untuk Tim ML. Karena folder ini berada di da
 
 ## 📂 Struktur Folder
 * **`notebooks/`**: Tempat file `.ipynb` untuk eksplorasi data dan training model.
-* **`data/`**: Tempat menaruh file CSV/Dataset.
-    * *Note: Jangan commit file CSV yang ukurannya > 50MB ke GitHub.*
+* **`output/`**: Tempat menaruh model.
 
 ## ⚠️ Aturan Penting (DOs and DON'Ts)
 
