@@ -20,9 +20,9 @@ SECRET_KEY = os.getenv("SECRET_KEY", "calon_best_capstone")
 
 # --- 3. Konfigurasi ML (Lokasi File) ---
 # Lokasi aset ML relatif terhadap folder backend/
-ML_MODEL_PATH = "backend/ml/output/xgb_recsys_model.pkl"
-ML_COLUMNS_PATH = "backend/ml/output/xgb_model_columns.pkl"
+ML_MODEL_PATH = "backend/ml/output/dataset_70_20_10/xgb_recsys_model.pkl"
+ML_COLUMNS_PATH = "backend/ml/output/dataset_70_20_10/xgb_model_columns.pkl"
 
 # --- 4. Konfigurasi Data (Untuk populate_db.py) ---
 # Lokasi file CSV yang sudah dibersihkan
-CLEANED_DATA_PATH = "data/processed/final_dataset_clean.csv"
+CLEANED_DATA_PATH = "data/datasets/processed/final_dataset_clean.csv"
