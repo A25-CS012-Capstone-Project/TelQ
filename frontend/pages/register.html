@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar - TelQ Recommender</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body>
+
+    <div class="auth-container" style="max-width: 500px;">
+        <h2>Buat Akun Baru</h2>
+        <form onsubmit="handleRegister(event)">
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;">
+                    <label for="firstname">Nama Depan</label>
+                    <input type="text" id="firstname" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label for="lastname">Nama Belakang</label>
+                    <input type="text" id="lastname">
+                </div>
+            </div>
+
+            <!-- PENTING: Customer ID untuk simulasi data -->
+            <div class="form-group">
+                <label for="customer_id">Customer ID (Unik)</label>
+                <input type="text" id="customer_id" required placeholder="Contoh: CUST-001">
+                <small style="color: #666; font-size: 0.8em;">Gunakan ID ini untuk simulasi nanti.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+
+            <button type="submit" class="btn-primary">Daftar Sekarang</button>
+        </form>
+        <div class="auth-link">
+            Sudah punya akun? <a href="login.html">Masuk disini</a>
+        </div>
+    </div>
+
+    <script src="../assets/js/auth.js"></script>
+</body>
+
+</html>
