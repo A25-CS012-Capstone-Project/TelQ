@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
+const API_BASE_URL = "/api/v1";
 
 document.addEventListener("DOMContentLoaded", () => {
   const userStr = localStorage.getItem("user");
@@ -215,5 +215,5 @@ function renderProductCards(items, container, isRecsysString) {
 
 function handleLogout() {
   localStorage.removeItem("user");
-  window.location.href = "login.html";
+  window.location.href = "/login";
 }

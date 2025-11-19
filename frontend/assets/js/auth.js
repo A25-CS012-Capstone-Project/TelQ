@@ -1,5 +1,4 @@
-// Konfigurasi URL Backend (Pastikan port 5000 sesuai dengan Flask Anda)
-const API_BASE_URL = "http://127.0.0.1:5000/api/v1/auth";
+const API_BASE_URL = "/api/v1/auth";
 
 // --- FUNGSI REGISTER ---
 async function handleRegister(event) {
@@ -33,7 +32,7 @@ async function handleRegister(event) {
 
     if (response.ok) {
       alert("Registrasi Berhasil! Silakan Login.");
-      window.location.href = "login.html";
+      window.location.href = "/login";
     } else {
       alert("Gagal: " + (result.error || "Terjadi kesalahan"));
     }
@@ -72,7 +71,7 @@ async function handleLogin(event) {
       localStorage.setItem("user", JSON.stringify(result.user));
 
       alert("Login Berhasil! Mengalihkan ke dashboard...");
-      window.location.href = "index.html"; // Arahkan ke dashboard
+      window.location.href = "/"; // Arahkan ke dashboard
     } else {
       alert("Login Gagal: " + (result.error || "Cek email/password Anda"));
     }
@@ -87,5 +86,5 @@ async function handleLogin(event) {
 // --- FUNGSI LOGOUT (Untuk dipanggil nanti) ---
 function handleLogout() {
   localStorage.removeItem("user");
-  window.location.href = "login.html";
+  window.location.href = "/login";
 }
