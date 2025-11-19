@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
+const API_BASE_URL = "/api/v1";
 
 document.addEventListener("DOMContentLoaded", () => {
   fetchAllProducts();
@@ -59,7 +59,7 @@ async function buyProduct(productId, productName) {
     if (response.ok) {
       alert(`Sukses membeli ${productName}!`);
       // Opsional: Arahkan kembali ke dashboard
-      window.location.href = "index.html";
+      window.location.href = "/";
     } else {
       alert("Gagal membeli produk.");
     }
