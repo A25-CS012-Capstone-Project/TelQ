@@ -3,7 +3,7 @@ const API_BASE_URL = "/api/v1";
 document.addEventListener("DOMContentLoaded", () => {
   const userStr = localStorage.getItem("user");
   if (!userStr) {
-    window.location.href = "login.html";
+    window.location.href = "/login";
     return;
   }
 
