@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TelQ Recommender</title>
+
+    <!-- BACA README -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        /* Style Khusus Dashboard */
+        .questionnaire-box {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: none;
+            text-align: center;
+        }
+
+        .questionnaire-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-pref {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-pref:hover {
+            transform: scale(1.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .best-deal-section {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Section Hasil Filter Kuesioner */
+        #filter-result-section {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #9b59b6;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <h1>TelQ AI</h1>
+        <div class="nav-user">
+            <span id="user-name">Halo, User!</span>
+            <button onclick="handleLogout()" class="btn-logout">Keluar</button>
+        </div>
+    </nav>
+
+    <!-- Konten Utama -->
+    <div class="main-content">
+
+        <!-- Tombol Aksi Cepat -->
+        <div class="quick-actions">
+            <a href="/products" class="btn-primary"
+                style="text-decoration:none; display:inline-block; width:auto; background-color:#27ae60;">
+                🛒 Simulasi Belanja Produk
+            </a>
+            <button id="btn-pipeline" onclick="handleTriggerPipeline()" class="btn-pipeline">
+                🔄 Perbarui Profil (Pipeline)
+            </button>
+        </div>
+
+        <!-- Kuesioner (Hanya muncul jika Cold Start) -->
+        <div id="questionnaire-box" class="questionnaire-box">
+            <h3>👋 Selamat Datang! Kami ingin mengenal Anda.</h3>
+            <p>Apa yang paling penting bagi Anda dalam memilih paket data?</p>
+            <div class="questionnaire-options">
+                <button onclick="submitPreference('Streaming')" class="btn-pref" style="background:#9b59b6">🎬 Streaming
+                    Video</button>
+                <button onclick="submitPreference('Gaming')" class="btn-pref" style="background:#e67e22">🎮
+                    Gaming</button>
+                <button onclick="submitPreference('Voice')" class="btn-pref" style="background:#2ecc71">📞
+                    Nelpon/Voice</button>
+                <button onclick="submitPreference('Hemat')" class="btn-pref" style="background:#34495e">💰 Hemat
+                    Biaya</button>
+                <button onclick="submitPreference('Travel')" class="btn-pref" style="background:#f1c40f; color:#333;">✈️
+                    Traveling</button>
+            </div>
+        </div>
+
+        <!-- 🟢 AREA KHUSUS: Hasil Filter Kuesioner -->
+        <!-- Ini akan muncul setelah user klik tombol di atas -->
+        <div id="filter-result-section" style="display:none;">
+            <div class="section-header">
+                <h2 class="section-title" style="margin:0;">💡 Rekomendasi Kategori Pilihan</h2>
+                <button onclick="closeFilterSection()"
+                    style="background:none; border:none; color:#666; cursor:pointer;">✕ Tutup</button>
+            </div>
+            <div id="filter-result-container" class="product-grid">
+                <!-- Hasil filter muncul di sini -->
+            </div>
+        </div>
+
+        <!-- Bagian Rekomendasi Personal (AI) -->
+        <h2 class="section-title">🤖 Rekomendasi Personal (AI)</h2>
+        <div id="recommendation-container" class="product-grid">
+            <p>Memuat rekomendasi...</p>
+        </div>
+
+        <!-- Bagian Best Deal -->
+        <div class="best-deal-section">
+            <h2 class="section-title">🔥 Penawaran Terlaris (Best Deals)</h2>
+            <div id="best-deal-container" class="product-grid">
+                <p>Memuat best deals...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/assets/js/home.js"></script>
+</body>
+
+</html>

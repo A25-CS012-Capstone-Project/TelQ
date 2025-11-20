@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TelQ Recommender</title>
+    
+    <!-- BACA README -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+
+    <div class="auth-container">
+        <h2>Masuk ke TelQ</h2>
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required placeholder="nama@email.com">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required placeholder="********">
+            </div>
+            <button type="submit" class="btn-primary">Masuk</button>
+        </form>
+        <div class="auth-link">
+            Belum punya akun? <a href="/register">Daftar disini</a>
+        </div>
+    </div>
+
+    <!-- Menghubungkan JavaScript -->
+    <script src="/assets/js/auth.js"></script>
+</body>
+
+</html>

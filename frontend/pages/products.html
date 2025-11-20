@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Produk - TelQ</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <h1 style="cursor:pointer" onclick="window.location.href='index.html'">TelQ AI</h1>
+        <div class="nav-user">
+            <a href="index.html" style="margin-right:20px; text-decoration:none; color:#333; font-weight:bold;">Kembali
+                ke Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <h2 class="section-title">Katalog Semua Produk</h2>
+        <p>Klik "Beli" untuk mensimulasikan transaksi. Ini akan dicatat di database dan mempengaruhi rekomendasi Anda.
+        </p>
+        <br>
+
+        <div id="all-products-container" class="product-grid">
+            <p>Memuat produk...</p>
+        </div>
+    </div>
+
+    <script src="/assets/js/products.js"></script>
+</body>
+
+</html>
