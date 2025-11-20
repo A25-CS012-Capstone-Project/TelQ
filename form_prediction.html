@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediksi Paket - TelQ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .custom-select {
+            /* Hide the default arrow */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            
+            /* Center the text */
+            text-align: center;
+            text-align-last: center; /* For Firefox */
+
+            /* We will use a separate element for the arrow, so no background image here */
+        }
+        /* Ensure the select text doesn't overlap with our custom arrow */
+        .custom-select {
+            padding-right: 4rem; /* Add some padding on the right */
+        }
+        .select-wrapper .arrow-icon {
+            /* Position the arrow */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(65px, -50%); /* Move it right from the center */
+            pointer-events: none; /* Make it non-interactive */
+        }
+    </style>
+</head>
+<body class="bg-[linear-gradient(180deg,#FF7D00_0%,#FFA600_100%)] font-sans">
+
+    <div class="flex items-center justify-center min-h-screen px-4 py-12">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg">
+            
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">Jawab pertanyaan ini yuk!</h1>
+                <p class="mt-2 text-gray-600">Bantu kami menemukan paket terbaik untukmu.</p>
+            </div>
+
+            <!-- Form -->
+            <form action="#" method="POST">
+                <div class="space-y-6">
+
+                    <!-- Average Data Usage -->
+                    <div>
+                        <label for="data-usage" class="block text-sm font-medium text-gray-700 text-center">Average Data Usage (GB):</label>
+                        <div class="relative mt-1 select-wrapper">
+                            <select id="data-usage" name="data-usage"
+                                    class="custom-select block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#FF7D00] focus:border-[#FF7D00]">
+                                <option selected disabled>Select an option</option>
+                                <option value="low">Kurang dari 10 GB</option>
+                                <option value="medium">10 - 30 GB</option>
+                                <option value="high">30 - 50 GB</option>
+                                <option value="very-high">Lebih dari 50 GB</option>
+                            </select>
+                            <span class="arrow-icon">
+                                <svg class="w-3 h-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 292.4 292.4"><path fill="currentColor" d="M287 69.4a17.6 17.6 0 0 0-13-5.4H18.4c-5 0-9.3 1.8-12.9 5.4A17.6 17.6 0 0 0 0 82.2c0 5 1.8 9.3 5.4 12.9l128 127.9c3.6 3.6 7.8 5.4 12.8 5.4s9.2-1.8 12.8-5.4L287 95c3.5-3.5 5.4-7.8 5.4-12.8 0-5-1.9-9.2-5.5-12.8z"/></svg>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Spend -->
+                    <div>
+                        <label for="monthly-spend" class="block text-sm font-medium text-gray-700 text-center">Monthly Spend (Rp):</label>
+                        <div class="relative mt-1 select-wrapper">
+                            <select id="monthly-spend" name="monthly-spend"
+                                    class="custom-select block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#FF7D00] focus:border-[#FF7D00]">
+                                <option selected disabled>Select an option</option>
+                                <option value="low">Kurang dari 50.000</option>
+                                <option value="medium">50.000 - 100.000</option>
+                                <option value="high">100.000 - 200.000</option>
+                                <option value="very-high">Lebih dari 200.000</option>
+                            </select>
+                            <span class="arrow-icon">
+                                <svg class="w-3 h-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 292.4 292.4"><path fill="currentColor" d="M287 69.4a17.6 17.6 0 0 0-13-5.4H18.4c-5 0-9.3 1.8-12.9 5.4A17.6 17.6 0 0 0 0 82.2c0 5 1.8 9.3 5.4 12.9l128 127.9c3.6 3.6 7.8 5.4 12.8 5.4s9.2-1.8 12.8-5.4L287 95c3.5-3.5 5.4-7.8 5.4-12.8 0-5-1.9-9.2-5.5-12.8z"/></svg>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Streaming -->
+                    <div>
+                        <label for="streaming" class="block text-sm font-medium text-gray-700 text-center">Streaming:</label>
+                        <div class="relative mt-1 select-wrapper">
+                            <select id="streaming" name="streaming"
+                                    class="custom-select block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#FF7D00] focus:border-[#FF7D00]">
+                                <option selected disabled>Select an option</option>
+                                <option value="1">Ya</option>
+                                <option value="0">Tidak</option>
+                            </select>
+                            <span class="arrow-icon">
+                                <svg class="w-3 h-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 292.4 292.4"><path fill="currentColor" d="M287 69.4a17.6 17.6 0 0 0-13-5.4H18.4c-5 0-9.3 1.8-12.9 5.4A17.6 17.6 0 0 0 0 82.2c0 5 1.8 9.3 5.4 12.9l128 127.9c3.6 3.6 7.8 5.4 12.8 5.4s9.2-1.8 12.8-5.4L287 95c3.5-3.5 5.4-7.8 5.4-12.8 0-5-1.9-9.2-5.5-12.8z"/></svg>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Gaming -->
+                    <div>
+                        <label for="gaming" class="block text-sm font-medium text-gray-700 text-center">Gaming:</label>
+                        <div class="relative mt-1 select-wrapper">
+                            <select id="gaming" name="gaming"
+                                    class="custom-select block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#FF7D00] focus:border-[#FF7D00]">
+                                <option selected disabled>Select an option</option>
+                                <option value="1">Ya</option>
+                                <option value="0">Tidak</option>
+                            </select>
+                            <span class="arrow-icon">
+                                <svg class="w-3 h-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 292.4 292.4"><path fill="currentColor" d="M287 69.4a17.6 17.6 0 0 0-13-5.4H18.4c-5 0-9.3 1.8-12.9 5.4A17.6 17.6 0 0 0 0 82.2c0 5 1.8 9.3 5.4 12.9l128 127.9c3.6 3.6 7.8 5.4 12.8 5.4s9.2-1.8 12.8-5.4L287 95c3.5-3.5 5.4-7.8 5.4-12.8 0-5-1.9-9.2-5.5-12.8z"/></svg>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Social Media -->
+                    <div>
+                        <label for="social-media" class="block text-sm font-medium text-gray-700 text-center">Social Media:</label>
+                        <div class="relative mt-1 select-wrapper">
+                            <select id="social-media" name="social-media"
+                                    class="custom-select block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#FF7D00] focus:border-[#FF7D00]">
+                                <option selected disabled>Select an option</option>
+                                <option value="1">Ya</option>
+                                <option value="0">Tidak</option>
+                            </select>
+                            <span class="arrow-icon">
+                                <svg class="w-3 h-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 292.4 292.4"><path fill="currentColor" d="M287 69.4a17.6 17.6 0 0 0-13-5.4H18.4c-5 0-9.3 1.8-12.9 5.4A17.6 17.6 0 0 0 0 82.2c0 5 1.8 9.3 5.4 12.9l128 127.9c3.6 3.6 7.8 5.4 12.8 5.4s9.2-1.8 12.8-5.4L287 95c3.5-3.5 5.4-7.8 5.4-12.8 0-5-1.9-9.2-5.5-12.8z"/></svg>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <button type="submit" class="inline-block text-xl font-bold rounded-lg transition duration-300 bg-[#FF7D00] text-white hover:bg-gray-600 w-full py-3">
+                        Predict
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
