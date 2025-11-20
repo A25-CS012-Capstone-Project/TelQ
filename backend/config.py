@@ -8,7 +8,7 @@ load_dotenv()
 # Gunakan variabel lingkungan untuk konfigurasi yang aman di produksi
 # Default disetel untuk pengembangan lokal
 DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "postgres")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "avisena2107") # <-- GANTI DI SINI
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "5432")
 DB_NAME = os.getenv("DB_NAME", "telq_recommender_db")
