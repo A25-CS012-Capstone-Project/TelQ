@@ -24,8 +24,12 @@ SECRET_KEY = os.getenv("SECRET_KEY", "calon_best_capstone")
 # ML_COLUMNS_PATH = "backend/ml/output/dataset_70_20_10/xgb_model_columns.pkl"
 
 # coba pakai random forest
-ML_MODEL_PATH = "backend/ml/output/randomforest/rf_telco_model.pkl"
-ML_COLUMNS_PATH = "backend/ml/output/randomforest/rf_feature_columns.pkl"
+# ML_MODEL_PATH = "backend/ml/output/randomforest/rf_telco_model.pkl"
+# ML_COLUMNS_PATH = "backend/ml/output/randomforest/rf_feature_columns.pkl"
+
+# coba pakai random forest v2
+ML_MODEL_PATH = "backend/ml/output/randomforest_v2/rf_telco_model_v2.pkl"
+ML_COLUMNS_PATH = "backend/ml/output/randomforest_v2/rf_feature_columns_v2.pkl"
 
 # --- 4. Konfigurasi Data (Untuk populate_db.py) ---
 # Lokasi file CSV yang sudah dibersihkan
