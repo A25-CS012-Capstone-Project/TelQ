@@ -5,11 +5,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - TelQ Recommender</title>
-
-    <!-- BACA README -->
     <link rel="stylesheet" href="/assets/css/style.css">
     <style>
-        /* Style Khusus Dashboard */
+        /* --- CSS Tambahan untuk Chatbot --- */
+        .chat-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #2980b9;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: transform 0.3s;
+        }
+
+        .chat-fab:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-window {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 450px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            display: none;
+            /* Hidden by default */
+            flex-direction: column;
+            z-index: 1000;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .chat-header {
+            background-color: #2980b9;
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f4f6f7;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-input-area {
+            padding: 10px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 5px;
+            background: white;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .chat-input-area button {
+            background: #2980b9;
+            color: white;
+            border: none;
+            padding: 0 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* Bubble Chat */
+        .msg {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .msg-bot {
+            background-color: #e3f2fd;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .msg-user {
+            background-color: #2980b9;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        /* Dashboard styles (existing) */
         .questionnaire-box {
             background: #e3f2fd;
             border: 1px solid #bbdefb;
@@ -62,7 +169,6 @@
             margin-bottom: 20px;
         }
 
-        /* Section Hasil Filter Kuesioner */
         #filter-result-section {
             background-color: #f9f9f9;
             padding: 15px;
@@ -79,28 +185,21 @@
     <nav class="navbar">
         <h1>TelQ AI</h1>
         <div class="nav-user">
-            <a href="/profile" class="btn-profile">
-                👤 Profil Saya
-            </a>
+            <a href="/profile" class="btn-profile">👤 Profil Saya</a>
             <button onclick="handleLogout()" class="btn-logout">Keluar</button>
         </div>
     </nav>
 
     <!-- Konten Utama -->
     <div class="main-content">
-
-        <!-- Tombol Aksi Cepat -->
         <div class="quick-actions">
             <a href="/products" class="btn-primary"
-                style="text-decoration:none; display:inline-block; width:auto; background-color:#27ae60;">
-                🛒 Simulasi Belanja Produk
-            </a>
-            <button id="btn-pipeline" onclick="handleTriggerPipeline()" class="btn-pipeline">
-                🔄 Perbarui Profil (Pipeline)
-            </button>
+                style="text-decoration:none; display:inline-block; width:auto; background-color:#27ae60;">🛒 Simulasi
+                Belanja</a>
+            <button id="btn-pipeline" onclick="handleTriggerPipeline()" class="btn-pipeline">🔄 Perbarui Profil
+                (Pipeline)</button>
         </div>
 
-        <!-- Kuesioner (Hanya muncul jika Cold Start) -->
         <div id="questionnaire-box" class="questionnaire-box">
             <h3>👋 Selamat Datang! Kami ingin mengenal Anda.</h3>
             <p>Apa yang paling penting bagi Anda dalam memilih paket data?</p>
@@ -118,33 +217,44 @@
             </div>
         </div>
 
-        <!-- 🟢 AREA KHUSUS: Hasil Filter Kuesioner -->
-        <!-- Ini akan muncul setelah user klik tombol di atas -->
         <div id="filter-result-section" style="display:none;">
             <div class="section-header">
                 <h2 class="section-title" style="margin:0;">💡 Rekomendasi Kategori Pilihan</h2>
                 <button onclick="closeFilterSection()"
                     style="background:none; border:none; color:#666; cursor:pointer;">✕ Tutup</button>
             </div>
-            <div id="filter-result-container" class="product-grid">
-                <!-- Hasil filter muncul di sini -->
-            </div>
+            <div id="filter-result-container" class="product-grid"></div>
         </div>
 
-        <!-- Bagian Rekomendasi Personal (AI) -->
         <h2 class="section-title">🤖 Rekomendasi Personal (AI)</h2>
         <div id="recommendation-container" class="product-grid">
             <p>Memuat rekomendasi...</p>
         </div>
 
-        <!-- Bagian Best Deal -->
         <div class="best-deal-section">
             <h2 class="section-title">🔥 Penawaran Terlaris (Best Deals)</h2>
             <div id="best-deal-container" class="product-grid">
                 <p>Memuat best deals...</p>
             </div>
         </div>
+    </div>
 
+    <!-- --- CHATBOT WIDGET --- -->
+    <div class="chat-fab" onclick="toggleChat()">💬</div>
+
+    <div class="chat-window" id="chat-window">
+        <div class="chat-header">
+            <span>Asisten Paket AI</span>
+            <span style="cursor:pointer" onclick="toggleChat()">✕</span>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <!-- Pesan akan muncul di sini -->
+            <div class="msg msg-bot">Halo! Ada yang bingung soal rekomendasi paketnya? Tanya aku aja!</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Ketik pesan..." onkeypress="handleEnter(event)">
+            <button onclick="sendChat()">➤</button>
+        </div>
     </div>
 
     <script src="/assets/js/home.js"></script>
