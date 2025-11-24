@@ -50,6 +50,65 @@ class PredictionService:
             FROM products;
         """
         return pd.read_sql(sql, db_engine)
+    
+    # --------------------- EXPLAINABLE AI LOGIC ---------------------
+    def _generate_explanation(self, user_features, product_row):
+        """
+        Menerjemahkan kecocokan antara User Features dan Product Features
+        menjadi kalimat alasan yang manusiawi.
+        """
+        reasons = []
+
+        # 1. Ambil data user (handle null dengan 0)
+        travel_score = float(user_features.get("travel_score", 0) or 0)
+        pct_video = float(user_features.get("pct_video_usage", 0) or 0)
+        avg_call = float(user_features.get("avg_call_duration", 0) or 0)
+        monthly_spend = float(user_features.get("monthly_spend", 0) or 0)
+
+        # 2. Ambil data produk (dari row dataframe/tuple)
+        p_roaming = getattr(product_row, "roaming_days_bonus", 0)
+        p_streaming = getattr(product_row, "streaming_gb_bonus", 0)
+        p_call = getattr(product_row, "call_minutes_bonus", 0)
+        p_data = getattr(product_row, "data_gb", 0)
+        p_price = getattr(product_row, "price", 0)
+
+        # 3. Logika Pencocokan (Rules)
+        
+        # A. Traveler
+        if travel_score > 0.6 and p_roaming > 0:
+            reasons.append("bonus roaming buat traveling")
+        
+        # B. Streamer
+        if pct_video > 0.6 and p_streaming > 0:
+            reasons.append("kuota ekstra khusus streaming")
+        
+        # C. Heavy Caller
+        if avg_call > 300 and p_call > 0:
+            reasons.append("bonus nelpon gratis")
+
+        # D. Big Data User (User boros data, dikasih paket besar)
+        avg_data = float(user_features.get("avg_data_usage_gb", 0) or 0)
+        if avg_data > 20 and p_data >= 20:
+             reasons.append(f"kuota internet besar ({p_data}GB)")
+
+        # E. Budget Logic
+        if monthly_spend > 0:
+            if p_price < monthly_spend * 0.8:
+                reasons.append("harganya lebih hemat dari biasanya")
+            elif p_price > monthly_spend * 1.5:
+                # Upselling explanation
+                reasons.append("upgrade fitur yang lebih maksimal")
+
+        # 4. Susun Kalimat
+        if not reasons:
+            # Fallback jika tidak ada kondisi spesifik yang "klik"
+            if p_streaming > 0: return "Paket populer dengan bonus hiburan."
+            if p_data > 50: return "Pilihan terbaik untuk internetan puas."
+            if p_price < 25000: return "Paket hemat paling ramah di kantong."
+            return "Rekomendasi terbaik berdasarkan polamu."
+
+        # Gabungkan semua alasan
+        return "Cocok untukmu karena ada " + " dan ".join(reasons) + "."
 
     # --------------------- REKOMENDASI ---------------------
     def get_recommendations(self, customer_id: str, top_k: int = 8):
@@ -89,11 +148,13 @@ class PredictionService:
                 test_df[col] = value
 
         # 2. PREPROCESSING UNTUK MODEL
+        # Tambahkan 'data_gb' disini agar bisa dipakai oleh fungsi explanation nanti
         result_metadata = test_df[
             [
                 "product_name",
                 "product_id",
                 "price",
+                "data_gb",  
                 "roaming_days_bonus",
                 "streaming_gb_bonus",
                 "call_minutes_bonus",
@@ -167,17 +228,20 @@ class PredictionService:
                 for row in top.itertuples()
             ]
 
-            # Versi structured (kalau nanti mau dipakai di FE)
-            items = [
-                {
+            # Versi structured dengan REASON (Explainable AI)
+            items = []
+            for row in top.itertuples():
+                # Panggil fungsi generator penjelasan
+                reason_text = self._generate_explanation(user_features_dict, row)
+                
+                items.append({
                     "product_id": int(row.product_id),
                     "product_name": row.product_name,
                     "price": int(row.price),
                     "final_score": float(row.final_score),
                     "ml_score": float(row.ml_score),
-                }
-                for row in top.itertuples()
-            ]
+                    "reason": reason_text # <--- INI HASILNYA
+                })
 
             return {
                 "status": "WARM",
@@ -204,6 +268,7 @@ class PredictionService:
                     "product_id": int(row.product_id),
                     "product_name": row.product_name,
                     "price": int(row.price),
+                    "reason": "Paket hemat rekomendasi kami." # Reason sederhana untuk fallback
                 }
                 for row in fallback.itertuples()
             ]
