@@ -1,2 +1,1 @@
-# TelQ
-Capstone Project
+Ini adalah random forest
