@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TelQ - Register</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    // Mendefinisikan 'Outfit' sebagai font sans default
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'], 
+                    },
+                    colors: {
+                        'primary': '#FF7D00',
+                        'secondary': '#FFA600',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans flex flex-col items-center justify-center mx-auto min-h-screen">
+    <div class="container mx-auto md:px-0 bg-[url('/img/hero_login.png')] w-[1365px] bg-no-repeat bg-center rounded-xl shadow-[0_0_5px_5px_rgba(0,0,0,0.25)] ">
+        <div class=" flex flex-col md:flex-row justify-between items-center ">
+            <div class="md:w-1/2 flex justify-center md:justify-center">
+            </div>
+            <div class=" md:w-1/2 text-center md:text-left z-10 md:mt-0 px-20 py-10">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <h1 class="text-5xl font-bold text-gray-800 mt-4">Create an account</h1>
+                </div>
+                <!-- Form -->
+                <form action="#" method="POST">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="first-name" class="block text-2xl font-light text-gray-700">First Name</label>
+                            <input type="text" id="first-name" name="first-name" placeholder="First Name" required
+                                class="bg-[#EEEEEE] text-2xl mt-1 block w-full px-4 py-4 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#FF7D00] focus:border-[#FF7D00]">
+                        </div>
+                        <div>
+                            <label for="last-name" class="block text-2xl font-light text-gray-700">Last Name</label>
+                            <input type="text" id="last-name" name="last-name" placeholder="Last Name" required
+                                class="bg-[#EEEEEE] text-2xl mt-1 block w-full px-4 py-4 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#FF7D00] focus:border-[#FF7D00]">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="email" class="block text-2xl font-light text-gray-700">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Email" required
+                            class="bg-[#EEEEEE] text-2xl mt-1 block w-full px-4 py-4 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#FF7D00] focus:border-[#FF7D00]">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="block text-2xl font-light text-gray-700">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Password" required
+                            class="bg-[#EEEEEE] text-2xl mt-1 block w-full px-4 py-4 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#FF7D00] focus:border-[#FF7D00]">
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="phone-number" class="block text-2xl font-light text-gray-700">Phone Number</label>
+                        <input type="tel" id="phone-number" name="phone-number" placeholder="Phone Number" required
+                            class="bg-[#EEEEEE] text-2xl mt-1 block w-full px-4 py-4 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#FF7D00] focus:border-[#FF7D00]">
+                    </div>
+
+                    <div class="flex items-center mb-6">
+                        <input id="terms" name="terms" type="checkbox" required
+                            class="h-5 w-5 text-[#FF7D00] border-gray-300 rounded-xl focus:ring-[#FF7D00]">
+                        <label for="terms" class="ml-4 block text-lg text-gray-900">
+                            I agree to the <a href="#" class="font-medium text-[#FF7D00] hover:text-gray-600">Term & Condition</a>
+                        </label>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="text-3xl inline-block font-medium rounded-lg transition duration-300 bg-[#FF7D00] text-white hover:bg-gray-600 w-full py-4">
+                            Create
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Footer Link -->
+                <p class="mt-8 pt-4 border-t border-[#FF7D00] text-center text-xl text-gray-600">
+                    Already have an account? <a href="#" class="font-medium text-[#FF7D00] hover:text-gray-600">Login here!</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    
+
+</body>
+</html>
