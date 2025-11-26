@@ -19,17 +19,21 @@ DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NA
 SECRET_KEY = os.getenv("SECRET_KEY", "calon_best_capstone")
 
 # --- 3. Konfigurasi ML (Lokasi File) ---
-# Lokasi aset ML relatif terhadap folder backend/
+# # Lokasi aset ML relatif terhadap folder backend/
 # ML_MODEL_PATH = "backend/ml/output/dataset_70_20_10/xgb_recsys_model.pkl"
 # ML_COLUMNS_PATH = "backend/ml/output/dataset_70_20_10/xgb_model_columns.pkl"
 
 # coba pakai random forest
-# ML_MODEL_PATH = "backend/ml/output/randomforest/rf_telco_model.pkl"
-# ML_COLUMNS_PATH = "backend/ml/output/randomforest/rf_feature_columns.pkl"
+ML_MODEL_PATH = "backend/ml/output/randomforest/rf_telco_model.pkl"
+ML_COLUMNS_PATH = "backend/ml/output/randomforest/rf_feature_columns.pkl"
 
-# coba pakai random forest v2
-ML_MODEL_PATH = "backend/ml/output/randomforest_v2/rf_telco_model_v2.pkl"
-ML_COLUMNS_PATH = "backend/ml/output/randomforest_v2/rf_feature_columns_v2.pkl"
+# # coba pakai random forest v2
+# ML_MODEL_PATH = "backend/ml/output/randomforest_v2/rf_telco_model_v2.pkl"
+# ML_COLUMNS_PATH = "backend/ml/output/randomforest_v2/rf_feature_columns_v2.pkl"
+
+# #model xgboost v3
+# ML_MODEL_PATH = "backend/ml/output/XGBoost_v3_25Nov2025/xgb_feature_columns_v1.pkl"
+# ML_COLUMNS_PATH = "backend/ml/output/XGBoost_v3_25Nov2025/xgb_telco_optimal_v1.pkl"
 
 # --- 4. Konfigurasi Data (Untuk populate_db.py) ---
 # Lokasi file CSV yang sudah dibersihkan
