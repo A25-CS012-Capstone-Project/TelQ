@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TelQ - Product</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    // Mendefinisikan 'Outfit' sebagai font sans default
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'], 
+                        // Anda juga bisa menambahkan font kustom seperti:
+                        // logo: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#FF7D00',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white font-sans">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-1 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" aria-label="TelQ Home">
+                <div class="w-24 h-16 bg-[url('/img/Logo_TelQ.png')] bg-contain bg-no-repeat bg-center"></div>
+            </a>
+            <!-- Center: Desktop Menu -->
+            <div class="flex-grow">
+                <nav class="hidden md:flex items-center justify-center space-x-8">
+                    <a href="#" class="text-gray-700 font-medium hover:text-primary font-semibold">Home</a>
+                    <a href="#" class="text-gray-700 font-medium hover:text-primary">Promo</a>
+                    <a href="#product-section" class="text-gray-700 font-medium hover:text-primary scroll-link">Product</a>
+                    <a href="#rekomendasi-section" class="text-gray-700 font-medium hover:text-primary scroll-smooth">Recomendation</a>
+                </nav>
+            </div>
+            <!-- Right side: User & Mobile Menu Button -->
+            <div class="flex items-center space-x-4">
+                <div class="hidden md:flex">
+                    <button class="flex items-center space-x-2 " aria-label="User Profile">
+                        <iconify-icon icon="icon-park-solid:people" class="text-3xl text-primary hover:text-gray-700"></iconify-icon>
+                        <span class="hidden sm:inline">User</span>
+                    </button>
+                </div>
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-600 hover:text-primary" aria-label="Open Menu">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="#" class="block py-2 px-6 text-sm text-gray-700 hover:bg-primary">Home</a>
+            <a href="#" class="block py-2 px-6 text-sm text-gray-700 hover:bg-primary">Promo</a>
+            <a href="#product-section" class="block py-2 px-6 text-sm text-gray-700 hover:bg-primary">Product</a>
+            <a href="#rekomendasi-section" class="block py-2 px-6 text-sm text-gray-700 hover:bg-primary">Rekomendasi</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="relative w-full overflow-hidden pt-8 pb-16">
+            <div class="absolute top-60 left-7 w-8 h-8 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
+            <div class="absolute top-[20em] left-8 w-24 h-24 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
+            <div class="absolute top-[30em] left-0 w-16 h-16 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
+            
+            <div class="absolute -top-[2.5em] -right-6 w-16 h-16 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
+            <div class="absolute top-[3em] right-16 w-24 h-24 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
+            <div class="absolute top-40 right-0 w-16 h-16 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
+            <div class="absolute top-[30em] -right-10 w-20 h-20 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
+            
+            <div class="container mx-auto px-32 md:px-8">
+                <div class="relative flex flex-col md:flex-row justify-between items-center ">
+                    <div class="md:w-1/2 text-center md:text-left z-10 mt-8 md:mt-0">
+                        <h1 class="text-5xl md:text-7xl font-bold text-[#1E1B29] leading-tight text-nowrap">
+                            Nikmati Dunia Digital <br>Tanpa Batas!
+                        </h1>
+                        <p class="mt-8 mr-6 text-lg md:text-5xl font-light">
+                            Streaming lancar, gaming stabil, dan browsing sepuasnya. <br>Pilih paket yang pas buat gaya hidupmu sekarang.
+                        </p>
+                        <a href="#questionnaire-box" class=" inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 mt-16 px-16 py-6 rounded-2xl">
+                            Jelajahi Product
+                        </a>
+                    </div>
+                    <div class="md:w-1/2 py-[4em] flex justify-center md:justify-center">
+                        <div class="bg-[url(/img/hero_product.png)] w-[490px] h-[490px] rounded-lg "></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kuesioner (Hanya muncul jika Cold Start) -->
+        <section id="questionnaire-box" class="relative w-full py-56 ">
+            <div class="container justify-between items-center p-6 py-32 md:p-10 bg-white mx-auto transition-transform duration-500 ease-in-out rounded-lg">
+
+            <div class=" grid grid-cols-3 md:grid-cols-5 gap-4 items-stretch"> 
+                <button 
+                    onclick="submitPreference('Streaming')" 
+                    class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
+                    style="background-color: #EF4444;" 
+                    aria-label="Streaming Video Preference">
+                    <iconify-icon icon="si:movie-fill"></iconify-icon>
+                    <span class="text-sm md:text-base">Streaming</span>
+                </button>
+
+                <button 
+                    onclick="submitPreference('Gaming')" 
+                    class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
+                    style="background-color: #FF7D00;" 
+                    aria-label="Gaming Preference">
+                    <iconify-icon icon="fluent-emoji-high-contrast:video-game"></iconify-icon>
+                    <span class="text-sm md:text-base">Gaming</span>
+                </button>
+
+                <button 
+                    onclick="submitPreference('Voice')" 
+                    class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
+                    style="background-color: #5C3E94;" 
+                    aria-label="Hemat Biaya Preference">
+                    <iconify-icon icon="fluent-emoji-high-contrast:money-bag"></iconify-icon>
+                    <span class="text-sm md:text-base">Hemat Biaya</span>
+                </button>
+                
+                <button 
+                    onclick="submitPreference('Hemat')" 
+                    class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
+                    style="background-color: #060771;" 
+                    aria-label="Roaming Preference">
+                    
+                    <iconify-icon icon="lucide:plane" ></iconify-icon>
+                    <span class="text-sm md:text-base">Roaming</span>
+                </button>
+
+                <button 
+                    onclick="submitPreference('Travel')" 
+                    class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
+                    style="background-color: #F1C40F;">
+                    
+                    <iconify-icon icon="ion:call" class="text-lg md:text-xl text-white"></iconify-icon>
+                    <span class="text-sm md:text-base text-white">Voice</span>
+                </button>
+                
+                </div>
+            </div>
+        </section>
+
+        <!-- Streaming Section -->
+        <section id="streaming-section" class="relative bg-50 py-32">
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-5xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span class="text-primary">Streaming</span> Non-Stop Nonton Tanpa Jeda</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                    <!-- Card 2 (Duplicate) -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                    <!-- Card 3 (Duplicate) -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gaming Section -->
+        <section id="gaming-section" class="relative bg-50 py-32">
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-5xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span class="text-primary">Gaming</span> Anti Lag, Jaminan Menang</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                    <!-- Card 2 (Duplicate) -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                    <!-- Card 3 (Duplicate) -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hemat Section -->
+        <section id="hemat-section" class="relative bg-50 py-32">
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-5xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span class="text-primary">Hemat</span> Data Maksimal, Harga Minimal</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                    <!-- Card 2 (Duplicate) -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                    <!-- Card 3 (Duplicate) -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roaming Section -->
+        <section id="roaming-section" class="relative bg-50 py-32">
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-5xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span class="text-primary">Roaming</span> Jelajah Dunia Tetap Terkoneksi</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                    <!-- Card 2 (Duplicate) -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                    <!-- Card 3 (Duplicate) -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Voice Section -->
+        <section id="voice-section" class="relative bg-50 py-32">
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-5xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span class="text-primary">Voice</span> Telepon Jelas, Pulsa Aman</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                    <!-- Card 2 (Duplicate) -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                    <!-- Card 3 (Duplicate) -->
+                    <div class="bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]">
+                        <div class=" p-6 relative overflow-hidden rounded-t-xl">
+                            <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
+                            <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+                            <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
+                            <h3 class="text-4xl font-semibold">Freedom<br> Internet 5G<br>11GB / 3 Hari</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-t-2xl">
+                            <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
+                            <ul class="space-y-2 text-black text-sm">
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku 3 Hari</li>
+                                <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama 9GB</li>
+                            </ul>
+                            <div class="mt-6 ">
+                                <p class="font-semibold text-gray-500">HARGA</p>
+                                <p class="text-xl font-bold text-primary">Rp 18.000 / 3 Hari</p>
+                            </div>
+                        </div>
+                        <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
+                            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full open-modal-btn">BELI</button>
+                            <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">LIHAT DETAIL</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Detail Paket Modal -->
+    <div id="detail-paket-modal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 w-full max-w-2xl relative ">
+            <div id="detailPaket">
+                <div class="p-8">
+                        <div class="flex items-center mb-6 pb-4 relative">
+                            <!-- Back Button -->
+                            <button id="close-modal-btn" class="text-primary hover:text-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                                </svg>
+                            </button>
+                            <h2 class="text-3xl font-semibold text-black-800 flex-grow text-center">Detail Paket</h2>
+                        </div>
+
+                        <h3 class="text-xl font-semibold text-center mb-4">Quicknet 5GB 3 Hari</h3>
+
+                        <div class="space-y-4 text-gray-700">
+                            <div class="flex justify-between items-center">
+                                <iconify-icon icon="material-symbols:timer" class="text-primary text-4xl"></iconify-icon>
+                                <span class="text-xl font-semibold flex-grow text-left ml-3">Masa aktif</span>
+                                <span class="font-bold text-primary px-2 py-1 rounded">3 HARI</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <iconify-icon icon="mdi:internet" class="text-primary text-4xl"></iconify-icon>
+                                <span class="text-xl font-semibold flex-grow text-left ml-3">Kuota Internet</span>
+                                <span class="font-bold text-primary px-2 py-1 rounded">5 GB</span>
+                            </div>
+                            <p class="text-sm text-primary pt-8">
+                                Kuota Utama 5GB + Kuota Lokal sesuai kotamu
+                            </p>
+                        </div>
+
+                        <div class=" mt-2 b-2 border-t border-primary">
+                            <div class="flex justify-between items-center pt-4">
+                                <iconify-icon icon="solar:dollar-bold" class="text-primary text-4xl"></iconify-icon>
+                                <span class="font-semibold text-xl flex-grow text-left ml-3">Total Harga</span>
+                                <span class="font-bold text-primary px-2 py-1 rounded">Rp12.900</span>
+                            </div>
+                        <a href="register.html" class="inline-block font-bold rounded-lg transition duration-300 bg-primary text-white hover:bg-gray-600 w-full py-3 mt-6 text-center">
+                                Beli
+                        </a>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative w-full pt-24 pb-36 overflow-hidden">
+        <!-- Background Image Div -->
+        <div class="absolute -bottom-36 right-0 w-full h-[300px] bg-[url('/img/footer_2.png')] bg-contain bg-no-repeat bg-right-bottom -z-10 [mask-image:linear-gradient(100.07deg,#FF7D00_57.46%,#FFA600_89.3%)] hidden md:block"></div>
+        <div class="absolute -bottom-8 right-0 w-full h-[550px] bg-[url('/img/footer_1.png')] bg-contain bg-no-repeat bg-right-bottom -z-10 [mask-image:linear-gradient(90deg,#FF7D00_15.4%,#FFA600_86.61%)] hidden md:block "></div>
+        <div class="container px-6 relative">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+                <!-- Column 1: Brand -->
+                <div class="lg:col-span-2 pl-4">
+                    <div class="bg-[url('/img/Logo_TelQ.png')] w-24 h-16 bg-no-repeat bg-contain"></div>
+                    <p class="mt-2 text-200 text-sm font-bold max-w-md">
+                        TelQ | Kuota Cepat, Murah & Terpercaya.<br>Quick, Quality, Quota, Quantity.<br>Pusat Bantuan & FAQ tersedia 24 Jam.<br>Kantor Pusat Layanan Digital, Surabaya..
+                    </p>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon icon="mdi:instagram"></iconify-icon></a>
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon icon="ri:facebook-fill"></iconify-icon></a>
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon icon="mdi:twitter"></iconify-icon></a>
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon icon="mdi:linkedin"></iconify-icon></a>
+                    </div>
+                    <div class="mt-8 pt-6  text-200 text-lg font-medium">
+                        <p>© All rights reserved TelQ</p>
+                    </div>
+                </div>
+                <!-- Column 2: Company -->
+                <div class="text-left">
+                    <h4 class="font-bold text-lg">Company</h4>
+                    <ul class="mt-4 space-y-2 text-200">
+                        <li><a href="#" class="hover:text-primary">Home</a></li>
+                        <li><a href="#" class="hover:text-primary">About Us</a></li>
+                        <li><a href="#" class="hover:text-primary">Feature</a></li>
+                        <li><a href="#" class="hover:text-primary">Pricing</a></li>
+                        <li><a href="#" class="hover:text-primary">Review</a></li>
+                    </ul>
+                </div>
+                <!-- Column 3: Template -->
+                <div class="text-left">
+                    <h4 class="font-bold text-lg">Template</h4>
+                    <ul class="mt-4 space-y-2 text-200">
+                        <li><a href="#" class="hover:text-primary">Style Guide</a></li>
+                        <li><a href="#" class="hover:text-primary">Licenses</a></li>
+                        <li><a href="#" class="hover:text-primary">Changelog</a></li>
+                        <li><a href="#" class="hover:text-primary">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-primary">404</a></li>
+                    </ul>
+                </div>
+                <!-- Column 4: Template -->
+                <div class="text-left">
+                    <h4 class="font-bold text-lg">Template</h4>
+                    <ul class="mt-4 space-y-2 text-200">
+                        <li><a href="#" class="hover:text-primary">(62) 857-4098-0695</a></li>
+                        <li><a href="#" class="hover:text-primary">Hello@cluster.com</a></li>
+                        <li><a href="#" class="hover:text-primary">Mario Bhona Parte</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+        <button id="back-to-top" 
+        class="fixed bottom-6 right-6 p-4 rounded-full 
+            bg-primary text-white shadow-lg 
+            hover:bg-[#FFA600] transition duration-300 
+            opacity-0 invisible z-50">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+    </button>
+
+    <!-- Library untuk notifikasi modern -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when a link inside it is clicked
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Card scroller
+        const scrollContainer = document.getElementById('card-scroll-container');
+        const scrollRightBtn = document.getElementById('scroll-right-btn');
+        const scrollLeftBtn = document.getElementById('scroll-left-btn');
+
+        if (scrollContainer && scrollRightBtn && scrollLeftBtn) {
+            const handleScrollButtons = () => {
+                const scrollLeft = scrollContainer.scrollLeft;
+                const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+
+                // Show/hide left button
+                if (scrollLeft > 0) {
+                    scrollLeftBtn.classList.remove('hidden');
+                } else {
+                    scrollLeftBtn.classList.add('hidden');
+                }
+
+                // Show/hide right button
+                if (scrollLeft >= maxScrollLeft - 1) { // -1 for precision issues
+                    scrollRightBtn.classList.add('hidden');
+                } else {
+                    scrollRightBtn.classList.remove('hidden');
+                }
+            };
+
+            const customSmoothScroll = (element, distance, duration) => {
+                const start = element.scrollLeft;
+                let startTime = null;
+
+                function animation(currentTime) {
+                    if (startTime === null) startTime = currentTime;
+                    const timeElapsed = currentTime - startTime;
+                    const progress = Math.min(timeElapsed / duration, 1);
+
+                    // Easing function for a smooth start and end
+                    const easeInOutQuad = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+                    element.scrollLeft = start + distance * easeInOutQuad(progress);
+
+                    if (timeElapsed < duration) {
+                        requestAnimationFrame(animation);
+                    }
+                }
+
+                requestAnimationFrame(animation);
+            };
+
+            scrollRightBtn.addEventListener('click', () => {
+                const cardWidth = scrollContainer.querySelector('div').offsetWidth;
+                const scrollAmount = cardWidth + 32; // 32px is space-x-8
+                customSmoothScroll(scrollContainer, scrollAmount, 1000); // 1000ms duration
+            });
+
+            scrollLeftBtn.addEventListener('click', () => {
+                const cardWidth = scrollContainer.querySelector('div').offsetWidth;
+                const scrollAmount = cardWidth + 32; // 32px is space-x-8
+                customSmoothScroll(scrollContainer, -scrollAmount, 1000); // 1000ms duration
+            });
+
+            scrollContainer.addEventListener('scroll', handleScrollButtons);
+            handleScrollButtons(); // Initial check
+        }
+        
+
+        // Modal logic
+        const modal = document.getElementById('detail-paket-modal');
+        const openModalButtons = document.querySelectorAll('.open-modal-btn');
+        const closeModalButton = document.getElementById('close-modal-btn');
+
+        const openModal = () => {
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        };
+
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        };
+
+        openModalButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal();
+            });
+        });
+
+        closeModalButton.addEventListener('click', closeModal);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+        
+        //scroll to page
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Konfigurasi
+            // Cari semua tautan yang href-nya dimulai dengan '#' (tautan jangkar lokal)
+            const scrollLinks = document.querySelectorAll('a[href^="#"]'); 
+            
+            // Durasi animasi (dalam milidetik)
+            const DURATION = 600; 
+            const OFFSET_TOP = 50; // Jarak tambahan (misalnya untuk menutupi navigasi sticky)
+            
+
+            // 2. Fungsi Easing: easeInOutQuad (Memulai dan mengakhiri dengan halus)
+            const easeInOutQuad = (t) => {
+                return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+            };
+
+            /**
+             * Melakukan pengguliran halus ke elemen tujuan.
+             */
+            const customSmoothScroll = (targetElement, duration, offset) => {
+                const startPosition = window.scrollY;
+                
+                // Hitung posisi target absolut, dikurangi offset (untuk navigasi)
+                const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - offset;
+                
+                const distance = targetPosition - startPosition;
+                let startTime = null;
+
+                function animation(currentTime) {
+                    if (startTime === null) startTime = currentTime;
+                    
+                    const timeElapsed = currentTime - startTime;
+                    const progress = Math.min(timeElapsed / duration, 1);
+                    const easedProgress = easeInOutQuad(progress);
+
+                    const newScrollY = startPosition + distance * easedProgress;
+
+                    window.scrollTo(0, newScrollY);
+
+                    if (timeElapsed < duration) {
+                        window.requestAnimationFrame(animation);
+                    }
+                }
+
+                window.requestAnimationFrame(animation);
+            };
+
+            // 3. Tambahkan Event Listener ke setiap Tautan
+            scrollLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    // Mencegah perilaku default browser (gulir instan)
+                    event.preventDefault(); 
+                    
+                    // Ambil ID target dari atribut href
+                    const targetId = link.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        customSmoothScroll(targetElement, DURATION, OFFSET_TOP);
+                    } else {
+                        console.error(`Elemen dengan ID ${targetId} tidak ditemukan.`);
+                    }
+                });
+            });
+            const backToTopButton = document.getElementById('back-to-top');
+            const SCROLL_THRESHOLD = 300; // Tombol akan muncul setelah gulir 300px ke bawah
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > SCROLL_THRESHOLD) {
+                    backToTopButton.classList.remove('opacity-0', 'invisible');
+                    backToTopButton.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopButton.classList.remove('opacity-100', 'visible');
+                    backToTopButton.classList.add('opacity-0', 'invisible');
+                }
+            });
+            backToTopButton.addEventListener('click', () => {
+                customSmoothScroll(document.body, DURATION, 0);
+            });
+        });
+        
+
+    </script>
+
+</body>
+</html>                 

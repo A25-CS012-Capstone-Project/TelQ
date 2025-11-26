@@ -13,7 +13,6 @@ from config import SECRET_KEY
 from backend.controllers.prediction_controller import prediction_bp
 from backend.controllers.auth_controller import auth_bp
 from backend.controllers.product_controller import product_bp
-from backend.controllers.user_controller import user_bp 
 
 # --- 1. INISIALISASI APLIKASI ---
 def create_app():
@@ -44,7 +43,6 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/api/v1/auth')
     # Endpoint Produk (/api/v1/products, /api/v1/simulate-purchase)
     app.register_blueprint(product_bp, url_prefix='/api/v1')
-    app.register_blueprint(user_bp, url_prefix='/api/v1/users')
     
     # --- 3. ROUTE ---
     @app.route('/')
@@ -62,10 +60,6 @@ def create_app():
     @app.route('/products')
     def products():
         return render_template('products.html')
-    
-    @app.route('/profile')
-    def profile():
-        return render_template('profile.html')
     
     # route asset
     @app.route('/assets/<path:filename>')
