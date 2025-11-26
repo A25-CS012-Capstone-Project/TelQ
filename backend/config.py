@@ -48,12 +48,12 @@ SECRET_KEY = os.getenv("SECRET_KEY", "calon_best_capstone")
 
 ML_MODEL_PATH = os.getenv(
     "ML_MODEL_PATH",
-    os.path.join(BACKEND_DIR, "ml", "output", "dataset_70_20_10", "xgb_recsys_model.pkl"),
+    os.path.join(BACKEND_DIR, "ml", "output", "randomforestv1", "rf_telco_model.pkl"),
 )
 
 ML_COLUMNS_PATH = os.getenv(
     "ML_COLUMNS_PATH",
-    os.path.join(BACKEND_DIR, "ml", "output", "dataset_70_20_10", "xgb_model_columns.pkl"),
+    os.path.join(BACKEND_DIR, "ml", "output", "randomforestv1", "rf_feature_columns.pkl"),
 )
 
 # ======================================================================
