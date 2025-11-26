@@ -8,7 +8,7 @@ load_dotenv()
 # Gunakan variabel lingkungan untuk konfigurasi yang aman di produksi
 # Default disetel untuk pengembangan lokal
 DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "postgres") # <-- GANTI DI SINI
+DB_PASSWORD = os.getenv("DB_PASSWORD", "postgres")
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "5432")
 DB_NAME = os.getenv("DB_NAME", "telq_recommender_db")
@@ -19,6 +19,7 @@ DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NA
 SECRET_KEY = os.getenv("SECRET_KEY", "calon_best_capstone")
 
 # --- 3. Konfigurasi ML (Lokasi File) ---
+<<<<<<< HEAD
 # # Lokasi aset ML relatif terhadap folder backend/
 # ML_MODEL_PATH = "backend/ml/output/dataset_70_20_10/xgb_recsys_model.pkl"
 # ML_COLUMNS_PATH = "backend/ml/output/dataset_70_20_10/xgb_model_columns.pkl"
@@ -26,6 +27,11 @@ SECRET_KEY = os.getenv("SECRET_KEY", "calon_best_capstone")
 # coba pakai random forest
 ML_MODEL_PATH = "backend/ml/output/randomforest/rf_telco_model.pkl"
 ML_COLUMNS_PATH = "backend/ml/output/randomforest/rf_feature_columns.pkl"
+=======
+# Lokasi aset ML relatif terhadap folder backend/
+ML_MODEL_PATH = "backend/ml/output/dataset_70_20_10/xgb_recsys_model.pkl"
+ML_COLUMNS_PATH = "backend/ml/output/dataset_70_20_10/xgb_model_columns.pkl"
+>>>>>>> origin
 
 # # coba pakai random forest v2
 # ML_MODEL_PATH = "backend/ml/output/randomforest_v2/rf_telco_model_v2.pkl"

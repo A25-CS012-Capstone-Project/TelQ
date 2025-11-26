@@ -31,29 +31,14 @@ async function handleRegister(event) {
     const result = await response.json();
 
     if (response.ok) {
-      Swal.fire({
-        title: "Registrasi Berhasil!",
-        text: "Akun Anda telah dibuat. Silakan login.",
-        icon: "success",
-        confirmButtonText: "OK",
-      }).then(() => {
-        window.location.href = "/login";
-      });
+      alert("Registrasi Berhasil! Silakan Login.");
+      window.location.href = "/login";
     } else {
-      Swal.fire({
-        title: "Registrasi Gagal",
-        text: result.error || "Terjadi kesalahan pada server.",
-        icon: "error",
-        confirmButtonText: "Coba Lagi",
-      });
+      alert("Gagal: " + (result.error || "Terjadi kesalahan"));
     }
   } catch (error) {
     console.error("Error:", error);
-    Swal.fire({
-      title: "Error",
-      text: "Gagal menghubungi server backend.",
-      icon: "error",
-    });
+    alert("Gagal menghubungi server backend.");
   }
 }
 
@@ -85,30 +70,16 @@ async function handleLogin(event) {
       // Ini penting agar kita tahu siapa yang sedang login di halaman Dashboard nanti
       localStorage.setItem("user", JSON.stringify(result.user));
 
-      Swal.fire({
-        title: "Login Berhasil!",
-        text: "Mengalihkan ke dashboard...",
-        icon: "success",
-        timer: 1500, // Tutup otomatis setelah 1.5 detik
-        showConfirmButton: false,
-      }).then(() => {
-        window.location.href = "/"; // Arahkan ke dashboard
-      });
+      alert("Login Berhasil! Mengalihkan ke dashboard...");
+      window.location.href = "/"; // Arahkan ke dashboard
     } else {
-      Swal.fire({
-        title: "Login Gagal",
-        text: result.error || "Cek kembali email dan password Anda.",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
+      alert("Login Gagal: " + (result.error || "Cek email/password Anda"));
     }
   } catch (error) {
     console.error("Error:", error);
-    Swal.fire({
-      title: "Koneksi Error",
-      text: "Gagal menghubungi server. Pastikan backend berjalan.",
-      icon: "error",
-    });
+    alert(
+      "Gagal menghubungi server backend. Pastikan backend/app.py berjalan."
+    );
   }
 }
 
