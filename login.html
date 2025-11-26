@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TelQ - Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    // Mendefinisikan 'Outfit' sebagai font sans default
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'], 
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans flex flex-col items-center justify-center mx-auto min-h-screen">
+    <!-- Login Box -->
+    <div class="container mx-auto md:px-0 bg-[url('/img/hero_login.png')] w-[1365px] bg-no-repeat bg-center rounded-xl shadow-[0_0_5px_5px_rgba(0,0,0,0.25)] ">
+        <div class=" flex flex-col md:flex-row justify-between items-center ">
+            <div class="md:w-1/2 flex justify-center md:justify-center">
+            </div>
+            <div class=" md:w-1/2 text-center md:text-left z-10 md:mt-0 px-20 py-10">
+                <div class="text-center">
+                    <h1 class="text-5xl font-bold text-gray-900 py-10">Welcome to website!</h1>
+                    <h3 class="mt-2 text-5xl font-semibold pb-8">USER LOGIN</h3>
+                </div>
+                <form class="mt-8 space-y-6">
+                    <div>
+                        <label class="block text-2xl font-light mb-2" for="email">Email </label>
+                        <input 
+                        type="email"
+                        id="email"
+                        placeholder="Email"
+                        class="w-full bg-[#EEEEEE] text-xl px-3 py-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF7D00] focus:border-brand-orange"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-2xl font-light  mb-2" for="password">Password</label>
+                        <input
+                        type="password"
+                        id="password"
+                        placeholder="Password"
+                        class="w-full bg-[#EEEEEE] text-xl px-3 py-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF7D00] focus:border-brand-orange"
+                        />
+                    </div>
+                    <button type="submit" class="w-full bg-[#FF7D00] hover:bg-gray-600 text-2xl text-white font-bold py-4 rounded-md transition duration-300">
+                        Login
+                    </button>
+                </form>
+                <div class="mt-10 py-8 text-left border-t border-[#FF7D00]">
+                    <p class="text-2xl ">
+                        Don’t have an account?
+                        <a href="#" class="text-[#FF7D00] font-medium hover:text-gray-600">Create here!</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
