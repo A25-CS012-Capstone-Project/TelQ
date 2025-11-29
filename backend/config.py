@@ -46,15 +46,55 @@ SECRET_KEY = os.getenv("SECRET_KEY", "calon_best_capstone")
 # 3. Konfigurasi ML (Lokasi File Model & Feature Columns)
 # ======================================================================
 
+# ML_MODEL_PATH = os.getenv(
+#     "ML_MODEL_PATH",
+#     os.path.join(BACKEND_DIR, "ml", "output", "randomforestv1", "rf_telco_model.pkl"),
+# )
+
+# ML_COLUMNS_PATH = os.getenv(
+#     "ML_COLUMNS_PATH",
+#     os.path.join(BACKEND_DIR, "ml", "output", "randomforestv1", "rf_feature_columns.pkl"),
+# )
+
+# ML_MODEL_PATH = os.getenv(
+#     "ML_MODEL_PATH",
+#     os.path.join(BACKEND_DIR, "ml", "output", "randomforest_v2", "rf_telco_model_v2.pkl"),
+# )
+
+# ML_COLUMNS_PATH = os.getenv(
+#     "ML_COLUMNS_PATH",
+#     os.path.join(BACKEND_DIR, "ml", "output", "randomforest_v2", "rf_feature_columns_v2.pkl"),
+# )
+
+# ML_MODEL_PATH = os.getenv(
+#     "ML_MODEL_PATH",
+#     os.path.join(BACKEND_DIR, "ml", "output", "dataset_70_20_10", "xgb_recsys_model.pkl"),
+# )
+
+# ML_COLUMNS_PATH = os.getenv(
+#     "ML_COLUMNS_PATH",
+#     os.path.join(BACKEND_DIR, "ml", "output", "dataset_70_20_10", "xgb_model_columns.pkl"),
+# )
+
 ML_MODEL_PATH = os.getenv(
     "ML_MODEL_PATH",
-    os.path.join(BACKEND_DIR, "ml", "output", "randomforestv1", "rf_telco_model.pkl"),
+    os.path.join(BACKEND_DIR, "ml", "output", "XGBoost_v3_25Nov2025", "xgb_telco_optimal_v1.pkl"),
 )
 
-ML_COLUMNS_PATH = os.getenv(
+ML_COLUMNS_PATH = os.getenv(    
     "ML_COLUMNS_PATH",
-    os.path.join(BACKEND_DIR, "ml", "output", "randomforestv1", "rf_feature_columns.pkl"),
+    os.path.join(BACKEND_DIR, "ml", "output", "XGBoost_v3_25Nov2025", "xgb_feature_columns_v1.pkl"),
 )
+
+# ML_MODEL_PATH = os.getenv(
+#     "ML_MODEL_PATH",
+#     os.path.join(BACKEND_DIR, "ml", "output", "logistic_regression_recommendation", "logistic_regression_recommendation.pkl"),
+# )
+
+# ML_COLUMNS_PATH = os.getenv(    
+#     "ML_COLUMNS_PATH",
+#     os.path.join(BACKEND_DIR, "ml", "output", "logistic_regression_recommendation", "lr_feature_columns.pkl"),
+# )
 
 # ======================================================================
 # 4. Konfigurasi Data (Untuk populate_db.py, dsb.)
