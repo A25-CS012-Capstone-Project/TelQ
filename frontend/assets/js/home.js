@@ -1,10 +1,10 @@
-// assets/js/home.js
 const API_BASE_URL = "/api/v1";
 
-// --- Variabel Global untuk Konteks Chat ---
+// --- Variabel Global ---
 let currentTopRecommendation = null;
 let currentReason = null;
 let currentUserName = "User";
+let productsStore = {}; // Simpan data produk untuk modal detail
 
 document.addEventListener("DOMContentLoaded", () => {
   const userStr = localStorage.getItem("user");
@@ -18,35 +18,84 @@ document.addEventListener("DOMContentLoaded", () => {
     user = JSON.parse(userStr);
     currentUserName = user.firstname || user.first_name || "User";
   } catch (e) {
-    console.error("[home] Gagal parse user dari localStorage:", e);
-    localStorage.removeItem("user");
+    console.error("Auth Error:", e);
     window.location.href = "/login";
     return;
   }
 
-  // Greeting
-  const nameEl = document.getElementById("user-name");
-  if (nameEl) {
-    nameEl.textContent = `Halo, ${currentUserName}!`;
-  }
+  const nameEl = document.querySelector("#user-name, .user-name-display");
+  if (nameEl) nameEl.textContent = `Halo, ${currentUserName}!`;
 
-  // Jalankan fetch
   if (user.customer_id) {
     fetchRecommendations(user.customer_id);
-  } else {
-    console.warn("[home] customer_id tidak ditemukan di user object:", user);
   }
   fetchBestDeals();
 });
 
-// ======================== REKOMENDASI PERSONAL (AI) ========================
+// ======================== 1. PIPELINE BUTTON ========================
+window.handleTriggerPipeline = async function (btnElement) {
+  const userStr = localStorage.getItem("user");
+  if (!userStr) return;
+  const user = JSON.parse(userStr);
+
+  let originalContent = "🔄 Update Profil";
+  if (btnElement) {
+    const span = btnElement.querySelector("span");
+    if (span) {
+      originalContent = span.innerHTML;
+      span.innerHTML = "⏳ Memproses...";
+    } else {
+      originalContent = btnElement.innerHTML;
+      btnElement.innerHTML = "⏳ Memproses...";
+    }
+    btnElement.disabled = true;
+    btnElement.classList.add("opacity-75", "cursor-not-allowed");
+  }
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/trigger-pipeline`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ customer_id: user.customer_id }),
+    });
+
+    if (res.ok) {
+      Swal.fire({
+        icon: "success",
+        title: "Profil Diperbarui!",
+        text: "AI sedang menghitung ulang rekomendasi...",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      await fetchRecommendations(user.customer_id);
+    } else {
+      Swal.fire("Gagal", "Terjadi kesalahan saat update profil.", "error");
+    }
+  } catch (e) {
+    console.error(e);
+    Swal.fire("Error", "Gagal menghubungi server.", "error");
+  } finally {
+    if (btnElement) {
+      const span = btnElement.querySelector("span");
+      if (span) {
+        span.innerHTML = originalContent;
+      } else {
+        btnElement.innerHTML = originalContent;
+      }
+      btnElement.disabled = false;
+      btnElement.classList.remove("opacity-75", "cursor-not-allowed");
+    }
+  }
+};
+
+// ======================== 2. FETCH REKOMENDASI AI ========================
 async function fetchRecommendations(customerId) {
   const container = document.getElementById("recommendation-container");
   const questBox = document.getElementById("questionnaire-box");
 
   if (!container) return;
 
-  container.innerHTML = "<p>Sedang memuat rekomendasi...</p>";
+  container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10">Sedang memuat rekomendasi cerdas...</p>`;
 
   try {
     const response = await fetch(`${API_BASE_URL}/recommend`, {
@@ -55,73 +104,83 @@ async function fetchRecommendations(customerId) {
       body: JSON.stringify({ customer_id: customerId }),
     });
 
-    if (!response.ok) throw new Error("Gagal fetch API /recommend");
-
     const data = await response.json();
     container.innerHTML = "";
 
     if (data.status === "COLD") {
       const filterSection = document.getElementById("filter-result-section");
-      if (filterSection && filterSection.style.display === "none") {
-        if (questBox) questBox.style.display = "block";
+      if (
+        questBox &&
+        filterSection &&
+        (filterSection.style.display === "none" ||
+          filterSection.classList.contains("hidden"))
+      ) {
+        questBox.classList.remove("hidden");
       }
+
       container.innerHTML = `
-        <div style="grid-column: 1/-1; text-align:center; color:#7f8c8d; padding:20px; background:#f8f9fa; border-radius:8px;">
-          <p><em>Belum ada data historis untuk rekomendasi AI.</em></p>
-          <p><small>Silakan isi kuesioner di atas atau lakukan <strong>Simulasi Belanja</strong>.</small></p>
+        <div class="col-span-full text-center p-8 bg-white/50 rounded-xl border border-dashed border-gray-300">
+          <p class="text-gray-500 italic">Belum ada data historis.</p>
+          <p class="text-sm text-gray-400">Isi kuesioner di atas untuk hasil terbaik.</p>
         </div>`;
     } else {
-      if (questBox) questBox.style.display = "none";
+      if (questBox) questBox.classList.add("hidden");
 
       if (data.items && data.items.length > 0) {
-        // --- SIMPAN KONTEKS UNTUK CHATBOT ---
-        currentTopRecommendation = data.items[0].product_name; // Produk paling atas
-        currentReason = data.items[0].reason; // Alasan produk tsb
-
-        renderProductCards(data.items, container, false);
+        currentTopRecommendation = data.items[0].product_name;
+        currentReason = data.items[0].reason;
+        renderProductCards(data.items.slice(0, 6), container, "gradient"); 
       } else {
-        renderProductCards(data.recommendations, container, true);
+        renderProductCards(
+          data.recommendations.slice(0, 6),
+          container,
+          "gradient"
+        );
       }
     }
   } catch (error) {
-    console.error("[home] fetchRecommendations error:", error);
-    container.innerHTML = '<p style="color:red">Gagal memuat rekomendasi.</p>';
+    console.error("Rec Error:", error);
+    container.innerHTML =
+      '<p class="col-span-full text-center text-red-500">Gagal memuat rekomendasi.</p>';
   }
 }
 
-// =========================== BEST DEALS ==========================
+// ======================== 3. FETCH BEST DEALS ========================
 async function fetchBestDeals() {
   const container = document.getElementById("best-deal-container");
   if (!container) return;
-  container.innerHTML = "<p>Mencari penawaran terbaik...</p>";
 
   try {
     const response = await fetch(`${API_BASE_URL}/products/best-deal`);
-    if (!response.ok) throw new Error("API Error /products/best-deal");
     const products = await response.json();
 
     if (!Array.isArray(products) || products.length === 0) {
-      container.innerHTML = "<p>Belum ada data penjualan.</p>";
+      container.innerHTML =
+        "<p class='text-white'>Belum ada promo saat ini.</p>";
     } else {
-      renderBestDealsCards(products, container, false);
+      renderBestDealsCards(products, container);
     }
   } catch (error) {
-    console.error("[home] Best Deal Error:", error);
-    container.innerHTML = '<p style="color:red">Gagal memuat Best Deals.</p>';
+    console.error("Best Deal Error:", error);
   }
 }
 
-// ======================= KUESIONER (FILTER) ======================
+// ======================== 4. LOGIC KUESIONER ========================
 async function submitPreference(pref) {
   const questBox = document.getElementById("questionnaire-box");
   const filterSection = document.getElementById("filter-result-section");
   const filterContainer = document.getElementById("filter-result-container");
 
-  if (!filterSection || !filterContainer || !questBox) return;
+  if (!filterContainer) return;
 
-  filterContainer.innerHTML = "<p>Mencari paket...</p>";
-  filterSection.style.display = "block";
-  questBox.style.opacity = "0.5";
+  filterContainer.innerHTML =
+    "<p class='col-span-full text-center'>Mencari paket...</p>";
+
+  if (filterSection) {
+    filterSection.style.display = "block";
+    filterSection.classList.remove("hidden");
+  }
+  if (questBox) questBox.classList.add("hidden");
 
   try {
     const response = await fetch(`${API_BASE_URL}/products/filter`, {
@@ -132,65 +191,45 @@ async function submitPreference(pref) {
 
     const data = await response.json();
     if (response.ok) {
-      questBox.style.display = "none";
       renderQuestionerCards(data.recommendations, filterContainer, false);
-    } else {
-      alert("Gagal memuat produk.");
     }
   } catch (error) {
-    console.error("[home] submitPreference error:", error);
-  } finally {
-    questBox.style.opacity = "1";
+    console.error("Filter Error:", error);
   }
 }
 
 function closeFilterSection() {
   const filterSection = document.getElementById("filter-result-section");
-  if (filterSection) filterSection.style.display = "none";
+  if (filterSection) {
+    filterSection.style.display = "none";
+    filterSection.classList.add("hidden");
+  }
   const userStr = localStorage.getItem("user");
   if (!userStr) return;
   const user = JSON.parse(userStr);
   if (user.customer_id) fetchRecommendations(user.customer_id);
 }
 
-// ======================= PIPELINE BUTTON =========================
-async function handleTriggerPipeline() {
-  const userStr = localStorage.getItem("user");
-  if (!userStr) return;
-  const user = JSON.parse(userStr);
-  const btn = document.getElementById("btn-pipeline");
-  if (!btn) return;
-
-  btn.disabled = true;
-  btn.innerHTML = "⏳ Sedang Menghitung Profil...";
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/trigger-pipeline`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ customer_id: user.customer_id }),
-    });
-
-    const res = await response.json();
-    if (response.ok) {
-      alert("Sukses! Profil Anda telah diperbarui.");
-      await fetchRecommendations(user.customer_id);
-      const filterSection = document.getElementById("filter-result-section");
-      if (filterSection) filterSection.style.display = "none";
+// ======================== HELPER ========================
+const parseProductName = (name) => {
+  const words = name.trim().split(/\s+/);
+  if (words.length >= 2) {
+    if (words[0].includes("GB") || words[1].includes("GB")) {
+      const gbIndex = words.findIndex((w) => w.includes("GB"));
+      const line1 = words.slice(0, gbIndex).join(" ");
+      const line2 = words.slice(gbIndex).join(" ");
+      return { line1: line1 || words[0], line2: line2 };
     } else {
-      alert("Gagal: " + (res.error || "Pipeline error"));
+      const line1 = words.slice(0, 2).join(" ");
+      const line2 = words.slice(2).join(" ") || "";
+      return { line1, line2 };
     }
-  } catch (error) {
-    console.error("[home] Pipeline Error:", error);
-    alert("Gagal menghubungi server pipeline.");
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = "🔄 Perbarui Profil (Pipeline)";
   }
-}
+  return { line1: words[0], line2: "" };
+};
 
+// ======================== RENDERERS ========================
 
-// ======================= KARTU QUESTIONER =====================
 function renderQuestionerCards(items, container, isRecsysString) {
   container.innerHTML = "";
   if (!items || items.length === 0) {
@@ -198,337 +237,477 @@ function renderQuestionerCards(items, container, isRecsysString) {
     return;
   }
   items.forEach((item) => {
+    if (!isRecsysString) productsStore[item.product_id] = item;
+
     let name,
-      info,
       priceDisplay,
       reasonHtml = "";
-      
+
     if (isRecsysString) {
       const match = item.match(/^\(([\d.]+%)\)\s(.+)/);
-      info = match
-        ? `<span style="color:#27ae60; font-weight:bold;">Match: ${match[1]}</span>`
-        : "Rekomendasi";
       name = match ? match[2] : item;
       priceDisplay = "";
     } else {
       name = item.product_name;
-      if (item.final_score) {
-        const scorePct = (
-          Math.max(Math.min(item.final_score, 0.999), 0.01) * 100
-        ).toFixed(1);
-        info = `<span style="color:#27ae60; font-weight:bold;">Match: ${scorePct}%</span>`;
-      } else {
-        info = item.target_offer || "Penawaran Spesial";
-      }
       priceDisplay = `Rp ${item.price.toLocaleString("id-ID")}`;
       if (item.reason) {
         reasonHtml = `
-            <div style="background-color: #e8f4fd; border: 1px solid #b3d7ff; border-radius: 6px; padding: 8px; margin-top: 8px; font-size: 0.85rem; color: #0c5460; line-height: 1.3; text-align: left;">
-                <span style="font-size: 1.1em; margin-right: 4px;">💡</span>
-                ${item.reason}
+            <div style="background-color: #e8f4fd; border: 1px solid #b3d7ff; border-radius: 6px; padding: 4px; margin-top: 4px; font-size: 0.75rem; color: #0c5460; line-height: 1.2;">
+                <span style="font-size: 1em;">💡</span> ${item.reason.substring(
+                  0,
+                  25
+                )}...
             </div>`;
       }
     }
+
     const card = document.createElement("div");
-    card.className = "bg-white rounded-lg overflow-hidden flex flex-col justify-between shadow-[0_8px_16px_-4px_rgba(0,0,0,0.2)]";
+    card.className =
+      "bg-white rounded-lg overflow-hidden flex flex-col justify-between shadow-[0_8px_16px_-4px_rgba(0,0,0,0.2)]";
     card.innerHTML = `
       <div class="p-3">
-          <p class="text-sm font-bold text-gray-600">${name}</p>
-          <div class="flex items-center ">
-              <!-- Container dengan background image, dibuat lebih besar dan menjadi flex container -->
-              <div class="relative bg-[url('../assets/img/bg_gb.png')] bg-cover bg-center h-20 w-20 rounded-lg flex flex-col items-center justify-center text-white flex-shrink-0">
-                  <span class="font-bold text-xl leading-none">${item.data_gb}</span>
+          <p class="text-sm font-bold text-gray-600 min-h-[40px]">${name}</p>
+          <div class="flex items-center mt-2">
+              <div class="relative bg-[url('/assets/img/bg_gb.png')] bg-cover bg-center h-20 w-20 rounded-lg flex flex-col items-center justify-center text-white flex-shrink-0">
+                  <span class="font-bold text-xl leading-none">${
+                    item.data_gb || "?"
+                  }</span>
                   <span class="font-bold text-xs leading-none">GB</span>
               </div>
               <div class="ml-2">
-                  <p class="text-xl font-bold text-[#AF5920]">${priceDisplay ? `${priceDisplay}` : "" } ${reasonHtml}</p>
-                  <p class="text-xs text-gray-500">Masa aktif ${item.duration_days} hari</p>
+                  <p class="text-xl font-bold text-[#AF5920]">${priceDisplay}</p>
+                  <p class="text-xs text-gray-500">Masa aktif ${
+                    item.duration_days || 30
+                  } hari</p>
+                  ${reasonHtml}
               </div>
           </div>
-          <p class="text-xs text-[#C66B2C]">Kuota Utama ${item.data_gb} GB</p>
-          <button class="inline-block font-bold rounded-lg transition duration-300 bg-primary text-white hover:bg-gray-600 w-full mt-3 py-1 open-modal-btn ">BELI</button>
+          <p class="text-xs text-[#C66B2C] mt-2">Kuota Utama ${
+            item.data_gb || 0
+          } GB</p>
+          <button onclick="buyProduct(${item.product_id || 0}, '${name.replace(
+      /'/g,
+      "\\'"
+    )}')" class="inline-block font-bold rounded-lg transition duration-300 bg-primary text-white hover:bg-gray-600 w-full mt-3 py-1 open-modal-btn">BELI</button>
       </div>`;
     container.appendChild(card);
   });
 }
 
-// ======================= KARTU BEST DEALS =====================
-
-function renderBestDealsCards(items, container, isRecsysString) {
+// --- [BAGIAN UTAMA YANG DIPERBAIKI] ---
+function renderProductCards(items, container) {
   container.innerHTML = "";
   if (!items || items.length === 0) {
-    container.innerHTML = "<p>Tidak ada produk ditemukan.</p>";
+    container.innerHTML = "<p>Data produk kosong.</p>";
     return;
   }
+
   items.forEach((item) => {
+    // Simpan ke store agar bisa diakses Modal
+    if (typeof item !== "string") productsStore[item.product_id] = item;
+
     let name,
-      info,
       priceDisplay,
-      reasonHtml = "";
-      // Fungsi parser BARU - HANYA 2 BARIS sesuai perintah
-      const parseProductName = (name) => {
-        const words = name.trim().split(/\s+/);
-        
-        // Cek 2 kata pertama apakah ada GB
-        if (words.length >= 2) {
-          if (words[0].includes('GB') || words[1].includes('GB')) {
-            // GB di 2 kata pertama → GB + sisanya di baris 2
-            const gbIndex = words.findIndex(w => w.includes('GB'));
-            const line1 = words.slice(0, gbIndex).join(' ');
-            const line2 = words.slice(gbIndex).join(' ');
-            return { line1: line1 || words[0], line2: line2 };
-          } else {
-            // 2 kata pertama TIDAK ada GB → 2 kata pertama di baris 1
-            const line1 = words.slice(0, 2).join(' ');
-            const line2 = words.slice(2).join(' ') || '';
-            return { line1, line2 };
-          }
-        }
-        
-        // Default 1 kata
-        return { line1: words[0], line2: '' };
-      };
+      reasonHtml = "",
+      dataGb = 0,
+      duration = 30,
+      bonusStream = 0,
+      matchBadge = "";
 
-    const nameParts = parseProductName(item.product_name);
-    const displayName = `${nameParts.line1}<br>${nameParts.line2}`;
-
-    if (isRecsysString) {
-      const match = item.match(/^\(([\d.]+%)\)\s(.+)/);
-      info = match
-        ? `<span style="color:#27ae60; font-weight:bold;">Match: ${match[1]}</span>`
-        : "Rekomendasi";
-      name = match ? match[2] : item;
-      priceDisplay = "";
+    if (typeof item === "string") {
+      name = item;
+      priceDisplay = "Cek Detail";
     } else {
       name = item.product_name;
+      priceDisplay = `Rp ${item.price.toLocaleString("id-ID")}`;
+      dataGb = item.data_gb || 0;
+      duration = item.duration_days || 30;
+      bonusStream = item.streaming_gb_bonus || 0;
+
+      // PERBAIKAN BADGE: Style lebih modern & Z-Index diperbaiki
       if (item.final_score) {
         const scorePct = (
           Math.max(Math.min(item.final_score, 0.999), 0.01) * 100
-        ).toFixed(1);
-        info = `<span style="color:#27ae60; font-weight:bold;">Match: ${scorePct}%</span>`;
-      } else {
-        info = item.target_offer || "Penawaran Spesial";
+        ).toFixed(0);
+        matchBadge = `
+            <div class="absolute top-6 left-6 z-20 bg-white/95 text-primary px-3 py-1.5 rounded-full text-[11px] font-bold shadow-sm border border-orange-100 backdrop-blur-sm tracking-wide uppercase">
+                Match ${scorePct}%
+            </div>`;
       }
-      priceDisplay = `Rp ${item.price.toLocaleString("id-ID")}`;
+
+      // PERBAIKAN AI INSIGHT: Layout terpisah yang rapi
       if (item.reason) {
         reasonHtml = `
-            <div style="background-color: #e8f4fd; border: 1px solid #b3d7ff; border-radius: 6px; padding: 8px; margin-top: 8px; font-size: 0.85rem; color: #0c5460; line-height: 1.3; text-align: left;">
-                <span style="font-size: 1.1em; margin-right: 4px;">💡</span> ${item.reason}
+            <div class="mt-4 p-3 bg-orange-50 border border-orange-100 rounded-xl flex gap-3 items-start">
+                <iconify-icon icon="mdi:lightbulb-on-outline" class="text-primary text-xl shrink-0 mt-0.5"></iconify-icon>
+                <div class="flex-grow">
+                    <p class="text-[10px] font-bold text-primary uppercase tracking-wide mb-0.5">AI Insight</p>
+                    <p class="text-xs text-gray-600 leading-relaxed">${item.reason}</p>
+                </div>
             </div>`;
       }
     }
+
+    const nameParts = parseProductName(name);
+    const displayName = `${nameParts.line1}<br>${nameParts.line2}`;
+
     const card = document.createElement("div");
-    card.className = "bg-white rounded-lg shadow-lg flex flex-col w-full max-w-sm flex-shrink-0";
+    // Layout kartu diperbaiki agar height setara
+    card.className =
+      "bg-[linear-gradient(270deg,#FFFFFF_18.18%,rgba(255,125,0,0.76)_98.14%)] rounded-2xl shadow-[0_10px_20px_rgba(255,125,0,0.15)] hover:shadow-[0_15px_30px_rgba(255,125,0,0.25)] transition-all duration-300 flex flex-col justify-between h-full relative overflow-hidden group";
+
     card.innerHTML = `
-      <div class="flex items-top ">
-        <div class="relative bg-[url('../assets/img/bg_gb.png')] bg-cover bg-center h-24 w-24 rounded-lg flex flex-col items-center justify-center text-white flex-shrink-0">
-          <span class="font-bold text-2xl leading-none">${item.data_gb}</span>
+        <!-- Header Kartu (Warna Oranye) -->
+        <div class="relative p-6 pt-8 pb-10 overflow-hidden rounded-t-2xl">
+            ${matchBadge}
+            <div class="absolute top-[-20%] right-[-10%] w-[160px] h-[160px] bg-[linear-gradient(205deg,#F9A02F_30%,#AF5920_90%)] rounded-full"></div>
+            <div class="absolute top-[15%] right-[18%] w-8 h-8 bg-[#AF5920] rounded-full"></div>
+            <div class="absolute top-[25%] right-[5%] w-12 h-12 bg-[#AF5920] rounded-full"></div>
+
+            <h3 class="relative z-10 font-sans font-bold text-black text-3xl leading-tight tracking-tight drop-shadow-sm mt-8 group-hover:scale-[1.02] transition-transform duration-300 origin-left">
+                ${displayName}
+            </h3>
+        </div>
+
+        <!-- Body Kartu (Putih) -->
+        <div class="flex-grow bg-white p-6 -mt-4 rounded-t-2xl relative z-10 flex flex-col gap-4">
+            <!-- Benefits List -->
+            <div>
+                <h4 class="font-sans font-bold text-gray-400 text-[10px] tracking-widest uppercase mb-3">KEUNTUNGAN</h4>
+                <ul class="space-y-3">
+                    <li class="flex items-center text-gray-700 text-sm font-medium">
+                        <div class="w-6 flex justify-center mr-2"><iconify-icon icon="iconoir:clock" class="text-lg text-gray-400"></iconify-icon></div>
+                        <span>Masa aktif <b class="text-gray-900">${duration} Hari</b></span>
+                    </li>
+                    <li class="flex items-center text-gray-700 text-sm font-medium">
+                        <div class="w-6 flex justify-center mr-2"><iconify-icon icon="mdi:database-outline" class="text-lg text-gray-400"></iconify-icon></div>
+                        <span>Kuota utama <b class="text-gray-900">${dataGb} GB</b></span>
+                    </li>
+                    ${
+                      bonusStream > 0
+                        ? `
+                    <li class="flex items-center text-primary text-sm font-medium">
+                        <div class="w-6 flex justify-center mr-2"><iconify-icon icon="mdi:youtube" class="text-lg"></iconify-icon></div>
+                        <span>Bonus Streaming <b>${bonusStream} GB</b></span>
+                    </li>`
+                        : ""
+                    }
+                </ul>
+            </div>
+            
+            <!-- Insert AI Reason -->
+            ${reasonHtml}
+
+            <!-- Harga -->
+            <div class="mt-auto pt-4 border-t border-gray-100">
+                <p class="font-sans font-bold text-gray-400 text-[10px] tracking-widest uppercase mb-1">HARGA</p>
+                <div class="flex items-baseline gap-1">
+                    <p class="font-sans font-extrabold text-2xl text-[#AF5920]">${priceDisplay}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Buttons -->
+        <div class="bg-white px-6 pb-6 pt-0 rounded-b-2xl flex justify-between items-center gap-3">
+            <button onclick="buyProduct(${
+              item.product_id || 0
+            }, '${name.replace(/'/g, "\\'")}')" 
+                class="flex-grow bg-primary text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-orange-200 hover:shadow-xl hover:bg-orange-600 transition-all duration-300 transform hover:-translate-y-0.5 text-sm">
+                BELI
+            </button>
+            <button onclick="showProductDetail(${item.product_id || 0})" 
+                class="px-4 py-3 text-sm font-bold text-gray-500 hover:text-primary transition-colors duration-300">
+                DETAIL
+            </button>
+        </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function renderBestDealsCards(items, container, isGridMode = false) {
+  container.innerHTML = "";
+
+  items.forEach((item) => {
+    // Simpan ke store
+    productsStore[item.product_id] = item;
+
+    let name = item.product_name || item;
+    let price = item.price ? `Rp ${item.price.toLocaleString("id-ID")}` : "";
+    let gb = item.data_gb || "?";
+    let duration = item.duration_days || 30;
+
+    const nameParts = parseProductName(name);
+    const displayName = `${nameParts.line1}<br>${nameParts.line2}`;
+
+    const card = document.createElement("div");
+    let wrapperClass =
+      "bg-white rounded-lg shadow-lg flex flex-col flex-shrink-0 overflow-hidden";
+    wrapperClass += isGridMode ? " w-full" : " w-full max-w-sm";
+
+    card.className = wrapperClass;
+
+    card.innerHTML = `
+      <div class="flex items-top p-3 pb-0">
+        <div class="relative bg-[url('/assets/img/bg_gb.png')] bg-cover bg-center h-24 w-24 rounded-lg flex flex-col items-center justify-center text-white flex-shrink-0">
+          <span class="font-bold text-2xl leading-none">${gb}</span>
           <span class="font-bold text-2xs leading-none">GB</span>
         </div>
-        <div class="flex-1 pt-4">
-          <h4 class="font-semibold text-gray-800 leading-none">${displayName}</h4>
-          <p class="text-xs text-gray-600">${item.data_gb} GB kuota utama</p>
-          <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold open-modal-btn">${info}</a>
+        <div class="flex-1 pl-3 pt-2">
+          <h4 class="font-semibold text-gray-800 leading-tight">${displayName}</h4>
+          <p class="text-xs text-gray-600 mt-1">${gb} GB kuota utama</p>
+          <a href="#" class="text-xs text-primary hover:text-gray-600 font-semibold mt-2 block" onclick="showProductDetail(${
+            item.product_id || 0
+          }); return false;">LIHAT DETAIL</a>
         </div>
       </div>
-      <div class="p-4 pt-0">
-        <hr class="my-3 border-black">
+      <div class="p-4 pt-2">
+        <hr class="my-2 border-gray-200">
         <div class="flex justify-between items-center mt-2">
-            <p class="font-bold text-lg text-gray-800">
-              ${priceDisplay}
-            </p>
-            <button class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 rounded-full px-6 py-2 text-sm">BELI</button>
+            <div>
+                <p class="font-bold text-lg text-gray-800">${price}</p>
+                <p class="text-[10px] text-gray-400">${duration} Hari</p>
+            </div>
+            <button onclick="buyProduct(${
+              item.product_id || 0
+            }, '${name.replace(
+      /'/g,
+      "\\'"
+    )}')" class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 rounded-full px-6 py-2 text-sm">BELI</button>
         </div>
       </div>
     `;
     container.appendChild(card);
-    });
-    // Panggil handleScrollButtons yang ada di global window dari HTML
-  if (window.handleScrollButtons) {
+  });
+
+  if (!isGridMode && window.handleScrollButtons) {
     window.handleScrollButtons();
   }
 }
-// Pemanggilan fetchBestDeals misal di load halaman
-window.addEventListener('load', () => {
-  fetchBestDeals();
-});
 
-// ======================= KARTU REKOMENDASI PERSONAL(AI) =====================
-function renderProductCards(items, container, isRecsysString) {
-  container.innerHTML = "";
-  if (!items || items.length === 0) {
-    container.innerHTML = "<p>Tidak ada produk ditemukan.</p>";
+// ======================== ACTIONS & UTILS ========================
+
+// 5. Logic Pembelian Real (Update DB + Pipeline)
+window.buyProduct = async function (id, name) {
+  const userStr = localStorage.getItem("user");
+  if (!userStr) {
+    Swal.fire("Error", "Silakan login terlebih dahulu.", "error");
     return;
   }
-  items.forEach((item) => {
-    let name,
-      info,
-      priceDisplay,
-      reasonHtml = "";
-      // Fungsi parser BARU - HANYA 2 BARIS sesuai perintah
-      const parseProductName = (name) => {
-        const words = name.trim().split(/\s+/);
-        
-        // Cek 2 kata pertama apakah ada GB
-        if (words.length >= 2) {
-          if (words[0].includes('GB') || words[1].includes('GB')) {
-            // GB di 2 kata pertama → GB + sisanya di baris 2
-            const gbIndex = words.findIndex(w => w.includes('GB'));
-            const line1 = words.slice(0, gbIndex).join(' ');
-            const line2 = words.slice(gbIndex).join(' ');
-            return { line1: line1 || words[0], line2: line2 };
-          } else {
-            // 2 kata pertama TIDAK ada GB → 2 kata pertama di baris 1
-            const line1 = words.slice(0, 2).join(' ');
-            const line2 = words.slice(2).join(' ') || '';
-            return { line1, line2 };
-          }
-        }
-        
-        // Default 1 kata
-        return { line1: words[0], line2: '' };
-      };
+  const user = JSON.parse(userStr);
 
-    const nameParts = parseProductName(item.product_name);
-    const displayName = `${nameParts.line1}<br>${nameParts.line2}`;
-    
-    if (isRecsysString) {
-      const match = item.match(/^\(([\d.]+%)\)\s(.+)/);
-      info = match
-        ? `<span style="color:#27ae60; font-weight:bold;">Match: ${match[1]}</span>`
-        : "Rekomendasi";
-      name = match ? match[2] : item;
-      priceDisplay = "";
-    } else {
-      name = item.product_name;
-      if (item.final_score) {
-        const scorePct = (
-          Math.max(Math.min(item.final_score, 0.999), 0.01) * 100
-        ).toFixed(1);
-        info = `<span style="color:#27ae60; font-weight:bold;">Match: ${scorePct}%</span>`;
-      } else {
-        info = item.target_offer || "Penawaran Spesial";
+  Swal.fire({
+    title: "Beli Paket?",
+    text: name,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Ya, Beli",
+    confirmButtonColor: "#FF7D00",
+    cancelButtonColor: "#d33",
+    showLoaderOnConfirm: true,
+    preConfirm: async () => {
+      try {
+        // 1. Catat Pembelian ke Database
+        const purchaseRes = await fetch(`${API_BASE_URL}/simulate-purchase`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customer_id: user.customer_id,
+            product_id: id,
+          }),
+        });
+
+        if (!purchaseRes.ok) throw new Error("Gagal memproses transaksi");
+
+        // 2. Trigger Pipeline (Update Profil User)
+        await fetch(`${API_BASE_URL}/trigger-pipeline`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ customer_id: user.customer_id }),
+        });
+
+        return true;
+      } catch (error) {
+        Swal.showValidationMessage(`Gagal: ${error}`);
       }
-      priceDisplay = `Rp ${item.price.toLocaleString("id-ID")}`;
-      if (item.reason) {
-        reasonHtml = `
-            <div style="background-color: #e8f4fd; border: 1px solid #b3d7ff; border-radius: 6px; padding: 8px; margin-top: 8px; font-size: 0.85rem; color: #0c5460; line-height: 1.3; text-align: left;">
-                <span style="font-size: 1.1em; margin-right: 4px;">💡</span>
-                ${item.reason}
-            </div>`;
-      }
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "Berhasil!",
+        text: "Paket aktif. Rekomendasi Anda sedang diperbarui...",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      }).then(() => {
+        // 3. Refresh Halaman / Rekomendasi
+        fetchRecommendations(user.customer_id);
+      });
     }
-    const card = document.createElement("div");
-    card.className = "bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)]";
-    card.innerHTML = `
-    <div class="p-6 relative overflow-hidden rounded-t-xl">
-        <div class="absolute top-20 -right-20 w-40 h-40 bg-[linear-gradient(205.41deg,#F9A02F_29.39%,#AF5920_92.11%)] rounded-full"></div>
-        <div class="absolute top-12 right-[4.5em] w-8 h-8 bg-[#AF5920] rounded-full"></div>
-        <div class="absolute top-16 right-6 w-16 h-16 bg-[#AF5920] rounded-full"></div>
-        <h3 class="text-4xl font-semibold leading-tight">${displayName}</h3>
-      </div>
-      <div class="bg-white p-6 rounded-t-2xl ">
-        <h4 class="font-semibold text-gray-500 mb-3">KEUNTUNGAN</h4>
-          <ul class="space-y-2 text-black text-sm">
-              <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Masa berlaku ${item.duration_days} Hari</li>
-              <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl"></iconify-icon>Kuota utama ${item.data_gb} GB</li>
-          </ul>
-        <div class="mt-6">
-          <p class="font-semibold text-gray-500">HARGA</p>
-          <p class="text-xl font-bold text-[#AF5920]">${priceDisplay} / ${item.duration_days} Hari</p>
-        </div>
-      </div>
-      <div class="bg-white px-6 pb-6 rounded-b-xl flex justify-between items-center">
-        <button onclick="buyProduct(${item.product_id}, '${item.product_name.replace(/'/g, "\\'")}')" 
-                class="font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 w-20 py-2 rounded-full text-sm">
-          BELI
-        </button>
-        <button onclick="showProductDetail(${item.product_id})" 
-                class="text-xs text-primary hover:text-gray-600 font-semibold">
-          LIHAT DETAIL
-        </button>
-      </div>`;
-    container.appendChild(card);
   });
-}
+};
 
-function handleLogout() {
+// 6. Show Detail (Modal Dinamis)
+window.showProductDetail = function (productId) {
+  const product = productsStore[productId];
+  if (!product) return;
+
+  const modal = document.getElementById("detail-paket-modal");
+  const container = document.getElementById("detailPaket");
+
+  if (modal && container) {
+    // Re-render isi modal dengan data produk yang diklik
+    const priceDisplay = `Rp ${product.price.toLocaleString("id-ID")}`;
+
+    container.innerHTML = `
+        <div class="p-8">
+            <div class="flex items-center mb-6 pb-4 relative">
+                <button onclick="document.getElementById('detail-paket-modal').classList.add('hidden'); document.body.classList.remove('overflow-hidden');" class="text-primary hover:text-gray-600 absolute left-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <h2 class="text-3xl font-semibold text-black-800 flex-grow text-center">Detail Paket</h2>
+            </div>
+
+            <h3 class="text-xl font-semibold text-center mb-4">${
+              product.product_name
+            }</h3>
+
+            <div class="space-y-4 text-gray-700">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <iconify-icon icon="material-symbols:timer" class="text-primary text-3xl"></iconify-icon>
+                        <span class="text-lg font-semibold ml-3">Masa aktif</span>
+                    </div>
+                    <span class="font-bold text-primary px-3 py-1 rounded bg-orange-50 border border-orange-100">${
+                      product.duration_days || 30
+                    } HARI</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <iconify-icon icon="mdi:internet" class="text-primary text-3xl"></iconify-icon>
+                        <span class="text-lg font-semibold ml-3">Kuota Internet</span>
+                    </div>
+                    <span class="font-bold text-primary px-3 py-1 rounded bg-orange-50 border border-orange-100">${
+                      product.data_gb || 0
+                    } GB</span>
+                </div>
+                <div class="text-sm text-gray-600 bg-gray-50 p-4 rounded-xl border border-gray-100 mt-6">
+                    <p class="font-bold text-gray-800 mb-2">Termasuk:</p>
+                    <ul class="list-disc ml-4 space-y-1">
+                        <li>Kuota Utama ${product.data_gb || 0} GB</li>
+                        ${
+                          product.streaming_gb_bonus > 0
+                            ? `<li>Bonus Streaming ${product.streaming_gb_bonus} GB</li>`
+                            : ""
+                        }
+                        ${
+                          product.call_minutes_bonus > 0
+                            ? `<li>Bonus Telepon ${product.call_minutes_bonus} Menit</li>`
+                            : ""
+                        }
+                        ${
+                          product.roaming_days_bonus > 0
+                            ? `<li>Roaming ${product.roaming_days_bonus} Hari</li>`
+                            : ""
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-8 border-t border-gray-100 pt-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-bold text-gray-500 uppercase tracking-wider text-xs">TOTAL HARGA</span>
+                    <span class="font-extrabold text-2xl text-primary">${priceDisplay}</span>
+                </div>
+                <button onclick="buyProduct(${
+                  product.product_id
+                }, '${product.product_name.replace(
+      /'/g,
+      "\\'"
+    )}')" class="block w-full bg-primary text-white font-bold rounded-xl py-4 hover:bg-orange-600 shadow-lg shadow-orange-200 transition-all transform hover:-translate-y-0.5">
+                    Beli Sekarang
+                </button>
+            </div>
+        </div>
+      `;
+
+    modal.classList.remove("hidden");
+    document.body.classList.add("overflow-hidden");
+  }
+};
+
+window.handleLogout = function () {
   localStorage.removeItem("user");
   window.location.href = "/login";
-}
+};
 
-// ======================== CHATBOT LOGIC ========================
+// ======================== CHATBOT ========================
 function toggleChat() {
-  const chatWindow = document.getElementById("chat-window");
-  if (chatWindow.style.display === "none" || chatWindow.style.display === "") {
-    chatWindow.style.display = "flex";
-    // Auto focus input
+  const w = document.getElementById("chat-window");
+  w.style.display = w.style.display === "flex" ? "none" : "flex";
+  if (w.style.display === "flex")
     setTimeout(() => document.getElementById("chat-input").focus(), 100);
-  } else {
-    chatWindow.style.display = "none";
-  }
 }
 
-function handleEnter(event) {
-  if (event.key === "Enter") {
-    sendChat();
-  }
+function handleEnter(e) {
+  if (e.key === "Enter") sendChat();
 }
 
 async function sendChat() {
-  const inputEl = document.getElementById("chat-input");
-  const bodyEl = document.getElementById("chat-body");
-  const message = inputEl.value.trim();
+  const input = document.getElementById("chat-input");
+  const body = document.getElementById("chat-body");
+  const msg = input.value.trim();
+  if (!msg) return;
 
-  if (!message) return;
+  appendMsg(msg, "user");
+  input.value = "";
 
-  // 1. Tampilkan pesan user
-  appendMessage(message, "user");
-  inputEl.value = "";
-
-  // 2. Loading sementara
-  const loadingId = "loading-" + Date.now();
-  const loadingDiv = document.createElement("div");
-  loadingDiv.className = "msg msg-bot";
-  loadingDiv.id = loadingId;
-  loadingDiv.innerText = "Mengetik...";
-  bodyEl.appendChild(loadingDiv);
-  bodyEl.scrollTop = bodyEl.scrollHeight;
+  const loadId = "load-" + Date.now();
+  body.innerHTML += `<div id="${loadId}" class="msg msg-bot">...</div>`;
+  body.scrollTop = body.scrollHeight;
 
   try {
-    // 3. Kirim ke API dengan KONTEKS (User Name & Top Recommendation)
-    const context = {
-      user_name: currentUserName,
-      top_product: currentTopRecommendation || "Paket Internet",
-      reason: currentReason || "pola penggunaanmu",
-    };
-
-    const response = await fetch(`${API_BASE_URL}/chat`, {
+    const res = await fetch(`${API_BASE_URL}/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: message,
-        context: context,
+        message: msg,
+        context: {
+          user_name: currentUserName,
+          top_product: currentTopRecommendation,
+          reason: currentReason,
+        },
       }),
     });
-
-    const data = await response.json();
-
-    // 4. Hapus loading, tampilkan balasan bot
-    document.getElementById(loadingId).remove();
-    appendMessage(data.reply, "bot");
-  } catch (error) {
-    console.error("Chat Error:", error);
-    document.getElementById(loadingId).remove();
-    appendMessage("Maaf, aku lagi pusing. Coba tanya lagi nanti ya.", "bot");
+    const data = await res.json();
+    document.getElementById(loadId).remove();
+    appendMsg(data.reply, "bot");
+  } catch (e) {
+    document.getElementById(loadId).remove();
+    appendMsg("Error koneksi bot.", "bot");
   }
 }
 
-function appendMessage(text, sender) {
-  const bodyEl = document.getElementById("chat-body");
+function appendMsg(txt, sender) {
+  const body = document.getElementById("chat-body");
   const div = document.createElement("div");
-  div.className = `msg msg-${sender}`;
-  div.innerText = text;
-  bodyEl.appendChild(div);
-  bodyEl.scrollTop = bodyEl.scrollHeight;
+
+  const base =
+    "max-w-[80%] px-3 py-2 rounded-xl mb-1 text-[0.8rem] leading-relaxed";
+
+  if (sender === "user") {
+    // bubble user (kanan, oranye)
+    div.className = `${base} self-end bg-primary text-white`;
+  } else {
+    // bubble bot (kiri, krem)
+    div.className = `${base} self-start bg-orange-50 border border-orange-100 text-orange-900`;
+  }
+
+  div.innerText = txt;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
 }

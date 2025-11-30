@@ -28,18 +28,10 @@ class PredictionService:
 
     # --------------------- DATA AKSES ---------------------
     def _get_user_features(self, customer_id: str) -> pd.DataFrame:
-        """
-        Ambil 1 baris user_features untuk customer_id tertentu.
-        Pakai TRIM untuk jaga-jaga ada spasi.
-        """
         sql = "SELECT * FROM user_features WHERE TRIM(customer_id) = %s"
         return pd.read_sql(sql, db_engine, params=(customer_id,))
 
     def _get_candidate_products(self) -> pd.DataFrame:
-        """
-        Ambil katalog produk lengkap dengan semua kolom
-        yang digunakan saat training (product_features).
-        """
         sql = """
             SELECT
                 product_id,
@@ -59,62 +51,42 @@ class PredictionService:
 
     # --------------------- EXPLAINABLE AI LOGIC ---------------------
     def _generate_explanation(self, user_features: dict, product_row) -> str:
-        """
-        Menerjemahkan kecocokan antara User Features dan Product Features
-        menjadi kalimat alasan yang manusiawi.
-        product_row di sini adalah baris hasil itertuples().
-        """
         reasons = []
 
-        # 1. Ambil data user (handle null dengan 0)
+        # 1. Ambil data user
         travel_score = float(user_features.get("travel_score", 0) or 0)
         pct_video = float(user_features.get("pct_video_usage", 0) or 0)
         avg_call = float(user_features.get("avg_call_duration", 0) or 0)
         monthly_spend = float(user_features.get("monthly_spend", 0) or 0)
         avg_data = float(user_features.get("avg_data_usage_gb", 0) or 0)
 
-        # 2. Ambil data produk (dari row dataframe/tuple)
+        # 2. Ambil data produk
         p_roaming = getattr(product_row, "roaming_days_bonus", 0) or 0
         p_streaming = getattr(product_row, "streaming_gb_bonus", 0) or 0
         p_call = getattr(product_row, "call_minutes_bonus", 0) or 0
         p_data = getattr(product_row, "data_gb", 0) or 0
         p_price = getattr(product_row, "price", 0) or 0
 
-        # 3. Logika Pencocokan (Rules)
-
-        # A. Traveler
+        # 3. Logika Pencocokan
         if travel_score > 0.6 and p_roaming > 0:
             reasons.append("bonus roaming untuk traveling")
-
-        # B. Streamer
         if pct_video > 0.6 and p_streaming > 0:
             reasons.append("kuota ekstra khusus streaming")
-
-        # C. Heavy Caller
         if avg_call > 300 and p_call > 0:
             reasons.append("bonus nelpon yang besar")
-
-        # D. Big Data User (User boros data, dikasih paket besar)
         if avg_data > 20 and p_data >= 20:
             reasons.append(f"kuota internet besar ({p_data}GB)")
 
-        # E. Budget Logic
         if monthly_spend > 0:
             if p_price < monthly_spend * 0.8:
                 reasons.append("harganya lebih hemat dari pola belanjamu")
             elif p_price > monthly_spend * 1.5:
-                # Upselling explanation
                 reasons.append("peningkatan fitur yang lebih maksimal dibanding paket biasa")
 
-        # 4. Susun Kalimat
         if not reasons:
-            # Fallback jika tidak ada kondisi spesifik yang "klik"
-            if p_streaming > 0:
-                return "Paket populer dengan bonus hiburan yang cocok untuk penggunaan harian."
-            if p_data > 50:
-                return "Pilihan terbaik untuk kamu yang butuh internetan puas."
-            if p_price < 25000:
-                return "Paket hemat yang ramah di kantong."
+            if p_streaming > 0: return "Paket populer dengan bonus hiburan."
+            if p_data > 50: return "Pilihan terbaik untuk kamu yang butuh internetan puas."
+            if p_price < 25000: return "Paket hemat yang ramah di kantong."
             return "Rekomendasi terbaik berdasarkan pola penggunaanmu."
 
         return "Cocok untukmu karena ada " + " dan ".join(reasons) + "."
@@ -124,7 +96,6 @@ class PredictionService:
         # 0. Cek user_features
         user_df = self._get_user_features(customer_id)
         if user_df.empty:
-            # Belum ada profil → cold start
             return {"status": "COLD", "recommendations": []}
 
         # 1. Ambil kandidat produk
@@ -134,7 +105,7 @@ class PredictionService:
 
         test_df = candidate_products_df.copy()
 
-        # 1.1. Ambil fitur user (sekali saja)
+        # 1.1. Ambil fitur user
         user_row = user_df.iloc[0]
         user_features_dict = user_row.to_dict()
 
@@ -143,124 +114,97 @@ class PredictionService:
         user_avg_call = float(user_features_dict.get("avg_call_duration", 0) or 0)
         user_spend = float(user_features_dict.get("monthly_spend", 0) or 0)
 
-        # 1.2. Filter kandidat berdasarkan budget (supaya tidak aneh)
+        # 1.2. Filter budget
         if user_spend > 0:
-            max_price = max(user_spend * 1.5, 20000)  # minimal 20k
+            max_price = max(user_spend * 1.5, 20000)
             test_df = test_df[test_df["price"] <= max_price].copy()
 
-        # Kalau setelah filter kosong, fallback ke semua produk (daripada kosong total)
         if test_df.empty:
             test_df = candidate_products_df.copy()
 
-        # 1.3. Broadcast fitur user ke semua baris produk
+        # 1.3. Broadcast fitur user
         for col, value in user_features_dict.items():
             if col != "customer_id":
                 test_df[col] = value
 
         # 2. PREPROCESSING UNTUK MODEL
         # Metadata yang akan dikirim ke FE + dipakai untuk rule & explanation
+        # --- PERBAIKAN: Menambahkan duration_days agar tidak hilang ---
         result_metadata = test_df[
             [
                 "product_id",
                 "product_name",
                 "price",
                 "data_gb",
+                "duration_days", # <--- DITAMBAHKAN
                 "roaming_days_bonus",
                 "streaming_gb_bonus",
                 "call_minutes_bonus",
             ]
         ].copy()
 
-        # Kolom yang TIDAK mau masuk ke model (disesuaikan dengan training)
-        drop_cols_ml = [
-            "customer_id",
-            "product_name",
-            "plan_type",      # kalau ada
-            "general_offer",  # kalau ada di dataset training
-            # JANGAN drop product_id & target_offer, karena dipakai model
-        ]
-
+        drop_cols_ml = ["customer_id", "product_name", "plan_type", "general_offer", "duration_days"] # Drop duration dr ML input jika tidak dipake training
         test_df_ml = test_df.drop(columns=drop_cols_ml, errors="ignore")
-
-        # One-hot encoding
         test_df_enc = pd.get_dummies(test_df_ml)
 
         if MODEL_COLS is not None:
-            # Pastikan urutan & nama kolom sama persis dengan training
             test_df_final = test_df_enc.reindex(columns=MODEL_COLS, fill_value=0)
         else:
             test_df_final = None
 
         # 3. PREDIKSI (ML SCORE) + HYBRID RERANKING
         if MODEL is not None and test_df_final is not None:
-            ml_scores = MODEL.predict_proba(test_df_final)[:, 1]
-            result_metadata["ml_score"] = ml_scores
+            try:
+                ml_scores = MODEL.predict_proba(test_df_final)[:, 1]
+                result_metadata["ml_score"] = ml_scores
+            except Exception:
+                result_metadata["ml_score"] = 0.5
 
-            # 3.1. Hitung rule_score (range kira-kira -1 .. +1)
+            # 3.1. Hitung rule_score
             def rule_score(row):
                 score = 0.0
-
-                # A. Traveler
                 if user_travel_score > 0.6:
-                    if row["roaming_days_bonus"] > 0:
-                        score += 1.0
-                    else:
-                        score -= 0.5
-
-                # B. Streaming
+                    score += 1.0 if row["roaming_days_bonus"] > 0 else -0.5
                 elif user_pct_video > 0.6:
-                    if row["streaming_gb_bonus"] > 0:
-                        score += 0.7
-                    else:
-                        score -= 0.1
-
-                # C. Heavy caller
+                    score += 0.7 if row["streaming_gb_bonus"] > 0 else -0.1
                 elif user_avg_call > 300:
-                    if row["call_minutes_bonus"] > 0:
-                        score += 0.5
-
-                # D. Low budget, paket terlalu mahal → penalti
+                    score += 0.5 if row["call_minutes_bonus"] > 0 else 0
                 if user_spend < 50000 and row["price"] > 100000:
                     score -= 0.8
-
                 return score
 
             result_metadata["rule_score"] = result_metadata.apply(rule_score, axis=1)
 
-            # 3.2. Kombinasi ML + rules
-            alpha = 0.85  # bobot ML
+            # 3.2. Kombinasi
+            alpha = 0.85
             result_metadata["final_score"] = (
                 alpha * result_metadata["ml_score"]
                 + (1 - alpha) * result_metadata["rule_score"]
             )
 
             # 4. Urutkan & format output
-            all_recs_df = result_metadata.sort_values(
-                by="final_score", ascending=False
-            )
-
+            all_recs_df = result_metadata.sort_values(by="final_score", ascending=False)
             top = all_recs_df.head(top_k)
 
-            # String legacy (dipakai FE sekarang)
             recommendations = [
                 f"({max(min(row.final_score, 0.999), 0.01) * 100:.1f}%) {row.product_name}"
                 for row in top.itertuples()
             ]
 
-            # Versi structured dengan REASON (Explainable AI)
             items = []
             for row in top.itertuples():
                 reason_text = self._generate_explanation(user_features_dict, row)
-                items.append(
-                    {
-                        "product_id": int(row.product_id),
-                        "product_name": row.product_name,
-                        "price": int(row.price),
-                        "final_score": float(row.final_score),
-                        "ml_score": float(row.ml_score),
-                        "reason": reason_text,
-                    }
-                )
+                items.append({
+                    "product_id": int(row.product_id),
+                    "product_name": row.product_name,
+                    "price": int(row.price),
+                    "data_gb": int(row.data_gb), # <--- DITAMBAHKAN
+                    "duration_days": int(row.duration_days) if pd.notnull(row.duration_days) else 30, # <--- DITAMBAHKAN
+                    "streaming_gb_bonus": int(row.streaming_gb_bonus), # <--- Tambahan buat UI
+                    "final_score": float(row.final_score),
+                    "ml_score": float(row.ml_score),
+                    "reason": reason_text,
+                })
 
             return {
                 "status": "WARM",
@@ -268,30 +212,22 @@ class PredictionService:
                 "items": items,
             }
 
-        # 4. Fallback kalau MODEL tidak siap
+        # 4. Fallback
         else:
             print("⚠️ MODEL tidak siap, fallback ke produk termurah.")
-            fallback = (
-                candidate_products_df.sort_values("price")
-                .head(top_k)
-                .copy()
-            )
-
-            recommendations = [
-                f"(fallback) {name}"
-                for name in fallback["product_name"].tolist()
-            ]
-
+            fallback = candidate_products_df.sort_values("price").head(top_k).copy()
+            recommendations = [f"(fallback) {name}" for name in fallback["product_name"].tolist()]
+            
             items = []
             for row in fallback.itertuples():
-                items.append(
-                    {
-                        "product_id": int(row.product_id),
-                        "product_name": row.product_name,
-                        "price": int(row.price),
-                        "reason": "Paket hemat rekomendasi kami.",
-                    }
-                )
+                items.append({
+                    "product_id": int(row.product_id),
+                    "product_name": row.product_name,
+                    "price": int(row.price),
+                    "data_gb": int(row.data_gb), # <--- DITAMBAHKAN
+                    "duration_days": int(row.duration_days) if pd.notnull(row.duration_days) else 30, # <--- DITAMBAHKAN
+                    "reason": "Paket hemat rekomendasi kami.",
+                })
 
             return {
                 "status": "FALLBACK",
@@ -299,13 +235,12 @@ class PredictionService:
                 "items": items,
             }
 
-    # --------------------- PIPELINE & COLD START ---------------------
+    # --------------------- PIPELINE (Tidak Berubah) ---------------------
     def trigger_pipeline(self, customer_id):
         conn = None
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
-
             sql = """
                 INSERT INTO user_features (
                     customer_id, plan_type, device_brand, 
@@ -314,26 +249,13 @@ class PredictionService:
                     travel_score, complain_count, spending_tier
                 )
                 SELECT
-                    ph.customer_id,
-                    'Prepaid' AS plan_type,
-                    'Android' AS device_brand,
-                    COALESCE(AVG(p.data_gb), 0) AS avg_data_usage_gb,
-                    COALESCE(AVG(p.price), 0) AS monthly_spend,
-                    COUNT(ph.product_id) AS topup_freq,
-                    COALESCE(
-                        AVG(p.streaming_gb_bonus)
-                        / NULLIF(AVG(p.data_gb) + AVG(p.streaming_gb_bonus), 0),
-                        0.0
-                    ) AS pct_video_usage,
-                    COALESCE(AVG(p.call_minutes_bonus), 0) AS avg_call_duration,
-                    COALESCE(AVG(p.sms_bonus), 0) AS sms_freq,
-                    LEAST(COALESCE(AVG(p.roaming_days_bonus), 0) / 4.0, 1.0) AS travel_score, 
-                    0 AS complain_count,
-                    CASE
-                        WHEN COALESCE(AVG(p.price), 0) > 100000 THEN 'high'
-                        WHEN COALESCE(AVG(p.price), 0) >= 50000 THEN 'mid'
-                        ELSE 'low'
-                    END AS spending_tier
+                    ph.customer_id, 'Prepaid', 'Android',
+                    COALESCE(AVG(p.data_gb), 0), COALESCE(AVG(p.price), 0), COUNT(ph.product_id),
+                    COALESCE(AVG(p.streaming_gb_bonus)/NULLIF(AVG(p.data_gb)+AVG(p.streaming_gb_bonus),0), 0.0),
+                    COALESCE(AVG(p.call_minutes_bonus), 0), COALESCE(AVG(p.sms_bonus), 0),
+                    LEAST(COALESCE(AVG(p.roaming_days_bonus), 0)/4.0, 1.0), 0,
+                    CASE WHEN COALESCE(AVG(p.price), 0) > 100000 THEN 'high'
+                         WHEN COALESCE(AVG(p.price), 0) >= 50000 THEN 'mid' ELSE 'low' END
                 FROM purchase_history ph
                 JOIN products p ON ph.product_id = p.product_id
                 WHERE ph.customer_id = %s
@@ -348,45 +270,29 @@ class PredictionService:
                     travel_score       = EXCLUDED.travel_score,
                     spending_tier      = EXCLUDED.spending_tier;
             """
-
             cursor.execute(sql, (customer_id,))
             conn.commit()
-
             if cursor.rowcount > 0:
                 return {"message": f"Pipeline sukses. Profil {customer_id} diperbarui."}
             else:
-                return {
-                    "message": "Pipeline berjalan, tapi belum ada history."
-                }, 200
-
+                return {"message": "Pipeline berjalan, tapi belum ada history."}, 200
         except Exception:
             traceback.print_exc()
-            if conn:
-                conn.rollback()
+            if conn: conn.rollback()
             return {"error": "Terjadi kesalahan pada Data Pipeline."}, 500
         finally:
-            if conn:
-                conn.close()
+            if conn: conn.close()
 
     def submit_cold_start_preference(self, customer_id, preference):
         conn = None
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
-
-            pct_video = 0.1
-            avg_call = 10.0
-            travel_score = 0.0
-            spending_tier = "mid"
-
-            if preference == "Streaming":
-                pct_video = 0.9
-            elif preference == "Voice":
-                avg_call = 500.0
-            elif preference == "Travel":
-                travel_score = 0.9
-            elif preference == "Hemat":
-                spending_tier = "low"
+            pct_video, avg_call, travel_score, spending_tier = 0.1, 10.0, 0.0, "mid"
+            if preference == "Streaming": pct_video = 0.9
+            elif preference == "Voice": avg_call = 500.0
+            elif preference == "Travel": travel_score = 0.9
+            elif preference == "Hemat": spending_tier = "low"
 
             sql = """
                 INSERT INTO user_features (
@@ -395,28 +301,20 @@ class PredictionService:
                     pct_video_usage, avg_call_duration, sms_freq,
                     travel_score, complain_count, spending_tier
                 )
-                VALUES (%s, 'Prepaid', 'Unknown',
-                        10.0, 100000, 1,
-                        %s, %s, 0,
-                        %s, 0, %s)
+                VALUES (%s, 'Prepaid', 'Unknown', 10.0, 100000, 1, %s, %s, 0, %s, 0, %s)
                 ON CONFLICT (customer_id) DO UPDATE SET
                     pct_video_usage   = EXCLUDED.pct_video_usage,
                     avg_call_duration = EXCLUDED.avg_call_duration,
                     travel_score      = EXCLUDED.travel_score,
                     spending_tier     = EXCLUDED.spending_tier;
             """
-            cursor.execute(
-                sql, (customer_id, pct_video, avg_call, travel_score, spending_tier)
-            )
+            cursor.execute(sql, (customer_id, pct_video, avg_call, travel_score, spending_tier))
             conn.commit()
             return {"message": f"Preferensi '{preference}' disimpan!"}
         except Exception:
-            if conn:
-                conn.rollback()
+            if conn: conn.rollback()
             raise
         finally:
-            if conn:
-                conn.close()
-
+            if conn: conn.close()
 
 prediction_service = PredictionService()

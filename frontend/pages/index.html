@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,7 +25,69 @@
             }
         }
     </script>
+
+    <!-- Skala font & line-height berdasarkan golden ratio -->
+    <style>
+        :root {
+            --phi: 1.618;
+        }
+
+        /* Base body */
+        body {
+            font-size: 15px;
+            line-height: 1.618;
+        }
+
+        /* Hero utama */
+        .golden-h1 {
+            font-size: clamp(2.3rem, 1.5rem + 1.6vw, 3.4rem);
+            line-height: 1.18;
+        }
+
+        @media (min-width: 768px) {
+            .golden-h1 {
+                font-size: clamp(2.8rem, 2rem + 1.8vw, 3.8rem);
+            }
+        }
+
+        /* Judul section besar (Keunggulan, Best Deal, dll.) */
+        .golden-section-title {
+            font-size: clamp(2rem, 1.4rem + 1vw, 3rem);
+            line-height: 1.25;
+        }
+
+        /* Subtitle / paragraf pendek penting */
+        .golden-subtitle {
+            font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.35rem);
+            line-height: 1.6;
+        }
+
+        /* Teks kecil / nav / label */
+        .golden-small {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Judul kartu / kolom kecil */
+        .golden-card-title {
+            font-size: 1.125rem;
+            line-height: 1.4;
+        }
+
+        /* Isi kartu / paragraf umum di dalam card */
+        .golden-card-body {
+            font-size: 0.95rem;
+            line-height: 1.55;
+        }
+
+        /* Teks footer & link kecil */
+        .golden-footer-text {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+    </style>
 </head>
+
 <body class="bg-white font-sans">
     <!-- Header -->
     <header class="bg-white shadow-md sticky top-0 z-50">
@@ -36,148 +99,178 @@
             <!-- Center: Desktop Menu -->
             <div class="flex-grow">
                 <nav class="hidden md:flex items-center justify-center space-x-8">
-                    <a href="/" class="text-gray-700 font-medium hover:text-primary font-semibold">Home</a>
-                    <a href="#" class="text-gray-700 font-medium hover:text-primary">Promo</a>
-                    <a href="/products" class="text-gray-700 font-medium hover:text-primary scroll-link">Products</a>
-                    <a href="#rekomendasi-section" class="text-gray-700 font-medium hover:text-primary scroll-smooth">Recomendation</a>
+                    <a href="/"
+                        class="golden-small md:text-[0.98rem] text-gray-700 font-semibold hover:text-primary">Home</a>
+                    <a href="#"
+                        class="golden-small md:text-[0.98rem] text-gray-700 font-semibold hover:text-primary">Promo</a>
+                    <a href="/products"
+                        class="golden-small md:text-[0.98rem] text-gray-700 font-semibold hover:text-primary scroll-link">Products</a>
+                    <a href="#rekomendasi-section"
+                        class="golden-small md:text-[0.98rem] text-gray-700 font-semibold hover:text-primary scroll-smooth">Recomendation</a>
                 </nav>
             </div>
             <!-- Right side: User & Mobile Menu Button -->
             <div class="flex items-center space-x-4">
                 <div class="hidden md:flex">
                     <a class="flex items-center space-x-2 " aria-label="User Profile" href="/profile">
-                        <iconify-icon icon="icon-park-solid:people" class="text-3xl text-primary hover:text-gray-700"></iconify-icon>
-                        <span class="hidden sm:inline">User</span>
+                        <iconify-icon icon="icon-park-solid:people"
+                            class="text-3xl text-primary hover:text-gray-700"></iconify-icon>
+                        <span class="hidden sm:inline golden-small">User</span>
                     </a>
                 </div>
                 <!-- Mobile Menu Button -->
                 <div class="md:hidden">
                     <button id="mobile-menu-button" class="text-gray-600 hover:text-primary" aria-label="Open Menu">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
                     </button>
                 </div>
             </div>
         </div>
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden">
-            <a href="/" class="block py-2 px-6 text-sm text-gray-700 hover:bg-primary">Home</a>
-            <a href="#" class="block py-2 px-6 text-sm text-gray-700 hover:bg-primary">Promo</a>
-            <a href="/products" class="block py-2 px-6 text-sm text-gray-700 hover:bg-primary">Products</a>
-            <a href="#rekomendasi-section" class="block py-2 px-6 text-sm text-gray-700 hover:bg-primary">Rekomendasi</a>
+            <a href="/" class="block py-2 px-6 golden-small text-gray-700 hover:bg-primary">Home</a>
+            <a href="#" class="block py-2 px-6 golden-small text-gray-700 hover:bg-primary">Promo</a>
+            <a href="/products" class="block py-2 px-6 golden-small text-gray-700 hover:bg-primary">Products</a>
+            <a href="#rekomendasi-section"
+                class="block py-2 px-6 golden-small text-gray-700 hover:bg-primary">Rekomendasi</a>
         </div>
     </header>
 
     <main>
         <!-- Hero Section -->
-        <section class="relative w-full overflow-hidden pt-8 pb-16">
-            <div class="absolute top-60 left-7 w-8 h-8 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
-            <div class="absolute top-[20em] left-8 w-24 h-24 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
-            <div class="absolute top-[30em] left-0 w-16 h-16 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
-            
-            <div class="absolute -top-[2.5em] -right-6 w-16 h-16 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
-            <div class="absolute top-[3em] right-16 w-24 h-24 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
-            <div class="absolute top-40 right-0 w-16 h-16 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
-            <div class="absolute top-[30em] -right-10 w-20 h-20 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block"></div>
-            
-            <div class="container mx-auto px-32 md:px-8">
-                <div class="relative flex flex-col md:flex-row justify-between items-center ">
-                    <div class="md:w-1/2 text-center md:text-left z-10 mt-8 md:mt-0">
-                        <h1 class="text-5xl md:text-7xl font-bold text-[#3E3B3B] leading-tight text-nowrap">
-                            Temukan Paket <br>Telekomunikasi yang <span class="text-primary"><br>Paling Cocok</span> <br>Untukmu!
-                        </h1>
-                        <p class="mt-8 mr-4 text-lg md:text-5xl text-black">
-                            Dapatkan rekomendasi paket data, telepon, dan hiburan berdasarkan kebiasaanmu.
-                        </p>
-                        <a href="#questionnaire-box" class=" inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-600 mt-16 px-16 py-6 rounded-2xl">
-                            Mulai Sekarang
-                        </a>
+        <section class="relative w-full h-screen flex items-center overflow-hidden">
+
+            <!-- BUBBLE BACKGROUND (tidak mempengaruhi tinggi) -->
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <div
+                    class="absolute top-40 left-10 w-10 h-10 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+                </div>
+                <div
+                    class="absolute top-[18rem] left-8 w-20 h-20 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+                </div>
+                <div
+                    class="absolute top-[30rem] left-4 w-14 h-14 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+                </div>
+
+                <div
+                    class="absolute -top-10 right-10 w-16 h-16 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+                </div>
+                <div
+                    class="absolute top-20 right-28 w-24 h-24 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+                </div>
+            </div>
+
+            <!-- MAIN CONTENT -->
+            <div
+                class="container mx-auto px-6 lg:px-20 relative z-10 flex flex-col-reverse md:flex-row items-center justify-between h-full">
+
+                <!-- LEFT TEXT -->
+                <div class="md:w-1/2 text-center md:text-left">
+                    <h1 class="golden-h1 font-bold text-[#3E3B3B]">
+                        Temukan Paket <br>
+                        Telekomunikasi yang <span class="text-primary">Paling Cocok</span><br> Untukmu!
+                    </h1>
+
+                    <p class="mt-5 golden-subtitle text-gray-700 max-w-md">
+                        Dapatkan rekomendasi paket data, telepon, dan hiburan berdasarkan kebiasaanmu.
+                    </p>
+
+                    <a href="#recommendation-container"
+                        class="inline-block font-bold text-[0.98rem] tracking-tight transition duration-300 bg-primary text-white hover:bg-gray-700 mt-10 px-10 py-3.5 rounded-xl">
+                        Mulai Sekarang
+                    </a>
+                </div>
+
+                <!-- RIGHT IMAGE -->
+                <div class="md:w-1/2 flex justify-center md:justify-end mb-10 md:mb-0">
+                    <div
+                        class="bg-[url('../assets/img/hero_index.png')] bg-contain bg-no-repeat w-[280px] h-[280px] md:w-[360px] md:h-[360px]">
                     </div>
-                    <div class="md:w-1/2 py-[4em] flex justify-center md:justify-center">
-                        <div class="bg-[url(../assets/img/hero_index.png)] w-[490px] h-[490px]  rounded-lg "></div>
+                </div>
+            </div>
+
+        </section>
+
+
+
+        <!-- Kuesioner (Desain Asli User + Hidden Class) -->
+        <section id="questionnaire-box" class="relative w-full py-32 hidden">
+            <div
+                class="p-6 py-32 md:p-10 bg-white max-w-3xl mx-auto transition-transform duration-500 ease-in-out rounded-lg">
+
+                <h3 class="golden-section-title text-center font-bold text-gray-800 mb-3">
+                    Bantu kami mengetahui preferensi anda
+                </h3>
+                <p class="text-center golden-subtitle text-gray-600 mb-8">
+                    Apa yang paling penting bagi Anda dalam memilih paket data?
+                </p>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-stretch">
+                    <button onclick="submitPreference('Streaming')"
+                        class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
+                        style="background-color: #EF4444;" aria-label="Streaming Video Preference">
+                        <iconify-icon icon="si:movie-fill"></iconify-icon>
+                        <span class="golden-small md:text-[1rem]">Streaming</span>
+                    </button>
+
+                    <button onclick="submitPreference('Gaming')"
+                        class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
+                        style="background-color: #FF7D00;" aria-label="Gaming Preference">
+                        <iconify-icon icon="fluent-emoji-high-contrast:video-game"></iconify-icon>
+                        <span class="golden-small md:text-[1rem]">Gaming</span>
+                    </button>
+
+                    <button onclick="submitPreference('Voice')"
+                        class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
+                        style="background-color: #5C3E94;" aria-label="Hemat Biaya Preference">
+                        <iconify-icon icon="ion:call"></iconify-icon>
+                        <span class="golden-small md:text-[1rem]">Voice</span>
+                    </button>
+
+                    <div class="md:col-span-3 flex justify-center space-x-4">
+                        <button onclick="submitPreference('Hemat')"
+                            class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2 w-full md:w-1/3"
+                            style="background-color: #060771;" aria-label="Roaming Preference">
+
+                            <iconify-icon icon="fluent-emoji-high-contrast:money-bag"></iconify-icon>
+                            <span class="golden-small md:text-[1rem]">Hemat Biaya</span>
+                        </button>
+
+                        <button onclick="submitPreference('Travel')"
+                            class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-gray-800 font-semibold text-center space-x-2 w-full md:w-1/3"
+                            style="background-color: #F1C40F;">
+
+                            <iconify-icon icon="lucide:plane" class="text-lg md:text-xl text-white"></iconify-icon>
+                            <span class="golden-small md:text-[1rem] text-gray-800">Roaming</span>
+                        </button>
+
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Kuesioner (Hanya muncul jika Cold Start) -->
-        <section id="questionnaire-box" class="relative w-full py-32 ">
-            <div class="p-6 py-32 md:p-10 bg-white max-w-3xl mx-auto transition-transform duration-500 ease-in-out rounded-lg">
-    
-            <h3 class="text-center text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-                Bantu kami mengetahui preferensi anda
-            </h3>
-            <p class="text-center text-lg text-gray-600 mb-6">
-                Apa yang paling penting bagi Anda dalam memilih paket data?
-            </p>
-
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-stretch"> 
-                <button 
-                    onclick="submitPreference('Streaming')" 
-                    class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
-                    style="background-color: #EF4444;" 
-                    aria-label="Streaming Video Preference">
-                    <iconify-icon icon="si:movie-fill"></iconify-icon>
-                    <span class="text-sm md:text-base">Streaming</span>
-                </button>
-
-                <button 
-                    onclick="submitPreference('Gaming')" 
-                    class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
-                    style="background-color: #FF7D00;" 
-                    aria-label="Gaming Preference">
-                    <iconify-icon icon="fluent-emoji-high-contrast:video-game"></iconify-icon>
-                    <span class="text-sm md:text-base">Gaming</span>
-                </button>
-
-                <button 
-                    onclick="submitPreference('Voice')" 
-                    class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
-                    style="background-color: #5C3E94;" 
-                    aria-label="Hemat Biaya Preference">
-                    <iconify-icon icon="fluent-emoji-high-contrast:money-bag"></iconify-icon>
-                    <span class="text-sm md:text-base">Hemat Biaya</span>
-                </button>
-                
-                <div class="md:col-span-3 flex justify-center space-x-4">
-                    <button 
-                        onclick="submitPreference('Hemat')" 
-                        class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2 w-full md:w-1/3"
-                        style="background-color: #060771;" 
-                        aria-label="Roaming Preference">
-                        
-                        <iconify-icon icon="lucide:plane" ></iconify-icon>
-                        <span class="text-sm md:text-base">Roaming</span>
-                    </button>
-
-                    <button 
-                        onclick="submitPreference('Travel')" 
-                        class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-gray-800 font-semibold text-center space-x-2 w-full md:w-1/3"
-                        style="background-color: #F1C40F;">
-                        
-                        <iconify-icon icon="ion:call" class="text-lg md:text-xl text-white"></iconify-icon>
-                        <span class="text-sm md:text-base text-gray-800">Voice</span>
-                    </button>
-                    
-                    </div>
-                </div>
+        <!-- Rekomendasi Kategori Pilihan Section (Filter Result) -->
+        <section id="filter-result-section" class="relative bg-50 py-32" style="display:none;">
+            <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.76)_0%,#F78018_71.63%)] -z-10">
             </div>
-        </section>
+            <div
+                class="absolute bottom-0 left-0 w-full h-[200px] bg-[url('../assets/img/garis-garis.png')] bg-no-repeat bg-cover [mask-image:linear-gradient(to_top,black_50%,transparent_100%)]">
+            </div>
 
-        <!-- Rekomendasi Kategori Pilihan Section -->
-        <section class="relative bg-50 py-32">
-            <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.76)_0%,#F78018_71.63%)] -z-10"></div>
-            <div class="absolute bottom-0 left-0 w-full h-[200px] bg-[url('../assets/img/garis-garis.png')] bg-no-repeat bg-cover [mask-image:linear-gradient(to_top,black_50%,transparent_100%)]"></div>
-
-            <div id="filter-result-section" class="container mx-auto px-6 relative z-10" style="display:none;">
-                <h2 class="text-5xl font-semibold text-center text-[#3E3B3B] mb-10">
-                    Rekomendasi paket <span class="text-primary">Streaming</span> untuk anda! <span class="float-right">
-                    <iconify-icon icon="material-symbols:close" class="text-2xl cursor-pointer text-gray-700" onclick="closeFilterSection()"></iconify-icon>
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="golden-section-title font-semibold text-center text-[#3E3B3B] mb-10">
+                    Rekomendasi Kategori Pilihan <span class="float-right cursor-pointer"
+                        onclick="closeFilterSection()">
+                        <iconify-icon icon="material-symbols:close"
+                            class="text-2xl text-gray-700"></iconify-icon></span>
                 </h2>
-                
+
                 <div id="filter-result-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <!-- Card 1 -->
-                    
-                    
+                    <!-- Hasil Filter Masuk Sini -->
                 </div>
             </div>
         </section>
@@ -185,42 +278,58 @@
         <!-- Keunggulan Section -->
         <section class="relative bg-50 py-16">
             <div class="absolute inset-0 bg-[#F78018] -z-10"></div>
-            <div class="absolute bottom-0 left-0 w-full h-full bg-[url('../assets/img/garis-garis.png')] bg-no-repeat bg-cover "></div>
+            <div
+                class="absolute bottom-0 left-0 w-full h-full bg-[url('../assets/img/garis-garis.png')] bg-no-repeat bg-cover ">
+            </div>
 
             <div class="container mx-auto px-6 relative z-10">
-                <h2 class="text-5xl font-bold text-center text-white mb-10 [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">Keunggulan TelQ</h2>
+                <h2
+                    class="golden-section-title font-bold text-center text-white mb-10 [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">
+                    Keunggulan TelQ</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center ">
                     <!-- Feature 1 -->
-                    <div class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
+                    <div
+                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
                         <div class="flex justify-center mb-4">
                             <iconify-icon icon="gravity-ui:signal" class="text-5xl text-primary"></iconify-icon>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800">Sinyal Qenceng</h3>
-                        <p class="mt-2 text-gray-600 text-sm">Akses internet yang lancar untuk kebutuhan browsing, chatting, dan download.</p>
+                        <h3 class="golden-card-title font-bold text-gray-800">Sinyal Qenceng</h3>
+                        <p class="mt-3 golden-card-body text-gray-600">Akses internet yang lancar untuk kebutuhan
+                            browsing,
+                            chatting, dan download.</p>
                     </div>
                     <!-- Feature 2 -->
-                    <div class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
+                    <div
+                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
                         <div class="flex justify-center mb-4">
                             <iconify-icon icon="icon-park-solid:setting" class="text-5xl text-primary"></iconify-icon>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800">Qustom Quota</h3>
-                        <p class="mt-2 text-gray-600 text-sm">Pilihan paket yang beragam dan bisa di atur sesuai keinginan kamu sendiri.</p>
+                        <h3 class="golden-card-title font-bold text-gray-800">Qustom Quota</h3>
+                        <p class="mt-3 golden-card-body text-gray-600">Pilihan paket yang beragam dan bisa di atur
+                            sesuai
+                            keinginan kamu sendiri.</p>
                     </div>
                     <!-- Feature 3 -->
-                    <div class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
+                    <div
+                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
                         <div class="flex justify-center mb-4">
                             <iconify-icon icon="tabler:coin-filled" class="text-5xl text-primary"></iconify-icon>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800">TelQ Point</h3>
-                        <p class="mt-2 text-gray-600 text-sm">Dapatkan points dengan membeli pulsa, kuota, dan tukarkan points menjadi kuota internet.</p>
+                        <h3 class="golden-card-title font-bold text-gray-800">TelQ Point</h3>
+                        <p class="mt-3 golden-card-body text-gray-600">Dapatkan points dengan membeli pulsa, kuota, dan
+                            tukarkan
+                            points menjadi kuota internet.</p>
                     </div>
                     <!-- Feature 4 -->
-                    <div class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
+                    <div
+                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
                         <div class="flex justify-center mb-4">
                             <iconify-icon icon="mdi:gift" class="text-5xl text-primary"></iconify-icon>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800">Banyak Bonus</h3>
-                        <p class="mt-2 text-gray-600 text-sm">Bonus berlimpah yang bisa kamu klaim di aplikasi TelQ App.</p>
+                        <h3 class="golden-card-title font-bold text-gray-800">Banyak Bonus</h3>
+                        <p class="mt-3 golden-card-body text-gray-600">Bonus berlimpah yang bisa kamu klaim di aplikasi
+                            TelQ App.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -230,28 +339,44 @@
         <section class="relative py-16">
             <!-- Background Layers -->
             <div class="absolute inset-0 bg-[#F78018] -z-10"></div>
-            <div class="absolute bottom-0 left-0 w-full h-full bg-[url('../assets/img/garis-garis.png')] bg-no-repeat bg-cover "></div>
-            
+            <div
+                class="absolute bottom-0 left-0 w-full h-full bg-[url('../assets/img/garis-garis.png')] bg-no-repeat bg-cover ">
+            </div>
+
             <div class="container mx-auto px-6 relative z-10">
                 <div class="text-center mb-10">
-                    <h2 class="text-5xl text-white font-bold [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">BEST DEAL</h2>
+                    <h2
+                        class="golden-section-title text-white font-bold [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">
+                        BEST DEAL</h2>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-end">
                     <!-- Left Column: Title and Controls -->
                     <div class="lg:col-span-1">
                         <div class="mb-10">
-                            <p class="mt-4 text-2lg text-left text-white [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">Mudah & hemat hanya di TelQ Store. Tarif flat ongkir hanya Rp5.000 untuk kartu SIM</p>
+                            <p
+                                class="mt-5 golden-subtitle text-left text-white [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">
+                                Mudah & hemat hanya di TelQ Store. Tarif flat ongkir hanya Rp5.000 untuk kartu SIM</p>
                         </div>
                         <div class="flex justify-center">
                             <div class="bg-white rounded-lg p-4 flex flex-col items-center space-y-2 mb-4 w-full">
-                                <span class="text-lg font-medium">Bisa bayar dengan:</span>
+                                <span class="golden-card-title font-medium">Bisa bayar dengan:</span>
                                 <!-- Payment Icons Placeholder -->
                                 <div class="flex justify-between items-center gap-20">
-                                    <div class="w-10 h-10 bg-[url('../assets/img/spay.png')] bg-contain bg-no-repeat bg-center"></div>
-                                    <div class="w-7 h-7 bg-[url('../assets/img/gopay.png')] bg-contain bg-no-repeat bg-center"></div>
-                                    <div class="w-10 h-10 bg-[url('../assets/img/bca.png')] bg-contain bg-no-repeat bg-center"></div>
-                                    <div class="w-7 h-7 bg-[url('../assets/img/dana.png')] bg-contain bg-no-repeat bg-center"></div>
-                                    <div class="w-9 h-9 bg-[url('../assets/img/ovo.png')] bg-contain bg-no-repeat bg-center"></div>
+                                    <div
+                                        class="w-10 h-10 bg-[url('../assets/img/spay.png')] bg-contain bg-no-repeat bg-center">
+                                    </div>
+                                    <div
+                                        class="w-7 h-7 bg-[url('../assets/img/gopay.png')] bg-contain bg-no-repeat bg-center">
+                                    </div>
+                                    <div
+                                        class="w-10 h-10 bg-[url('../assets/img/bca.png')] bg-contain bg-no-repeat bg-center">
+                                    </div>
+                                    <div
+                                        class="w-7 h-7 bg-[url('../assets/img/dana.png')] bg-contain bg-no-repeat bg-center">
+                                    </div>
+                                    <div
+                                        class="w-9 h-9 bg-[url('../assets/img/ovo.png')] bg-contain bg-no-repeat bg-center">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -261,15 +386,24 @@
                     <div class="lg:col-span-1">
                         <div class="relative">
                             <!-- Left Arrow -->
-                            <button id="scroll-left-btn" class="absolute top-1/2 -translate-y-1/2 -left-4 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 hover:scale-105 transition-transform duration-300 z-20 hidden">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                            <button id="scroll-left-btn"
+                                class="absolute top-1/2 -translate-y-1/2 -left-4 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 hover:scale-105 transition-transform duration-300 z-20 hidden">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                </svg>
                             </button>
-                            <div id="best-deal-container" class="flex space-x-8 overflow-x-auto pb-4 scroll-smooth" style="scrollbar-width: none; -ms-overflow-style: none;">
-                                    <p>Memuat best deals...</p>
+                            <div id="best-deal-container" class="flex space-x-8 overflow-x-auto pb-4 scroll-smooth"
+                                style="scrollbar-width: none; -ms-overflow-style: none;">
+                                <p>Memuat best deals...</p>
                             </div>
                             <!-- Right Arrow -->
-                            <button id="scroll-right-btn" class="absolute top-1/2 -translate-y-1/2 -right-4 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 hover:scale-105 transition-transform duration-300 z-20">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                            <button id="scroll-right-btn"
+                                class="absolute top-1/2 -translate-y-1/2 -right-4 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 hover:scale-105 transition-transform duration-300 z-20">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
                             </button>
                         </div>
                     </div>
@@ -280,21 +414,26 @@
         <!-- Rekomendasi Personal Section -->
         <section class="relative py-32 pb-64">
             <!-- Background Layers -->
-            <div class="absolute inset-0 bg-[linear-gradient(0deg,rgba(255,255,255,0.76)_0%,#F78018_71.63%)] -z-10"></div>
-            <div class="absolute top-0 left-0 w-full h-[200px] bg-[url('../assets/img/garis-garis.png')] bg-no-repeat bg-cover [mask-image:linear-gradient(to_bottom,black_50%,transparent_100%)] -z-10"></div>
+            <div class="absolute inset-0 bg-[linear-gradient(0deg,rgba(255,255,255,0.76)_0%,#F78018_71.63%)] -z-10">
+            </div>
+            <div
+                class="absolute top-0 left-0 w-full h-[200px] bg-[url('../assets/img/garis-garis.png')] bg-no-repeat bg-cover [mask-image:linear-gradient(to_bottom,black_50%,transparent_100%)] -z-10">
+            </div>
 
             <div class="container mx-auto px-6 relative">
                 <div class="flex items-start justify-between">
                     <div class="text-left mb-10">
-                        <h2 class="text-5xl text-white font-bold [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">Rekomendasi Personal!</h2>
-                        <p class="text-2xl text-white font-bold [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">berdasarkan kebiasaanmu..</h2>
+                        <h2
+                            class="golden-section-title text-white font-bold [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">
+                            Rekomendasi Personal!</h2>
+                        <p
+                            class="golden-subtitle text-white font-bold [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">
+                            berdasarkan kebiasaanmu..</p>
                     </div>
                     <div class="my-auto justify-center">
-                        <button 
-                            onclick="handleTriggerPipeline()"
-                            class="px-6 py-3 bg-[#EF4444] text-white font-semibold rounded-lg shadow-lg 
+                        <button onclick="handleTriggerPipeline(this)" class="px-6 py-3 bg-[#EF4444] text-white font-semibold rounded-lg shadow-lg 
                                 hover:bg-gray-700 transition duration-300 flex items-end space-x-2">
-                            <span>Perbarui rekomendasi</span>
+                            <span class="golden-small md:text-[0.98rem]">Perbarui rekomendasi</span>
                         </button>
                     </div>
                 </div>
@@ -307,48 +446,53 @@
     </main>
 
     <!-- Detail Paket Modal -->
-    <div id="detail-paket-modal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+    <div id="detail-paket-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 w-full max-w-2xl relative ">
             <div id="detailPaket">
                 <div class="p-8">
-                        <div class="flex items-center mb-6 pb-4 relative">
-                            <!-- Back Button -->
-                            <button id="close-modal-btn" class="text-primary hover:text-gray-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-                                </svg>
-                            </button>
-                            <h2 class="text-3xl font-semibold text-black-800 flex-grow text-center">Detail Paket</h2>
+                    <div class="flex items-center mb-6 pb-4 relative">
+                        <!-- Back Button -->
+                        <button id="close-modal-btn" class="text-primary hover:text-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                            </svg>
+                        </button>
+                        <h2 class="golden-section-title text-black-800 flex-grow text-center font-semibold">Detail Paket
+                        </h2>
+                    </div>
+
+                    <h3 class="golden-card-title text-center mb-4 font-semibold">Quicknet 5GB 3 Hari</h3>
+
+                    <div class="space-y-4 text-gray-700">
+                        <div class="flex justify-between items-center">
+                            <iconify-icon icon="material-symbols:timer" class="text-primary text-4xl"></iconify-icon>
+                            <span class="golden-card-title font-semibold flex-grow text-left ml-3">Masa aktif</span>
+                            <span class="font-bold text-primary px-2 py-1 rounded golden-small">3 HARI</span>
                         </div>
-
-                        <h3 class="text-xl font-semibold text-center mb-4">Quicknet 5GB 3 Hari</h3>
-
-                        <div class="space-y-4 text-gray-700">
-                            <div class="flex justify-between items-center">
-                                <iconify-icon icon="material-symbols:timer" class="text-primary text-4xl"></iconify-icon>
-                                <span class="text-xl font-semibold flex-grow text-left ml-3">Masa aktif</span>
-                                <span class="font-bold text-primary px-2 py-1 rounded">3 HARI</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <iconify-icon icon="mdi:internet" class="text-primary text-4xl"></iconify-icon>
-                                <span class="text-xl font-semibold flex-grow text-left ml-3">Kuota Internet</span>
-                                <span class="font-bold text-primary px-2 py-1 rounded">5 GB</span>
-                            </div>
-                            <p class="text-sm text-primary pt-8">
-                                Kuota Utama 5GB + Kuota Lokal sesuai kotamu
-                            </p>
+                        <div class="flex justify-between items-center">
+                            <iconify-icon icon="mdi:internet" class="text-primary text-4xl"></iconify-icon>
+                            <span class="golden-card-title font-semibold flex-grow text-left ml-3">Kuota Internet</span>
+                            <span class="font-bold text-primary px-2 py-1 rounded golden-small">5 GB</span>
                         </div>
+                        <p class="golden-card-body text-primary pt-8">
+                            Kuota Utama 5GB + Kuota Lokal sesuai kotamu
+                        </p>
+                    </div>
 
-                        <div class=" mt-2 b-2 border-t border-primary">
-                            <div class="flex justify-between items-center pt-4">
-                                <iconify-icon icon="solar:dollar-bold" class="text-primary text-4xl"></iconify-icon>
-                                <span class="font-semibold text-xl flex-grow text-left ml-3">Total Harga</span>
-                                <span class="font-bold text-primary px-2 py-1 rounded">Rp12.900</span>
-                            </div>
-                        <a href="register.html" class="inline-block font-bold rounded-lg transition duration-300 bg-primary text-white hover:bg-gray-600 w-full py-3 mt-6 text-center">
-                                Beli
+                    <div class=" mt-2 b-2 border-t border-primary">
+                        <div class="flex justify-between items-center pt-4">
+                            <iconify-icon icon="solar:dollar-bold" class="text-primary text-4xl"></iconify-icon>
+                            <span class="golden-card-title font-semibold flex-grow text-left ml-3">Total Harga</span>
+                            <span class="font-bold text-primary px-2 py-1 rounded golden-small">Rp12.900</span>
+                        </div>
+                        <a href="register.html"
+                            class="inline-block font-bold rounded-lg transition duration-300 bg-primary text-white hover:bg-gray-600 w-full py-3 mt-6 text-center golden-small md:text-[0.98rem]">
+                            Beli
                         </a>
-                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -357,30 +501,39 @@
     <!-- Footer -->
     <footer class="relative w-full pt-24 pb-36 overflow-hidden">
         <!-- Background Image Div -->
-        <div class="absolute -bottom-36 right-0 w-full h-[300px] bg-[url('../assets/img/footer_2.png')] bg-contain bg-no-repeat bg-right-bottom -z-10 [mask-image:linear-gradient(100.07deg,#FF7D00_57.46%,#FFA600_89.3%)] hidden md:block"></div>
-        <div class="absolute -bottom-8 right-0 w-full h-[550px] bg-[url('../assets/img/footer_1.png')] bg-contain bg-no-repeat bg-right-bottom -z-10 [mask-image:linear-gradient(90deg,#FF7D00_15.4%,#FFA600_86.61%)] hidden md:block "></div>
+        <div
+            class="absolute -bottom-36 right-0 w-full h-[300px] bg-[url('../assets/img/footer_2.png')] bg-contain bg-no-repeat bg-right-bottom -z-10 [mask-image:linear-gradient(100.07deg,#FF7D00_57.46%,#FFA600_89.3%)] hidden md:block">
+        </div>
+        <div
+            class="absolute -bottom-8 right-0 w-full h-[550px] bg-[url('../assets/img/footer_1.png')] bg-contain bg-no-repeat bg-right-bottom -z-10 [mask-image:linear-gradient(90deg,#FF7D00_15.4%,#FFA600_86.61%)] hidden md:block ">
+        </div>
         <div class="container px-6 relative">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
                 <!-- Column 1: Brand -->
                 <div class="lg:col-span-2 pl-4">
                     <div class="bg-[url('../assets/img/Logo_TelQ.png')] w-24 h-16 bg-no-repeat bg-contain"></div>
-                    <p class="mt-2 text-200 text-sm font-bold max-w-md">
-                        TelQ | Kuota Cepat, Murah & Terpercaya.<br>Quick, Quality, Quota, Quantity.<br>Pusat Bantuan & FAQ tersedia 24 Jam.<br>Kantor Pusat Layanan Digital, Surabaya..
+                    <p class="mt-3 text-200 golden-footer-text font-bold max-w-md">
+                        TelQ | Kuota Cepat, Murah & Terpercaya.<br>Quick, Quality, Quota, Quantity.<br>Pusat Bantuan &
+                        FAQ tersedia 24 Jam.<br>Kantor Pusat Layanan Digital, Surabaya..
                     </p>
                     <div class="flex space-x-4 mt-4">
-                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon icon="mdi:instagram"></iconify-icon></a>
-                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon icon="ri:facebook-fill"></iconify-icon></a>
-                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon icon="mdi:twitter"></iconify-icon></a>
-                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon icon="mdi:linkedin"></iconify-icon></a>
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon
+                                icon="mdi:instagram"></iconify-icon></a>
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon
+                                icon="ri:facebook-fill"></iconify-icon></a>
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon
+                                icon="mdi:twitter"></iconify-icon></a>
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon
+                                icon="mdi:linkedin"></iconify-icon></a>
                     </div>
-                    <div class="mt-8 pt-6  text-200 text-lg font-medium">
+                    <div class="mt-8 pt-6 text-200 golden-footer-text font-medium">
                         <p>© All rights reserved TelQ</p>
                     </div>
                 </div>
                 <!-- Column 2: Company -->
                 <div class="text-left">
-                    <h4 class="font-bold text-lg">Company</h4>
-                    <ul class="mt-4 space-y-2 text-200">
+                    <h4 class="font-bold golden-card-title">Company</h4>
+                    <ul class="mt-4 space-y-2 text-200 golden-footer-text">
                         <li><a href="#" class="hover:text-primary">Home</a></li>
                         <li><a href="#" class="hover:text-primary">About Us</a></li>
                         <li><a href="#" class="hover:text-primary">Feature</a></li>
@@ -390,8 +543,8 @@
                 </div>
                 <!-- Column 3: Template -->
                 <div class="text-left">
-                    <h4 class="font-bold text-lg">Template</h4>
-                    <ul class="mt-4 space-y-2 text-200">
+                    <h4 class="font-bold golden-card-title">Template</h4>
+                    <ul class="mt-4 space-y-2 text-200 golden-footer-text">
                         <li><a href="#" class="hover:text-primary">Style Guide</a></li>
                         <li><a href="#" class="hover:text-primary">Licenses</a></li>
                         <li><a href="#" class="hover:text-primary">Changelog</a></li>
@@ -401,8 +554,8 @@
                 </div>
                 <!-- Column 4: Template -->
                 <div class="text-left">
-                    <h4 class="font-bold text-lg">Template</h4>
-                    <ul class="mt-4 space-y-2 text-200">
+                    <h4 class="font-bold golden-card-title">Template</h4>
+                    <ul class="mt-4 space-y-2 text-200 golden-footer-text">
                         <li><a href="#" class="hover:text-primary">(62) 857-4098-0695</a></li>
                         <li><a href="#" class="hover:text-primary">Hello@cluster.com</a></li>
                         <li><a href="#" class="hover:text-primary">Mario Bhona Parte</a></li>
@@ -411,18 +564,62 @@
             </div>
         </div>
     </footer>
-        <button id="back-to-top" 
-        class="fixed bottom-6 right-6 p-4 rounded-full 
-            bg-primary text-white shadow-lg 
-            hover:bg-[#FFA600] transition duration-300 
-            opacity-0 invisible z-50">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-        </svg>
-    </button>
-
+    <!-- Floating buttons: Chatbot + Back to Top -->
+    <div class="fixed bottom-6 right-6 flex items-center gap-3 z-50">
+        <!-- Chatbot toggle -->
+        <button type="button" class="p-4 rounded-full bg-white text-primary shadow-lg border border-gray-200
+                   hover:bg-primary hover:text-white transition duration-300" onclick="toggleChat()"
+            aria-label="Buka chatbot">
+            <iconify-icon icon="ri:robot-2-fill" class="text-xl"></iconify-icon>
+        </button>
+    
+        <!-- Back to top -->
+        <button id="back-to-top" class="p-4 rounded-full 
+                bg-primary text-white shadow-lg 
+                hover:bg-[#FFA600] transition duration-300 
+                opacity-0 invisible" aria-label="Kembali ke atas">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+            </svg>
+        </button>
+    </div>
+    
     <!-- Library untuk notifikasi modern -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Chatbot Window -->
+    <div id="chat-window" class="hidden fixed bottom-24 right-6 w-80 max-w-[calc(100vw-2rem)] h-96
+                bg-white rounded-2xl shadow-[0_18px_40px_rgba(0,0,0,0.25)]
+                flex-col overflow-hidden z-50 text-[0.9rem]">
+    
+        <!-- Header -->
+        <div
+            class="flex items-center justify-between px-4 py-2.5 bg-gradient-to-r from-primary to-[#FFA600] text-white font-semibold">
+            <span>Asisten Paket AI</span>
+            <button type="button" onclick="toggleChat()" class="text-white/80 hover:text-white text-lg leading-none">
+                ✕
+            </button>
+        </div>
+    
+        <!-- Body -->
+        <div id="chat-body" class="flex-1 flex flex-col gap-2 px-3 py-2 overflow-y-auto bg-gray-50">
+            <div
+                class="max-w-[80%] px-3 py-2 rounded-xl bg-orange-50 border border-orange-100 text-[0.8rem] leading-relaxed text-orange-900 self-start">
+                Halo! Ada yang bingung soal rekomendasi paketnya? Tanya aku aja!
+            </div>
+        </div>
+    
+        <!-- Input -->
+        <div class="flex items-center gap-2 px-3 py-2 border-t border-gray-200 bg-white">
+            <input type="text" id="chat-input" placeholder="Ketik pesan..." onkeypress="handleEnter(event)" class="flex-1 px-3 py-2 rounded-full border border-gray-300 text-[0.85rem]
+                       focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+            <button type="button" onclick="sendChat()" class="px-3 py-2 rounded-full bg-primary text-white text-sm font-semibold
+                       hover:bg-[#FFA600] transition">
+                ➤
+            </button>
+        </div>
+    </div>
+
 
     <script>
         // Mobile menu toggle
@@ -504,7 +701,7 @@
             // Expose function globally so home.js bisa akses
             window.handleScrollButtons = handleScrollButtons;
         }
-        
+
         // Modal logic
         const modal = document.getElementById('detail-paket-modal');
         const openModalButtons = document.querySelectorAll('.open-modal-btn');
@@ -534,17 +731,17 @@
                 closeModal();
             }
         });
-        
+
         //scroll to page
         document.addEventListener('DOMContentLoaded', () => {
             // 1. Konfigurasi
             // Cari semua tautan yang href-nya dimulai dengan '#' (tautan jangkar lokal)
-            const scrollLinks = document.querySelectorAll('a[href^="#"]'); 
-            
+            const scrollLinks = document.querySelectorAll('a[href^="#"]');
+
             // Durasi animasi (dalam milidetik)
-            const DURATION = 600; 
+            const DURATION = 600;
             const OFFSET_TOP = 50; // Jarak tambahan (misalnya untuk menutupi navigasi sticky)
-            
+
 
             // 2. Fungsi Easing: easeInOutQuad (Memulai dan mengakhiri dengan halus)
             const easeInOutQuad = (t) => {
@@ -556,16 +753,16 @@
              */
             const customSmoothScroll = (targetElement, duration, offset) => {
                 const startPosition = window.scrollY;
-                
+
                 // Hitung posisi target absolut, dikurangi offset (untuk navigasi)
                 const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - offset;
-                
+
                 const distance = targetPosition - startPosition;
                 let startTime = null;
 
                 function animation(currentTime) {
                     if (startTime === null) startTime = currentTime;
-                    
+
                     const timeElapsed = currentTime - startTime;
                     const progress = Math.min(timeElapsed / duration, 1);
                     const easedProgress = easeInOutQuad(progress);
@@ -586,8 +783,8 @@
             scrollLinks.forEach(link => {
                 link.addEventListener('click', (event) => {
                     // Mencegah perilaku default browser (gulir instan)
-                    event.preventDefault(); 
-                    
+                    event.preventDefault();
+
                     // Ambil ID target dari atribut href
                     const targetId = link.getAttribute('href');
                     const targetElement = document.querySelector(targetId);
@@ -615,9 +812,10 @@
                 customSmoothScroll(document.body, DURATION, 0);
             });
         });
-        
+
     </script>
     <script src="/assets/js/home.js"></script>
 
 </body>
-</html>                 
+
+</html>

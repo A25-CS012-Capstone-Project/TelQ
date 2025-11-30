@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TelQ - Profil</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#FF7D00',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-100 font-sans text-[15px] leading-[1.618]">
+    <!-- bubble dekor -->
+    <div
+        class="absolute -top-10 -left-16 w-56 h-56 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+    </div>
+
+    <div class="container mx-auto px-4 pt-24 pb-8 max-w-6xl">
+        <!-- HEADER PROFIL -->
+        <div
+            class="bg-white rounded-3xl p-6 shadow-[0_0_5px_5px_rgba(0,0,0,0.25)] mb-6 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden">
+
+            <!-- dekor kanan -->
+            <div
+                class="absolute top-0 right-0 w-[90px] h-[90px] bg-[url('/assets/img/bubble_profile.png')] bg-no-repeat bg-cover bg-center z-0">
+            </div>
+
+            <!-- Avatar -->
+            <div class="z-10">
+                <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff&size=128"
+                    class="w-36 h-36 rounded-full border-4 border-white shadow-md" id="avatar-img" alt="Avatar" />
+            </div>
+
+            <!-- Info User -->
+            <div class="flex-1 text-center md:text-left z-10 flex flex-col justify-between gap-3">
+                <div>
+                    <!-- page title ~ golden ratio: 2.3rem -> 2.9rem -->
+                    <h1 class="pt-2 text-[2.3rem] md:text-[2.9rem] font-semibold text-gray-800 leading-tight tracking-tight"
+                        id="user-name">
+                        Loading...
+                    </h1>
+                    <p class="mt-1 text-[0.95rem] md:text-[1.02rem] text-gray-500">
+                        Customer ID:
+                        <span id="customer-id" class="font-mono text-[0.9em] align-middle">...</span>
+                    </p>
+                </div>
+
+                <!-- Badges -->
+                <div class="flex flex-wrap justify-center md:justify-start gap-2 pt-1 text-[0.86rem] leading-[1.5]"
+                    id="badge-container">
+                    <!-- badge via JS -->
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="z-10 flex flex-col justify-between items-center md:items-end self-stretch gap-4">
+                <button onclick="alert('Fitur Edit Preferensi akan segera hadir!')"
+                    class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center text-[0.98rem] font-medium text-gray-700 transition">
+                    <iconify-icon icon="uil:setting" class="inline-block mr-1 text-2xl"></iconify-icon>
+                    Edit Preferensi
+                </button>
+                <div class="flex space-x-3">
+                    <a href="/"
+                        class="px-7 py-2 rounded-lg bg-primary text-white text-[0.98rem] font-semibold hover:bg-gray-700 text-center transition">
+                        Home
+                    </a>
+                    <button onclick="handleLogout()"
+                        class="px-7 py-2 rounded-lg bg-[#F90000] text-white text-[0.98rem] font-semibold hover:bg-gray-700 transition">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERSONA & BEHAVIOR -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Persona Card -->
+            <div class="md:col-span-1 bg-white rounded-2xl p-6 shadow-[0_0_5px_5px_rgba(0,0,0,0.25)]">
+                <h3 class="mb-4 text-[1.05rem] font-semibold uppercase tracking-[0.08em] text-gray-800">
+                    Your Persona
+                </h3>
+                <div id="persona-list" class="space-y-4 text-[0.9rem] leading-[1.55]">
+                    <!-- via JS -->
+                    <p class="text-gray-400">Menganalisis persona...</p>
+                </div>
+            </div>
+
+            <!-- Behavior Stats -->
+            <div class="md:col-span-2 bg-white rounded-2xl px-8 py-6 shadow-[0_0_5px_5px_rgba(0,0,0,0.25)]">
+                <h3 class="mb-6 text-[1.5rem] md:text-[1.8rem] font-semibold text-gray-800 leading-[1.25]">
+                    Behavior Summary
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- angka statistik -->
+                    <div class="space-y-6">
+                        <div>
+                            <p class="text-[0.98rem] text-gray-600">Rata-rata Data</p>
+                            <p class="text-[2.1rem] md:text-[2.3rem] font-bold text-gray-900">
+                                <span id="stat-data">0</span> GB/bln
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-[0.98rem] text-gray-600">Frekuensi Topup</p>
+                            <p class="text-[2.1rem] md:text-[2.3rem] font-bold text-gray-900">
+                                <span id="stat-freq">0</span>x /bln
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-[0.98rem] text-gray-600">Rata-rata Belanja</p>
+                            <p class="text-[2.1rem] md:text-[2.3rem] font-bold text-gray-900" id="stat-spend">
+                                Rp 0
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- bar usage -->
+                    <div class="space-y-6 flex flex-col justify-start h-full">
+                        <div>
+                            <p class="mb-1 text-[0.86rem] text-gray-600">Streaming Video</p>
+                            <div class="flex items-center gap-2">
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div id="bar-video"
+                                        class="h-2.5 rounded-full bg-[#EF4444] transition-all duration-1000"
+                                        style="width:0%">
+                                    </div>
+                                </div>
+                                <span id="val-video" class="text-[0.86rem] text-gray-700">0%</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="mb-1 text-[0.86rem] text-gray-600">Travel Activity</p>
+                            <div class="flex items-center gap-2">
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div id="bar-travel"
+                                        class="h-2.5 rounded-full bg-[#FF7D00] transition-all duration-1000"
+                                        style="width:0%">
+                                    </div>
+                                </div>
+                                <span id="val-travel" class="text-[0.86rem] text-gray-700">0</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORY & RECOMMENDATION -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- History List -->
+            <div class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-[0_0_5px_5px_rgba(0,0,0,0.25)]">
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <h2
+                            class="flex items-center gap-2 text-[1.5rem] md:text-[1.8rem] font-semibold text-gray-800 leading-tight">
+                            <iconify-icon icon="iconoir:clock" class="text-3xl"></iconify-icon>
+                            Riwayat Pembelian
+                        </h2>
+                        <p class="pt-2 text-[0.86rem] text-gray-500">
+                            Transaksi kamu belakangan ini
+                        </p>
+                    </div>
+
+                    <!-- Filter Dropdown -->
+                    <div class="relative mt-1">
+                        <select id="history-filter" onchange="filterHistory()"
+                            class="bg-[#D9D9D9] border border-gray-300 text-gray-700 text-[0.9rem] rounded-lg px-3 py-2 focus:ring-blue-500 appearance-none cursor-pointer">
+                            <option value="All">Semua</option>
+                            <option value="Streaming">Streaming</option>
+                            <option value="Gaming">Gaming</option>
+                            <option value="Hemat">Hemat</option>
+                            <option value="Roaming">Roaming</option>
+                            <option value="Voice">Voice</option>
+                        </select>
+                        <iconify-icon icon="gridicons:dropdown"
+                            class="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none text-black"></iconify-icon>
+                    </div>
+                </div>
+
+                <!-- List Container -->
+                <div id="history-container" class="space-y-3 text-[0.9rem] leading-[1.55]">
+                    <!-- via JS -->
+                    <p class="text-gray-400">Memuat riwayat...</p>
+                </div>
+            </div>
+
+            <!-- Summary & Recommendations -->
+            <div class="flex flex-col justify-between">
+                <div class="space-y-6">
+                    <!-- Summary Card -->
+                    <div class="bg-white p-5 rounded-xl shadow-[0_0_5px_5px_rgba(0,0,0,0.25)]">
+                        <h4 class="mb-3 pb-2 border-b text-[1.3rem] font-bold text-gray-700">
+                            Ringkasan History
+                        </h4>
+                        <div class="space-y-3 text-[0.9rem] leading-[1.55]">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Total Transaksi</span>
+                                <span id="sum-trx" class="font-bold">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Total Pengeluaran</span>
+                                <span id="sum-spend" class="font-bold">Rp 0</span>
+                            </div>
+                            <div class="pt-2">
+                                <span class="block mb-3 text-gray-500">Favorit Kamu:</span>
+                                <span id="sum-fav"
+                                    class="inline-block px-5 py-1 rounded-xl bg-blue-100 text-[#2D40AF] text-[1rem] font-semibold">
+                                    -
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Smart Recommendations -->
+                    <div class="bg-white p-5 rounded-xl shadow-[0_0_5px_5px_rgba(0,0,0,0.25)]">
+                        <div class="flex items-center gap-2 mb-3">
+                            <iconify-icon icon="flat-color-icons:idea" class="text-4xl"></iconify-icon>
+                            <h4 class="text-[1.3rem] font-semibold text-gray-800">Rekomendasi Pintar</h4>
+                        </div>
+                        <p class="mb-4 text-[0.9rem] text-gray-600">
+                            Berdasarkan pola penggunaanmu:
+                        </p>
+
+                        <div id="mini-recs-container" class="space-y-3 text-[0.9rem] leading-[1.55]">
+                            <!-- via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- tiga lingkaran dekor -->
+                <div class="mt-5 rounded-xl hidden md:block">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span
+                            class="w-28 h-28 rounded-full bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)]"></span>
+                        <span
+                            class="w-28 h-28 rounded-full bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)]"></span>
+                        <span
+                            class="w-28 h-28 rounded-full bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)]"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/profile.js"></script>
+</body>
+
+</html>
