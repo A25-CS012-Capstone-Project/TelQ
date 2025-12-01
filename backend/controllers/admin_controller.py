@@ -159,35 +159,73 @@ def add_product():
 
     conn = get_db_connection()
     cursor = conn.cursor()
+    
     try:
-        # Generate Product ID sederhana (di real app pakai Serial/UUID)
-        # Kita ambil max id + 1
+        # --- [DEBUGGING] CEK NAMA DATABASE ---
+        # Ini akan mencetak nama database yang sedang aktif di terminal Flask
+        cursor.execute("SELECT current_database();")
+        db_name = cursor.fetchone()[0]
+        print(f"👀 [DEBUG] Menyimpan produk ke database: {db_name}")
+        # -------------------------------------
+
+        # Generate product_id (max + 1)
         cursor.execute("SELECT MAX(product_id) FROM products")
-        max_id = cursor.fetchone()[0] or 0
+        row = cursor.fetchone()
+        max_id = row[0] if row and row[0] is not None else 0
         new_id = max_id + 1
+
+        # Ambil nilai + default
+        product_name = data['product_name']
+        price = data['price']
+        data_gb = data['data_gb']
+        
+        # Validasi Durasi (Minimal 30 jika 0/kosong)
+        duration_days = data.get('duration_days', 30)
+        if not duration_days or int(duration_days) <= 0:
+            duration_days = 30
+            
+        # Ambil Bonus (Default 0)
+        streaming_gb_bonus = data.get('streaming_gb_bonus', 0)
+        gaming_gb_bonus = data.get('gaming_gb_bonus', 0)
+        social_gb_bonus = data.get('social_gb_bonus', 0)
+        call_minutes_bonus = data.get('call_minutes_bonus', 0)
+        sms_bonus = data.get('sms_bonus', 0)
+        roaming_days_bonus = data.get('roaming_days_bonus', 0)
+
+        # Logic Target Offer
+        target_offer = data.get('target_offer')
+        if not target_offer:
+            target_offer = "General Offer"
+            if streaming_gb_bonus > 0: target_offer = "Streaming Offer"
+            elif gaming_gb_bonus > 0: target_offer = "Gaming Offer"
+            elif roaming_days_bonus > 0: target_offer = "Roaming Offer"
 
         sql = """
             INSERT INTO products (
-                product_id, product_name, price, data_gb, 
-                streaming_gb_bonus, call_minutes_bonus, roaming_days_bonus, sms_bonus
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                product_id, product_name, price, duration_days, data_gb,
+                streaming_gb_bonus, gaming_gb_bonus, social_gb_bonus,
+                call_minutes_bonus, sms_bonus, roaming_days_bonus, target_offer
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
+        
         vals = (
-            new_id, 
-            data['product_name'], 
-            data['price'], 
-            data['data_gb'],
-            data.get('streaming_gb', 0),
-            data.get('call_minutes', 0),
-            data.get('roaming_days', 0),
-            0 # sms default 0
+            new_id, product_name, price, duration_days, data_gb,
+            streaming_gb_bonus, gaming_gb_bonus, social_gb_bonus,
+            call_minutes_bonus, sms_bonus, roaming_days_bonus, target_offer
         )
+
         cursor.execute(sql, vals)
-        conn.commit()
+        conn.commit() # Simpan permanen
+        
+        print(f"✅ [SUCCESS] Produk ID {new_id} ({product_name}) tersimpan!")
+        
         return jsonify({"message": "Produk berhasil ditambahkan!", "id": new_id})
+
     except Exception as e:
-        conn.rollback()
+        conn.rollback() # Batalkan jika error
+        print(f"❌ [ERROR] Gagal simpan: {str(e)}")
         return jsonify({"error": str(e)}), 500
+        
     finally:
         cursor.close()
         conn.close()

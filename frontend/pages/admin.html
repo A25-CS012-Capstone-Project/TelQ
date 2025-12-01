@@ -10,7 +10,6 @@
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Alert cantik -->
-
     <script>
         tailwind.config = {
             theme: {
@@ -31,7 +30,6 @@
             <div class="w-8 h-8 bg-primary rounded-lg shadow-lg shadow-orange-500/50"></div>
             <span class="text-2xl font-bold tracking-wider">TelQ Admin</span>
         </div>
-
         <nav class="flex-1 px-4 space-y-2 mt-6">
             <button onclick="switchView('dashboard')" id="nav-dashboard"
                 class="nav-item w-full flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-xl font-semibold transition-all">
@@ -46,7 +44,6 @@
                 <iconify-icon icon="fa6-solid:box-open" class="text-xl"></iconify-icon> Katalog Produk
             </button>
         </nav>
-
         <div class="p-6 border-t border-gray-700">
             <button onclick="window.location.href='/'"
                 class="flex items-center gap-2 text-gray-400 hover:text-white transition">
@@ -57,7 +54,6 @@
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col h-screen overflow-y-auto relative">
-
         <!-- Header -->
         <header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center sticky top-0 z-10">
             <h2 class="text-xl font-bold text-gray-800" id="page-title">Business Overview</h2>
@@ -74,7 +70,7 @@
 
         <!-- CONTENT: DASHBOARD VIEW -->
         <main id="view-dashboard" class="p-8 view-section">
-            <!-- Stats Cards (Sama seperti sebelumnya) -->
+            <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Card 1 -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
@@ -190,13 +186,12 @@
                 <!-- Product Cards injected via JS -->
             </div>
         </main>
-
     </div>
 
-    <!-- Modal Tambah Produk -->
+    <!-- Modal Tambah Produk (UPDATED FORM) -->
     <div id="product-modal"
         class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 relative">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 relative overflow-y-auto max-h-[90vh]">
             <button onclick="toggleProductModal()"
                 class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl">&times;</button>
             <h3 class="text-xl font-bold text-gray-800 mb-6">Tambah Produk Baru</h3>
@@ -208,6 +203,7 @@
                         class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none"
                         placeholder="Contoh: Super 5G Hemat">
                 </div>
+
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Harga (Rp)</label>
@@ -221,223 +217,73 @@
                     </div>
                 </div>
 
-                <p class="text-sm font-bold text-gray-600 pt-2">Bonus (Opsional)</p>
-                <div class="grid grid-cols-3 gap-2">
-                    <input type="number" name="streaming_gb" placeholder="Stream GB"
-                        class="border rounded-lg px-2 py-2 text-sm">
-                    <input type="number" name="call_minutes" placeholder="Call Mins"
-                        class="border rounded-lg px-2 py-2 text-sm">
-                    <input type="number" name="roaming_days" placeholder="Roam Days"
-                        class="border rounded-lg px-2 py-2 text-sm">
+                <!-- Bagian Durasi (Dropdown) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Durasi (Hari)</label>
+                    <div class="relative">
+                        <select name="duration_days" required
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none appearance-none bg-white">
+                            <option value="30">30 Hari (Bulanan)</option>
+                            <option value="7">7 Hari (Mingguan)</option>
+                            <option value="3">3 Hari</option>
+                            <option value="1">1 Hari (Harian)</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <iconify-icon icon="mdi:chevron-down" class="text-gray-500"></iconify-icon>
+                        </div>
+                    </div>
                 </div>
 
-                <button type="submit"
-                    class="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-orange-600 transition mt-4">Simpan
-                    Produk</button>
+                <!-- Bagian Bonus Lengkap -->
+                <div class="border-t border-gray-100 pt-4 mt-2">
+                    <p class="text-sm font-bold text-gray-800 mb-3">Bonus Tambahan (Opsional)</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs text-gray-500">Streaming (GB)</label>
+                            <input type="number" name="streaming_gb_bonus" placeholder="0"
+                                class="w-full border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500">Gaming (GB)</label>
+                            <input type="number" name="gaming_gb_bonus" placeholder="0"
+                                class="w-full border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500">Social Media (GB)</label>
+                            <input type="number" name="social_gb_bonus" placeholder="0"
+                                class="w-full border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500">Telepon (Menit)</label>
+                            <input type="number" name="call_minutes_bonus" placeholder="0"
+                                class="w-full border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500">SMS (Qty)</label>
+                            <input type="number" name="sms_bonus" placeholder="0"
+                                class="w-full border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500">Roaming (Hari)</label>
+                            <input type="number" name="roaming_days_bonus" placeholder="0"
+                                class="w-full border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit"
+                        class="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-orange-600 transition shadow-lg shadow-orange-200">
+                        Simpan Produk
+                    </button>
+                </div>
+
             </form>
         </div>
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
-    <script>
-        const API_URL = '/api/v1/admin';
-
-        // --- NAVIGATION LOGIC ---
-        function switchView(viewName) {
-            // Hide all sections
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('bg-primary', 'text-white');
-                el.classList.add('text-gray-400');
-            });
-
-            // Show selected
-            document.getElementById(`view-${viewName}`).classList.remove('hidden');
-            const navBtn = document.getElementById(`nav-${viewName}`);
-            navBtn.classList.remove('text-gray-400');
-            navBtn.classList.add('bg-primary', 'text-white');
-
-            // Update Title
-            const titles = { 'dashboard': 'Business Overview', 'users': 'User Management', 'products': 'Product Catalog' };
-            document.getElementById('page-title').innerText = titles[viewName];
-
-            // Trigger Fetch
-            if (viewName === 'users') fetchUsers();
-            if (viewName === 'products') fetchProducts();
-        }
-
-        // --- DASHBOARD CHARTS (Existing) ---
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchOverview();
-            fetchSalesChart();
-            fetchSegmentChart();
-            fetchProductChart();
-        });
-
-        // (Fungsi fetchOverview, fetchSalesChart, fetchSegmentChart, fetchProductChart SAMA SEPERTI SEBELUMNYA - Copy paste dari kode lama jika perlu, atau biarkan di sini jika mau lengkap)
-        async function fetchOverview() {
-            try {
-                const res = await fetch(`${API_URL}/stats/overview`);
-                const data = await res.json();
-                document.getElementById('total-revenue').innerText = 'Rp ' + data.total_revenue.toLocaleString('id-ID');
-                document.getElementById('active-users').innerText = data.active_users;
-                document.getElementById('conversion-rate').innerText = data.conversion_rate + '%';
-                document.getElementById('model-accuracy').innerText = data.model_accuracy + '%';
-            } catch (e) { }
-        }
-
-        async function fetchSalesChart() {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            const res = await fetch(`${API_URL}/stats/sales-trend`);
-            const data = await res.json();
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.labels,
-                    datasets: [
-                        { label: 'AI', data: data.series_ai, borderColor: '#FF7D00', backgroundColor: 'rgba(255, 125, 0, 0.1)', fill: true, tension: 0.4 },
-                        { label: 'Organik', data: data.series_organic, borderColor: '#94A3B8', borderDash: [5, 5], tension: 0.4 }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-        }
-
-        async function fetchSegmentChart() {
-            const ctx = document.getElementById('segmentChart').getContext('2d');
-            const res = await fetch(`${API_URL}/stats/segments`);
-            const data = await res.json();
-            new Chart(ctx, { type: 'doughnut', data: { labels: data.labels, datasets: [{ data: data.data, backgroundColor: ['#FF7D00', '#3B82F6', '#10B981', '#8B5CF6'] }] }, options: { responsive: true, maintainAspectRatio: false } });
-        }
-
-        async function fetchProductChart() {
-            const ctx = document.getElementById('productChart').getContext('2d');
-            const res = await fetch(`${API_URL}/stats/top-products`);
-            const data = await res.json();
-            new Chart(ctx, { type: 'bar', data: { labels: data.labels, datasets: [{ label: 'Terjual', data: data.data, backgroundColor: '#FF7D00', borderRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false } });
-        }
-
-
-        // --- USER MANAGEMENT LOGIC ---
-        let userChartInstance = null;
-
-        async function fetchUsers() {
-            const res = await fetch(`${API_URL}/users`);
-            const users = await res.json();
-            const tbody = document.getElementById('users-table-body');
-            tbody.innerHTML = '';
-
-            // Render Table
-            users.forEach(u => {
-                const tr = document.createElement('tr');
-                tr.className = "border-b hover:bg-gray-50 transition";
-                tr.innerHTML = `
-                    <td class="px-6 py-4 font-medium text-gray-900">${u.customer_id}</td>
-                    <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${u.persona === 'Streamer' ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-600'}">${u.persona}</span></td>
-                    <td class="px-6 py-4">${u.device_brand}</td>
-                    <td class="px-6 py-4 font-bold text-green-600">Rp ${u.total_spend.toLocaleString('id-ID')}</td>
-                    <td class="px-6 py-4"><span class="w-2 h-2 rounded-full bg-green-500 inline-block mr-2"></span>Active</td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            // Render Chart (Top 5 vs Bottom 5)
-            // Sort by spend
-            const sorted = [...users].sort((a, b) => b.total_spend - a.total_spend);
-            const top5 = sorted.slice(0, 5);
-            const bottom5 = sorted.slice(-5).reverse(); // Reverse agar urutannya bagus di chart
-
-            const chartLabels = [...top5.map(u => u.customer_id), ...bottom5.map(u => u.customer_id)];
-            const chartData = [...top5.map(u => u.total_spend), ...bottom5.map(u => u.total_spend)];
-            const chartColors = [...top5.map(() => '#10B981'), ...bottom5.map(() => '#EF4444')]; // Hijau Top, Merah Bottom
-
-            const ctx = document.getElementById('userSpendChart').getContext('2d');
-            if (userChartInstance) userChartInstance.destroy(); // Hapus chart lama sebelum buat baru
-
-            userChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartLabels,
-                    datasets: [{
-                        label: 'Total Spend (Rp)',
-                        data: chartData,
-                        backgroundColor: chartColors,
-                        borderRadius: 5
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
-        }
-
-        // --- PRODUCT MANAGEMENT LOGIC ---
-        function toggleProductModal() {
-            document.getElementById('product-modal').classList.toggle('hidden');
-        }
-
-        async function fetchProducts() {
-            const res = await fetch(`${API_URL}/products`);
-            const products = await res.json();
-            const grid = document.getElementById('products-grid');
-            grid.innerHTML = '';
-
-            products.forEach(p => {
-                const el = document.createElement('div');
-                el.className = "bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition flex flex-col justify-between";
-                el.innerHTML = `
-                    <div>
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-lg text-gray-800">${p.product_name}</h4>
-                            <span class="bg-orange-100 text-orange-600 text-xs font-bold px-2 py-1 rounded">ID: ${p.product_id}</span>
-                        </div>
-                        <p class="text-2xl font-bold text-primary mb-4">Rp ${p.price.toLocaleString('id-ID')}</p>
-                        <div class="space-y-1 text-sm text-gray-500 mb-4">
-                            <p><iconify-icon icon="mdi:database" class="inline mr-1"></iconify-icon> ${p.data_gb} GB Data</p>
-                            ${p.streaming_gb_bonus > 0 ? `<p class="text-purple-500"><iconify-icon icon="mdi:youtube" class="inline mr-1"></iconify-icon> +${p.streaming_gb_bonus} GB Stream</p>` : ''}
-                        </div>
-                    </div>
-                    <button class="w-full border border-gray-200 text-gray-500 py-2 rounded-lg hover:bg-gray-50 text-sm font-bold">Edit Detail</button>
-                `;
-                grid.appendChild(el);
-            });
-        }
-
-        // Add Product Form Submit
-        document.getElementById('add-product-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-
-            // Convert numbers
-            ['price', 'data_gb', 'streaming_gb', 'call_minutes', 'roaming_days'].forEach(k => {
-                if (data[k]) data[k] = parseFloat(data[k]);
-            });
-
-            try {
-                const res = await fetch(`${API_URL}/products`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                if (res.ok) {
-                    Swal.fire('Sukses!', 'Produk berhasil ditambahkan.', 'success');
-                    toggleProductModal();
-                    e.target.reset();
-                    fetchProducts(); // Refresh list
-                } else {
-                    Swal.fire('Gagal', 'Terjadi kesalahan.', 'error');
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        });
-
-    </script>
+    <script src="/assets/js/admin.js"></script>
 </body>
 
 </html>

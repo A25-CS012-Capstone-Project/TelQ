@@ -20,7 +20,7 @@ async function handleRegister(event) {
   };
 
   try {
-    // Tampilkan loading state (opsional, agar terlihat responsif)
+    // Tampilkan loading state
     const submitBtn = event.target.querySelector("button[type='submit']");
     const originalBtnText = submitBtn.innerHTML;
     submitBtn.innerHTML = "Memproses...";
@@ -47,7 +47,7 @@ async function handleRegister(event) {
         title: "Registrasi Berhasil!",
         text: "Akun Anda telah dibuat. Silakan login.",
         showConfirmButton: false,
-        timer: 2000, // Tunggu 2 detik sebelum pindah
+        timer: 2000,
       }).then(() => {
         window.location.href = "/login";
       });
@@ -57,7 +57,7 @@ async function handleRegister(event) {
         icon: "error",
         title: "Registrasi Gagal",
         text: result.error || "Terjadi kesalahan saat mendaftar.",
-        confirmButtonColor: "#FF7D00", // Warna Primary TelQ
+        confirmButtonColor: "#FF7D00",
       });
     }
   } catch (error) {
@@ -106,6 +106,7 @@ async function handleLogin(event) {
     submitBtn.disabled = false;
 
     if (response.ok) {
+      // Simpan data user (termasuk role) ke localStorage
       localStorage.setItem("user", JSON.stringify(result.user));
 
       // SWAL SUKSES
@@ -114,9 +115,15 @@ async function handleLogin(event) {
         title: "Login Berhasil!",
         text: `Selamat datang kembali, ${result.user.firstname || "User"}!`,
         showConfirmButton: false,
-        timer: 1500, // Tunggu 1.5 detik
+        timer: 1500,
       }).then(() => {
-        window.location.href = "/"; // Arahkan ke dashboard
+        // --- LOGIKA REDIRECT BERDASARKAN ROLE ---
+        // Jika role admin, ke admin.html. Jika user, ke index (dashboard).
+        if (result.user.role === "admin") {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = "/";
+        }
       });
     } else {
       // SWAL ERROR LOGIN
@@ -139,7 +146,7 @@ async function handleLogin(event) {
   }
 }
 
-// --- FUNGSI LOGOUT (Dengan Konfirmasi) ---
+// --- FUNGSI LOGOUT ---
 function handleLogout() {
   Swal.fire({
     title: "Yakin ingin keluar?",

@@ -28,7 +28,7 @@ def register():
     if result['success']:
         return jsonify(result), 201
     else:
-        return jsonify(result), 409 # 409 Conflict (jika duplikat)
+        return jsonify(result), 409 
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
@@ -38,16 +38,41 @@ def login():
     """
     data = request.get_json()
 
+    # Validasi Input
     if not data or not data.get('email') or not data.get('password'):
         return jsonify({"error": "Email dan password wajib diisi"}), 400
+    
+    email_input = data.get('email')
+    password_input = data.get('password')
 
-    # Panggil Service
+    # =========================================================
+    # 1. CEK KHUSUS ADMIN (Hardcoded Credentials)
+    # =========================================================
+    if email_input == 'admin@super.com' and password_input == 'admin123':
+        return jsonify({
+            "success": True,
+            "message": "Login Admin Berhasil",
+            "user": {
+                "firstname": "Super Admin",
+                "lastname": "(Administrator)",
+                "email": email_input,
+                "customer_id": "ADMIN-001",
+                "role": "admin" 
+            }
+        }), 200
+
+    # =========================================================
+    # 2. LOGIN USER BIASA (Via Database Service)
+    # =========================================================
     result = auth_service.login_user(
-        email=data.get('email'),
-        password=data.get('password')
+        email=email_input,
+        password=password_input
     )
 
     if result['success']:
+        if 'user' in result:
+            result['user']['role'] = 'user'
+            
         return jsonify(result), 200
     else:
-        return jsonify(result), 401 # 401 Unauthorized
+        return jsonify(result), 401 
