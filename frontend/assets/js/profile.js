@@ -1,4 +1,4 @@
-let allHistoryData = []; // Simpan data mentah untuk filtering
+let allHistoryData = []; 
 
 document.addEventListener("DOMContentLoaded", async () => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("user-name").textContent = displayName;
   document.getElementById("customer-id").textContent = user.customer_id;
 
-  // Fetch Data Lengkap
   await fetchProfileData(user.customer_id);
 });
 
@@ -31,7 +30,6 @@ async function fetchProfileData(customerId) {
       renderPersona(data.persona_list);
       renderBehavior(data.behavior_stats);
 
-      // Simpan history ke variabel global & render
       allHistoryData = data.history_list;
       renderHistory(allHistoryData);
 
@@ -139,7 +137,6 @@ function renderHistory(historyList) {
 
   container.innerHTML = historyList
     .map((item) => {
-      // Tentukan warna border kiri berdasarkan kategori
       let borderClass = "border-gray-300";
       let tagClass = "bg-gray-100 text-gray-600";
 
@@ -154,7 +151,7 @@ function renderHistory(historyList) {
         tagClass = "bg-blue-50 text-blue-600";
       }
 
-      // Format Tanggal Aman
+      // Format Tanggal
       const dateStr = item.purchase_date
         ? new Date(item.purchase_date).toLocaleDateString("id-ID")
         : "-";
@@ -189,7 +186,7 @@ function renderHistory(historyList) {
     .join("");
 }
 
-// 5. Fitur Filter (Frontend Side)
+// 5. Fitur Filter
 function filterHistory() {
   const category = document.getElementById("history-filter").value;
   if (category === "All") {
@@ -228,7 +225,6 @@ function renderRecommendations(recs) {
 
   container.innerHTML = recs
     .map((recStr) => {
-      // Bersihkan string rekomendasi: "(98.5%) Paket Super" -> "Paket Super"
       const cleanName = recStr.replace(/\(\d+\.\d+%\)\s*/, "");
 
       return `

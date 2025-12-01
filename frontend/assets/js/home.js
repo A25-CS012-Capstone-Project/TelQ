@@ -294,7 +294,6 @@ function renderQuestionerCards(items, container, isRecsysString) {
   });
 }
 
-// --- [BAGIAN UTAMA YANG DIPERBAIKI] ---
 function renderProductCards(items, container) {
   container.innerHTML = "";
   if (!items || items.length === 0) {
@@ -311,7 +310,11 @@ function renderProductCards(items, container) {
       reasonHtml = "",
       dataGb = 0,
       duration = 30,
+      // Inisialisasi variabel bonus (default 0)
       bonusStream = 0,
+      bonusGame = 0,
+      bonusCall = 0,
+      bonusRoam = 0,
       matchBadge = "";
 
     if (typeof item === "string") {
@@ -322,9 +325,13 @@ function renderProductCards(items, container) {
       priceDisplay = `Rp ${item.price.toLocaleString("id-ID")}`;
       dataGb = item.data_gb || 0;
       duration = item.duration_days || 30;
-      bonusStream = item.streaming_gb_bonus || 0;
 
-      // PERBAIKAN BADGE: Style lebih modern & Z-Index diperbaiki
+      // --- AMBIL DATA BONUS SESUAI products.js ---
+      bonusStream = item.streaming_gb_bonus || 0;
+      bonusGame = item.gaming_gb_bonus || 0; // Mengambil bonus Gaming
+      bonusCall = item.call_minutes_bonus || 0; // Mengambil bonus Telepon
+      bonusRoam = item.roaming_days_bonus || 0; // Mengambil bonus Roaming
+
       if (item.final_score) {
         const scorePct = (
           Math.max(Math.min(item.final_score, 0.999), 0.01) * 100
@@ -335,7 +342,6 @@ function renderProductCards(items, container) {
             </div>`;
       }
 
-      // PERBAIKAN AI INSIGHT: Layout terpisah yang rapi
       if (item.reason) {
         reasonHtml = `
             <div class="mt-4 p-3 bg-orange-50 border border-orange-100 rounded-xl flex gap-3 items-start">
@@ -352,12 +358,10 @@ function renderProductCards(items, container) {
     const displayName = `${nameParts.line1}<br>${nameParts.line2}`;
 
     const card = document.createElement("div");
-    // Layout kartu diperbaiki agar height setara
     card.className =
       "bg-[linear-gradient(270deg,#FFFFFF_18.18%,rgba(255,125,0,0.76)_98.14%)] rounded-2xl shadow-[0_10px_20px_rgba(255,125,0,0.15)] hover:shadow-[0_15px_30px_rgba(255,125,0,0.25)] transition-all duration-300 flex flex-col justify-between h-full relative overflow-hidden group";
 
     card.innerHTML = `
-        <!-- Header Kartu (Warna Oranye) -->
         <div class="relative p-6 pt-8 pb-10 overflow-hidden rounded-t-2xl">
             ${matchBadge}
             <div class="absolute top-[-20%] right-[-10%] w-[160px] h-[160px] bg-[linear-gradient(205deg,#F9A02F_30%,#AF5920_90%)] rounded-full"></div>
@@ -369,9 +373,7 @@ function renderProductCards(items, container) {
             </h3>
         </div>
 
-        <!-- Body Kartu (Putih) -->
         <div class="flex-grow bg-white p-6 -mt-4 rounded-t-2xl relative z-10 flex flex-col gap-4">
-            <!-- Benefits List -->
             <div>
                 <h4 class="font-sans font-bold text-gray-400 text-[10px] tracking-widest uppercase mb-3">KEUNTUNGAN</h4>
                 <ul class="space-y-3">
@@ -383,6 +385,7 @@ function renderProductCards(items, container) {
                         <div class="w-6 flex justify-center mr-2"><iconify-icon icon="mdi:database-outline" class="text-lg text-gray-400"></iconify-icon></div>
                         <span>Kuota utama <b class="text-gray-900">${dataGb} GB</b></span>
                     </li>
+
                     ${
                       bonusStream > 0
                         ? `
@@ -392,13 +395,38 @@ function renderProductCards(items, container) {
                     </li>`
                         : ""
                     }
+                    ${
+                      bonusGame > 0
+                        ? `
+                    <li class="flex items-center text-primary text-sm font-medium">
+                        <div class="w-6 flex justify-center mr-2"><iconify-icon icon="ion:game-controller" class="text-lg"></iconify-icon></div>
+                        <span>Bonus Gaming <b>${bonusGame} GB</b></span>
+                    </li>`
+                        : ""
+                    }
+                    ${
+                      bonusCall > 0
+                        ? `
+                    <li class="flex items-center text-primary text-sm font-medium">
+                        <div class="w-6 flex justify-center mr-2"><iconify-icon icon="mdi:phone-in-talk" class="text-lg"></iconify-icon></div>
+                        <span>Bonus Nelfon <b>${bonusCall} Menit</b></span>
+                    </li>`
+                        : ""
+                    }
+                    ${
+                      bonusRoam > 0
+                        ? `
+                    <li class="flex items-center text-primary text-sm font-medium">
+                        <div class="w-6 flex justify-center mr-2"><iconify-icon icon="mdi:airplane" class="text-lg"></iconify-icon></div>
+                        <span>Bonus Roaming <b>${bonusRoam} Hari</b></span>
+                    </li>`
+                        : ""
+                    }
                 </ul>
             </div>
             
-            <!-- Insert AI Reason -->
             ${reasonHtml}
 
-            <!-- Harga -->
             <div class="mt-auto pt-4 border-t border-gray-100">
                 <p class="font-sans font-bold text-gray-400 text-[10px] tracking-widest uppercase mb-1">HARGA</p>
                 <div class="flex items-baseline gap-1">
@@ -407,7 +435,6 @@ function renderProductCards(items, container) {
             </div>
         </div>
 
-        <!-- Footer Buttons -->
         <div class="bg-white px-6 pb-6 pt-0 rounded-b-2xl flex justify-between items-center gap-3">
             <button onclick="buyProduct(${
               item.product_id || 0
@@ -486,8 +513,6 @@ function renderBestDealsCards(items, container, isGridMode = false) {
   }
 }
 
-// ======================== ACTIONS & UTILS ========================
-
 // 5. Logic Pembelian Real (Update DB + Pipeline)
 window.buyProduct = async function (id, name) {
   const userStr = localStorage.getItem("user");
@@ -558,8 +583,13 @@ window.showProductDetail = function (productId) {
   const container = document.getElementById("detailPaket");
 
   if (modal && container) {
-    // Re-render isi modal dengan data produk yang diklik
     const priceDisplay = `Rp ${product.price.toLocaleString("id-ID")}`;
+
+    // --- SETUP VARIABEL BONUS UNTUK MODAL ---
+    let bonusStream = product.streaming_gb_bonus || 0;
+    let bonusGame = product.gaming_gb_bonus || 0; 
+    let bonusCall = product.call_minutes_bonus || 0;
+    let bonusRoam = product.roaming_days_bonus || 0;
 
     container.innerHTML = `
         <div class="p-8">
@@ -595,25 +625,33 @@ window.showProductDetail = function (productId) {
                       product.data_gb || 0
                     } GB</span>
                 </div>
+
                 <div class="text-sm text-gray-600 bg-gray-50 p-4 rounded-xl border border-gray-100 mt-6">
                     <p class="font-bold text-gray-800 mb-2">Termasuk:</p>
                     <ul class="list-disc ml-4 space-y-1">
                         <li>Kuota Utama ${product.data_gb || 0} GB</li>
+                        
                         ${
-                          product.streaming_gb_bonus > 0
-                            ? `<li>Bonus Streaming ${product.streaming_gb_bonus} GB</li>`
+                          bonusStream > 0
+                            ? `<li>Bonus Streaming ${bonusStream} GB</li>`
                             : ""
                         }
                         ${
-                          product.call_minutes_bonus > 0
-                            ? `<li>Bonus Telepon ${product.call_minutes_bonus} Menit</li>`
+                          bonusGame > 0
+                            ? `<li>Bonus Gaming ${bonusGame} GB</li>`
                             : ""
                         }
                         ${
-                          product.roaming_days_bonus > 0
-                            ? `<li>Roaming ${product.roaming_days_bonus} Hari</li>`
+                          bonusCall > 0
+                            ? `<li>Bonus Nelfon ${bonusCall} Menit</li>`
                             : ""
                         }
+                        ${
+                          bonusRoam > 0
+                            ? `<li>Bonus Roaming ${bonusRoam} Hari</li>`
+                            : ""
+                        }
+                        
                     </ul>
                 </div>
             </div>

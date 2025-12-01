@@ -101,7 +101,7 @@
                 <nav class="hidden md:flex items-center justify-center space-x-8">
                     <a href="/"
                         class="golden-small md:text-[0.98rem] text-gray-700 font-semibold hover:text-primary">Home</a>
-                    <a href="#"
+                    <a href="#best-deal-section"
                         class="golden-small md:text-[0.98rem] text-gray-700 font-semibold hover:text-primary">Promo</a>
                     <a href="/products"
                         class="golden-small md:text-[0.98rem] text-gray-700 font-semibold hover:text-primary scroll-link">Products</a>
@@ -133,7 +133,7 @@
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden">
             <a href="/" class="block py-2 px-6 golden-small text-gray-700 hover:bg-primary">Home</a>
-            <a href="#" class="block py-2 px-6 golden-small text-gray-700 hover:bg-primary">Promo</a>
+            <a href="#best-deal-section" class="block py-2 px-6 golden-small text-gray-700 hover:bg-primary">Promo</a>
             <a href="/products" class="block py-2 px-6 golden-small text-gray-700 hover:bg-primary">Products</a>
             <a href="#rekomendasi-section"
                 class="block py-2 px-6 golden-small text-gray-700 hover:bg-primary">Rekomendasi</a>
@@ -143,8 +143,6 @@
     <main>
         <!-- Hero Section -->
         <section class="relative w-full h-screen flex items-center overflow-hidden">
-
-            <!-- BUBBLE BACKGROUND (tidak mempengaruhi tinggi) -->
             <div class="absolute inset-0 overflow-hidden pointer-events-none">
                 <div
                     class="absolute top-40 left-10 w-10 h-10 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
@@ -166,7 +164,7 @@
 
             <!-- MAIN CONTENT -->
             <div
-                class="container mx-auto px-6 lg:px-20 relative z-10 flex flex-col-reverse md:flex-row items-center justify-between h-full">
+                class="container mb-10 mx-auto px-6 lg:px-20 relative z-10 flex flex-col-reverse md:flex-row items-center justify-between h-full">
 
                 <!-- LEFT TEXT -->
                 <div class="md:w-1/2 text-center md:text-left">
@@ -192,12 +190,9 @@
                     </div>
                 </div>
             </div>
-
         </section>
 
-
-
-        <!-- Kuesioner (Desain Asli User + Hidden Class) -->
+        <!-- Kuesioner  -->
         <section id="questionnaire-box" class="relative w-full py-32 hidden">
             <div
                 class="p-6 py-32 md:p-10 bg-white max-w-3xl mx-auto transition-transform duration-500 ease-in-out rounded-lg">
@@ -281,62 +276,70 @@
             <div
                 class="absolute bottom-0 left-0 w-full h-full bg-[url('../assets/img/garis-garis.png')] bg-no-repeat bg-cover ">
             </div>
-
             <div class="container mx-auto px-6 relative z-10">
                 <h2
                     class="golden-section-title font-bold text-center text-white mb-10 [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">
                     Keunggulan TelQ</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center ">
-                    <!-- Feature 1 -->
+        
+                    <!-- Feature 1: AI Personalization -->
                     <div
                         class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
                         <div class="flex justify-center mb-4">
-                            <iconify-icon icon="gravity-ui:signal" class="text-5xl text-primary"></iconify-icon>
+                            <!-- Icon Otak/AI -->
+                            <iconify-icon icon="fluent:brain-circuit-24-filled" class="text-5xl text-primary"></iconify-icon>
                         </div>
-                        <h3 class="golden-card-title font-bold text-gray-800">Sinyal Qenceng</h3>
-                        <p class="mt-3 golden-card-body text-gray-600">Akses internet yang lancar untuk kebutuhan
-                            browsing,
-                            chatting, dan download.</p>
-                    </div>
-                    <!-- Feature 2 -->
-                    <div
-                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
-                        <div class="flex justify-center mb-4">
-                            <iconify-icon icon="icon-park-solid:setting" class="text-5xl text-primary"></iconify-icon>
-                        </div>
-                        <h3 class="golden-card-title font-bold text-gray-800">Qustom Quota</h3>
-                        <p class="mt-3 golden-card-body text-gray-600">Pilihan paket yang beragam dan bisa di atur
-                            sesuai
-                            keinginan kamu sendiri.</p>
-                    </div>
-                    <!-- Feature 3 -->
-                    <div
-                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
-                        <div class="flex justify-center mb-4">
-                            <iconify-icon icon="tabler:coin-filled" class="text-5xl text-primary"></iconify-icon>
-                        </div>
-                        <h3 class="golden-card-title font-bold text-gray-800">TelQ Point</h3>
-                        <p class="mt-3 golden-card-body text-gray-600">Dapatkan points dengan membeli pulsa, kuota, dan
-                            tukarkan
-                            points menjadi kuota internet.</p>
-                    </div>
-                    <!-- Feature 4 -->
-                    <div
-                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
-                        <div class="flex justify-center mb-4">
-                            <iconify-icon icon="mdi:gift" class="text-5xl text-primary"></iconify-icon>
-                        </div>
-                        <h3 class="golden-card-title font-bold text-gray-800">Banyak Bonus</h3>
-                        <p class="mt-3 golden-card-body text-gray-600">Bonus berlimpah yang bisa kamu klaim di aplikasi
-                            TelQ App.
+                        <h3 class="golden-card-title font-bold text-gray-800">Rekomendasi AI</h3>
+                        <p class="mt-3 golden-card-body text-gray-600">
+                            Algoritma cerdas yang menganalisis pola penggunaanmu untuk memilihkan paket yang paling pas.
                         </p>
                     </div>
+        
+                    <!-- Feature 2: User Profiling -->
+                    <div
+                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
+                        <div class="flex justify-center mb-4">
+                            <!-- Icon Data/Analytics -->
+                            <iconify-icon icon="fluent:data-usage-24-filled" class="text-5xl text-primary"></iconify-icon>
+                        </div>
+                        <h3 class="golden-card-title font-bold text-gray-800">Analisis Akurat</h3>
+                        <p class="mt-3 golden-card-body text-gray-600">
+                            Memahami gaya hidup digitalmu, apakah kamu seorang Streamer, Gamer, atau Traveler sejati.
+                        </p>
+                    </div>
+        
+                    <!-- Feature 3: Cost Efficiency -->
+                    <div
+                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
+                        <div class="flex justify-center mb-4">
+                            <!-- Icon Dompet/Hemat -->
+                            <iconify-icon icon="solar:wallet-money-bold" class="text-5xl text-primary"></iconify-icon>
+                        </div>
+                        <h3 class="golden-card-title font-bold text-gray-800">Jaminan Hemat</h3>
+                        <p class="mt-3 golden-card-body text-gray-600">
+                            Sistem kami mencarikan kombinasi harga terbaik agar kamu tidak boros kuota dan biaya.
+                        </p>
+                    </div>
+        
+                    <!-- Feature 4: Smart Assistant -->
+                    <div
+                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
+                        <div class="flex justify-center mb-4">
+                            <!-- Icon Chatbot -->
+                            <iconify-icon icon="ri:robot-2-fill" class="text-5xl text-primary"></iconify-icon>
+                        </div>
+                        <h3 class="golden-card-title font-bold text-gray-800">Asisten Pintar</h3>
+                        <p class="mt-3 golden-card-body text-gray-600">
+                            Bingung memilih? Chatbot AI kami siap membantu menjawab pertanyaanmu 24/7.
+                        </p>
+                    </div>
+        
                 </div>
             </div>
         </section>
 
         <!-- BEST DEAL Section -->
-        <section class="relative py-16">
+        <section id="best-deal-section" class="best-deal relative py-16">
             <!-- Background Layers -->
             <div class="absolute inset-0 bg-[#F78018] -z-10"></div>
             <div
@@ -347,7 +350,7 @@
                 <div class="text-center mb-10">
                     <h2
                         class="golden-section-title text-white font-bold [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">
-                        BEST DEAL</h2>
+                        BEST SELLER</h2>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-end">
                     <!-- Left Column: Title and Controls -->
@@ -412,7 +415,7 @@
         </section>
 
         <!-- Rekomendasi Personal Section -->
-        <section class="relative py-32 pb-64">
+        <section id="rekomendasi-section" class="relative py-32 pb-64">
             <!-- Background Layers -->
             <div class="absolute inset-0 bg-[linear-gradient(0deg,rgba(255,255,255,0.76)_0%,#F78018_71.63%)] -z-10">
             </div>
@@ -513,8 +516,7 @@
                 <div class="lg:col-span-2 pl-4">
                     <div class="bg-[url('../assets/img/Logo_TelQ.png')] w-24 h-16 bg-no-repeat bg-contain"></div>
                     <p class="mt-3 text-200 golden-footer-text font-bold max-w-md">
-                        TelQ | Kuota Cepat, Murah & Terpercaya.<br>Quick, Quality, Quota, Quantity.<br>Pusat Bantuan &
-                        FAQ tersedia 24 Jam.<br>Kantor Pusat Layanan Digital, Surabaya..
+                        TelQ | Solusi Internet Cerdas & Personal.<br>Rekomendasi AI, Analisis Akurat, & Jaminan Hemat.<br>Dibantu Asisten Pintar 24 Jam.
                     </p>
                     <div class="flex space-x-4 mt-4">
                         <a href="#" class="text-3xl hover:text-primary"><iconify-icon
@@ -527,43 +529,40 @@
                                 icon="mdi:linkedin"></iconify-icon></a>
                     </div>
                     <div class="mt-8 pt-6 text-200 golden-footer-text font-medium">
-                        <p>© All rights reserved TelQ</p>
+                        <p>© 2025 TelQ — Capstone Project (Program Asah Dicoding)</p>
                     </div>
                 </div>
-                <!-- Column 2: Company -->
+                <!-- Column 2: Navigation -->
                 <div class="text-left">
-                    <h4 class="font-bold golden-card-title">Company</h4>
+                    <h4 class="font-bold golden-card-title">Navigation</h4>
                     <ul class="mt-4 space-y-2 text-200 golden-footer-text">
-                        <li><a href="#" class="hover:text-primary">Home</a></li>
-                        <li><a href="#" class="hover:text-primary">About Us</a></li>
-                        <li><a href="#" class="hover:text-primary">Feature</a></li>
-                        <li><a href="#" class="hover:text-primary">Pricing</a></li>
-                        <li><a href="#" class="hover:text-primary">Review</a></li>
+                        <li><a href="/" class="hover:text-primary">Home</a></li>
+                        <li><a href="/products" class="hover:text-primary">Products</a></li>
+                        <li><a href="/profile" class="hover:text-primary">Profile</a></li>
                     </ul>
                 </div>
                 <!-- Column 3: Template -->
                 <div class="text-left">
                     <h4 class="font-bold golden-card-title">Template</h4>
                     <ul class="mt-4 space-y-2 text-200 golden-footer-text">
-                        <li><a href="#" class="hover:text-primary">Style Guide</a></li>
-                        <li><a href="#" class="hover:text-primary">Licenses</a></li>
-                        <li><a href="#" class="hover:text-primary">Changelog</a></li>
-                        <li><a href="#" class="hover:text-primary">Contact Us</a></li>
-                        <li><a href="#" class="hover:text-primary">404</a></li>
+                        <li><a href="https://www.figma.com/design/gX2yRDWUo8Deq5kVlFJEQR/Capstone---Telco?node-id=0-1&t=hLb939k7jkKsUuab-1" class="hover:text-primary" target="_blank">Style Guide</a></li>
+                        <li><a href="https://www.figma.com/board/Yavux6azRsJ62ol9yr90jn/Design-System?node-id=0-1&t=95Aho0m9QNsLykX5-1" class="hover:text-primary" target="_blank">Architectur</a></li>
+                        <li><a href="#" class="hover:text-primary">Documentation</a></li>
+                        <li><a href="https://github.com/A25-CS012-Capstone-Project/TelQ" class="hover:text-primary" target="_blank">Github</a></li>
                     </ul>
                 </div>
-                <!-- Column 4: Template -->
+                <!-- Column 4: Contact -->
                 <div class="text-left">
-                    <h4 class="font-bold golden-card-title">Template</h4>
+                    <h4 class="font-bold golden-card-title">Contact</h4>
                     <ul class="mt-4 space-y-2 text-200 golden-footer-text">
-                        <li><a href="#" class="hover:text-primary">(62) 857-4098-0695</a></li>
-                        <li><a href="#" class="hover:text-primary">Hello@cluster.com</a></li>
-                        <li><a href="#" class="hover:text-primary">Mario Bhona Parte</a></li>
+                        <li><a href="mailto:a25-cs012@student.devacademy.id" class="hover:text-primary" target="_blank">A25-CS012</a></li>
+                        <li><a href="mailto:a25-cs012@student.devacademy.id" class="hover:text-primary" target="_blank">Email</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </footer>
+
     <!-- Floating buttons: Chatbot + Back to Top -->
     <div class="fixed bottom-6 right-6 flex items-center gap-3 z-50">
         <!-- Chatbot toggle -->

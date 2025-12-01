@@ -66,8 +66,6 @@ async function handleLogin(event) {
     const result = await response.json();
 
     if (response.ok) {
-      // SIMPAN SESI USER DI BROWSER (LocalStorage)
-      // Ini penting agar kita tahu siapa yang sedang login di halaman Dashboard nanti
       localStorage.setItem("user", JSON.stringify(result.user));
 
       alert("Login Berhasil! Mengalihkan ke dashboard...");
@@ -83,7 +81,6 @@ async function handleLogin(event) {
   }
 }
 
-// --- FUNGSI LOGOUT (Untuk dipanggil nanti) ---
 function handleLogout() {
   localStorage.removeItem("user");
   window.location.href = "/login";

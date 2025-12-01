@@ -32,6 +32,7 @@ class PredictionService:
         return pd.read_sql(sql, db_engine, params=(customer_id,))
 
     def _get_candidate_products(self) -> pd.DataFrame:
+        # [PERBAIKAN 1]: Menambahkan gaming_gb_bonus ke Query SQL
         sql = """
             SELECT
                 product_id,
@@ -40,6 +41,7 @@ class PredictionService:
                 duration_days,
                 data_gb,
                 streaming_gb_bonus,
+                gaming_gb_bonus,
                 social_gb_bonus,
                 call_minutes_bonus,
                 sms_bonus,
@@ -128,22 +130,23 @@ class PredictionService:
                 test_df[col] = value
 
         # 2. PREPROCESSING UNTUK MODEL
-        # Metadata yang akan dikirim ke FE + dipakai untuk rule & explanation
-        # --- PERBAIKAN: Menambahkan duration_days agar tidak hilang ---
+        # [PERBAIKAN 2]: Menambahkan field bonus ke metadata agar tidak hilang
         result_metadata = test_df[
             [
                 "product_id",
                 "product_name",
                 "price",
                 "data_gb",
-                "duration_days", # <--- DITAMBAHKAN
+                "duration_days",
                 "roaming_days_bonus",
                 "streaming_gb_bonus",
-                "call_minutes_bonus",
+                "gaming_gb_bonus",     # <-- Ditambahkan
+                "call_minutes_bonus",  # <-- Ditambahkan
+                "sms_bonus"            # <-- Ditambahkan
             ]
         ].copy()
 
-        drop_cols_ml = ["customer_id", "product_name", "plan_type", "general_offer", "duration_days"] # Drop duration dr ML input jika tidak dipake training
+        drop_cols_ml = ["customer_id", "product_name", "plan_type", "general_offer", "duration_days"]
         test_df_ml = test_df.drop(columns=drop_cols_ml, errors="ignore")
         test_df_enc = pd.get_dummies(test_df_ml)
 
@@ -194,13 +197,23 @@ class PredictionService:
             items = []
             for row in top.itertuples():
                 reason_text = self._generate_explanation(user_features_dict, row)
+                
+                # [PERBAIKAN 3]: Memasukkan data bonus ke dalam JSON output
                 items.append({
                     "product_id": int(row.product_id),
                     "product_name": row.product_name,
                     "price": int(row.price),
-                    "data_gb": int(row.data_gb), # <--- DITAMBAHKAN
-                    "duration_days": int(row.duration_days) if pd.notnull(row.duration_days) else 30, # <--- DITAMBAHKAN
-                    "streaming_gb_bonus": int(row.streaming_gb_bonus), # <--- Tambahan buat UI
+                    "data_gb": int(row.data_gb),
+                    "duration_days": int(row.duration_days) if pd.notnull(row.duration_days) else 30,
+                    
+                    # --- DATA BONUS YANG DIPERBAIKI ---
+                    "streaming_gb_bonus": int(row.streaming_gb_bonus or 0),
+                    "gaming_gb_bonus": int(row.gaming_gb_bonus or 0),       # <-- Fix
+                    "call_minutes_bonus": int(row.call_minutes_bonus or 0), # <-- Fix
+                    "roaming_days_bonus": int(row.roaming_days_bonus or 0), # <-- Fix
+                    "sms_bonus": int(row.sms_bonus or 0),                   # <-- Fix
+                    # ----------------------------------
+                    
                     "final_score": float(row.final_score),
                     "ml_score": float(row.ml_score),
                     "reason": reason_text,
@@ -220,12 +233,21 @@ class PredictionService:
             
             items = []
             for row in fallback.itertuples():
+                # Pastikan fallback juga mengirim data bonus
                 items.append({
                     "product_id": int(row.product_id),
                     "product_name": row.product_name,
                     "price": int(row.price),
-                    "data_gb": int(row.data_gb), # <--- DITAMBAHKAN
-                    "duration_days": int(row.duration_days) if pd.notnull(row.duration_days) else 30, # <--- DITAMBAHKAN
+                    "data_gb": int(row.data_gb),
+                    "duration_days": int(row.duration_days) if pd.notnull(row.duration_days) else 30,
+                    
+                    # --- DATA BONUS FALLBACK ---
+                    "streaming_gb_bonus": int(row.streaming_gb_bonus or 0),
+                    "gaming_gb_bonus": int(row.gaming_gb_bonus or 0),
+                    "call_minutes_bonus": int(row.call_minutes_bonus or 0),
+                    "roaming_days_bonus": int(row.roaming_days_bonus or 0),
+                    # ---------------------------
+
                     "reason": "Paket hemat rekomendasi kami.",
                 })
 
@@ -303,7 +325,7 @@ class PredictionService:
                 )
                 VALUES (%s, 'Prepaid', 'Unknown', 10.0, 100000, 1, %s, %s, 0, %s, 0, %s)
                 ON CONFLICT (customer_id) DO UPDATE SET
-                    pct_video_usage   = EXCLUDED.pct_video_usage,
+                    pct_video_usage    = EXCLUDED.pct_video_usage,
                     avg_call_duration = EXCLUDED.avg_call_duration,
                     travel_score      = EXCLUDED.travel_score,
                     spending_tier     = EXCLUDED.spending_tier;
