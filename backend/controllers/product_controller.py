@@ -71,7 +71,7 @@ def get_all_products():
                 # Cari yang punya bonus streaming ATAU namanya mengandung 'Stream'
                 conditions.append("(streaming_gb_bonus > 0 OR product_name ILIKE '%%Stream%%')")
             elif category == 'Gaming':
-                conditions.append("(product_name ILIKE '%%Game%%' OR product_name ILIKE '%%Play%%')")
+                conditions.append("(gaming_gb_bonus > 0 OR product_name ILIKE '%%Game%%' OR product_name ILIKE '%%Play%%')")
             elif category == 'Roaming':
                 conditions.append("(roaming_days_bonus > 0 OR product_name ILIKE '%%Roam%%')")
             elif category == 'Voice':
