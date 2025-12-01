@@ -40,8 +40,8 @@ services:
       # --- [PERBAIKAN DISINI] ---
       # Ubah nama file sesuai dengan file asli kamu (.pkl)
       # Pastikan nama depannya (telq_model) juga sesuai dengan file kamu
-      - ML_MODEL_PATH=backend/models/telq_model.pkl
-      - ML_COLUMNS_PATH=backend/models/telq_model_columns.pkl
+      - ML_MODEL_PATH=backend/ml/output/XGBoost_v3_25Nov2025/xgb_telco_optimal_v1.pkl
+      - ML_COLUMNS_PATH=backend/ml/output/XGBoost_v3_25Nov2025/xgb_feature_columns_v1.pkl
 
 volumes:
   postgres_data:

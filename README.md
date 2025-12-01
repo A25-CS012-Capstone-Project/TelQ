@@ -1,7 +1,5 @@
 TelQ - Intelligent Telecommunication Plan Recommender
 
-<!-- Ganti path gambar di atas jika ada banner project -->
-
 TelQ adalah aplikasi web cerdas yang membantu pengguna menemukan paket telekomunikasi (Internet, Telepon, Roaming) terbaik berdasarkan pola penggunaan mereka menggunakan Machine Learning (Hybrid Recommendation System).
 
 Project ini dibuat sebagai Capstone Project untuk program Dicoding - Pengembang Machine Learning & Front-End.
@@ -161,22 +159,6 @@ User (Pelanggan)
 Silakan Register akun baru di halaman Login.
 
 Atau gunakan user demo (jika ada di database).
-
-📂 Struktur Folder
-
-TelQ/
-├── assets/             # Gambar, CSS, JS Frontend
-├── backend/
-│   ├── controllers/    # Logika Auth, Produk, Rekomendasi
-│   ├── models/         # Skema Database & Script Init DB
-│   ├── services/       # Logic ML & Helper
-│   └── config.py       # Konfigurasi App
-├── templates/          # File HTML (Home, Login, Admin)
-├── app.py              # Entry Point Aplikasi Flask
-├── requirements.txt    # Daftar Library
-└── README.md           # Dokumentasi ini
-
-
 
 ❓ Troubleshooting (Masalah Umum)
 
