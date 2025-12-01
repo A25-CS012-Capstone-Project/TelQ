@@ -7,3 +7,4 @@ sqlalchemy
 joblib
 scikit-learn
 xgboost
+google-generativeai
