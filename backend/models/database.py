@@ -9,23 +9,26 @@ import sys
 # Tambahkan direktori root backend ke sys.path untuk impor config
 # Karena file ini dipanggil dari luar backend/
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from backend.config import DATABASE_URL, ML_MODEL_PATH, ML_COLUMNS_PATH
+from backend.config import DATABASE_URL
 
 # =================================================================
 # FUNGSI HELPER PYTHON UNTUK KONEKSI
 # =================================================================
 def get_db_connection():
     """Mengembalikan objek koneksi psycopg2 baru menggunakan DATABASE_URL."""
-    conn = psycopg2.connect(DATABASE_URL)
-    return conn
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        return conn
+    except Exception as e:
+        print(f"❌ Error Connection: {e}")
+        sys.exit(1)
 
 # =================================================================
 # DEFINISI SKEMA DAN DATA INSERSI (SQL MENTAH)
 # =================================================================
 
-# Skema SQL yang sudah Anda buat (dibuat di database.py sebelumnya)
 CREATE_TABLES_SQL = """
--- Hapus tabel jika sudah ada (untuk pengembangan/testing)
+-- Hapus tabel jika sudah ada (untuk reset/testing)
 DROP TABLE IF EXISTS user_features CASCADE;
 DROP TABLE IF EXISTS purchase_history CASCADE;
 DROP TABLE IF EXISTS products CASCADE;
@@ -80,11 +83,10 @@ CREATE TABLE user_features (
     topup_freq INTEGER NOT NULL,
     travel_score FLOAT NOT NULL,
     complain_count INTEGER NOT NULL,
-    spending_tier VARCHAR(10) NOT NULL -- Tambahkan kembali kolom ini untuk konsistensi di pipeline lama
+    spending_tier VARCHAR(10) NOT NULL
 );
 """
 
-# Data insersi produk (disertakan di database.py sebelumnya)
 INSERT_PRODUCTS_SQL = """
 INSERT INTO products (
     product_id,
@@ -124,3 +126,42 @@ INSERT INTO products (
 (22, 'SocmedMax 40GB (15+25)', 110000, 30, 15, 0, 0, 25, 0, 0, 0, 'Social Offer'),
 (23, 'Super Plan 50GB All-in-One', 160000, 30, 50, 10, 10, 10, 500, 200, 3, 'Premium Offer');
 """
+
+# =================================================================
+# BAGIAN EKSEKUSI (Jalankan ini agar tabel terbuat)
+# =================================================================
+def init_db():
+    """Fungsi untuk menjalankan Query SQL ke Database."""
+    conn = None
+    try:
+        print(f"🔄 Menghubungkan ke database via: {DATABASE_URL}")
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        print("🔨 (1/2) Membuat tabel (DROP & CREATE)...")
+        cur.execute(CREATE_TABLES_SQL)
+        
+        print("📦 (2/2) Mengisi data produk awal...")
+        cur.execute(INSERT_PRODUCTS_SQL)
+
+        # COMMIT adalah langkah terpenting! Tanpa ini data tidak tersimpan.
+        conn.commit()
+        
+        print("\n✅ SUKSES: Database berhasil diinisialisasi!")
+        print("   - Tabel created: users, products, purchase_history, user_features")
+        print("   - Data: 23 Produk berhasil dimasukkan.")
+        
+        cur.close()
+    except Exception as e:
+        print(f"\n❌ GAGAL: Terjadi kesalahan saat inisialisasi database.")
+        print(f"Pesan Error: {e}")
+        if conn:
+            conn.rollback()
+    finally:
+        if conn:
+            conn.close()
+            print("🔌 Koneksi database ditutup.")
+
+if __name__ == "__main__":
+    # Kode di bawah ini hanya jalan jika file dipanggil langsung: python database.py
+    init_db()

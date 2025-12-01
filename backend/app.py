@@ -13,7 +13,7 @@ from backend.controllers.auth_controller import auth_bp
 from backend.controllers.product_controller import product_bp
 from backend.controllers.user_controller import user_bp 
 from backend.controllers.chatbot_controller import chatbot_bp # <--- IMPOR BARU
-# from backend.controllers.admin_controller import admin_bp
+from backend.controllers.admin_controller import admin_bp
 
 def create_app():
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -38,7 +38,7 @@ def create_app():
     app.register_blueprint(product_bp, url_prefix='/api/v1')
     app.register_blueprint(user_bp, url_prefix='/api/v1/users')
     app.register_blueprint(chatbot_bp, url_prefix='/api/v1') # <--- DAFTAR BARU
-    # app.register_blueprint(admin_bp, url_prefix='/api/v1/admin')
+    app.register_blueprint(admin_bp, url_prefix='/api/v1/admin')
     
     # --- ROUTE ---
     @app.route('/')
