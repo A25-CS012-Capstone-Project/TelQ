@@ -24,18 +24,19 @@ def get_user_profile():
 
         # 2. AMBIL HISTORY PEMBELIAN (Lengkap dengan kategori untuk filter)
         sql_history = """
-            SELECT p.product_name, p.data_gb, p.price, p.duration_days AS validity_days, 
-                   ph.purchase_date,
-                   CASE 
-                        WHEN p.product_name ILIKE '%%stream%%' THEN 'Streaming'
-                        WHEN p.product_name ILIKE '%%roam%%' THEN 'Roaming'
-                        WHEN p.product_name ILIKE '%%voice%%' OR p.product_name ILIKE '%%talk%%' THEN 'Voice'
-                        ELSE 'General'
-                   END as category
+            SELECT 
+                p.product_name,
+                p.price,
+                p.data_gb,
+                p.duration_days,
+                ph.purchase_date,
+                p.target_offer AS category 
+                
             FROM purchase_history ph
             JOIN products p ON ph.product_id = p.product_id
             WHERE ph.customer_id = %s
             ORDER BY ph.purchase_date DESC
+            LIMIT 10
         """
         history_df = pd.read_sql(sql_history, conn, params=(customer_id,))
         

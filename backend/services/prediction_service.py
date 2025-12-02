@@ -8,7 +8,6 @@ from backend.models.database import get_db_connection
 from backend.config import DATABASE_URL, ML_MODEL_PATH, ML_COLUMNS_PATH
 
 # ====================== LOAD MODEL SEKALI DI AWAL ==========================
-
 try:
     MODEL = joblib.load(ML_MODEL_PATH)
     MODEL_COLS = joblib.load(ML_COLUMNS_PATH)
@@ -32,7 +31,6 @@ class PredictionService:
         return pd.read_sql(sql, db_engine, params=(customer_id,))
 
     def _get_candidate_products(self) -> pd.DataFrame:
-        # [PERBAIKAN 1]: Menambahkan gaming_gb_bonus ke Query SQL
         sql = """
             SELECT
                 product_id,
@@ -53,61 +51,144 @@ class PredictionService:
 
     # --------------------- EXPLAINABLE AI LOGIC ---------------------
     def _generate_explanation(self, user_features: dict, product_row) -> str:
+        """
+        Buat explanation yang singkat dan content-based aware.
+        Menyebutkan sosial saat produk punya social_gb_bonus dan user heavy video (pct_video_usage).
+        """
         reasons = []
 
-        # 1. Ambil data user
+        # Ambil data user
         travel_score = float(user_features.get("travel_score", 0) or 0)
         pct_video = float(user_features.get("pct_video_usage", 0) or 0)
         avg_call = float(user_features.get("avg_call_duration", 0) or 0)
         monthly_spend = float(user_features.get("monthly_spend", 0) or 0)
         avg_data = float(user_features.get("avg_data_usage_gb", 0) or 0)
 
-        # 2. Ambil data produk
-        p_roaming = getattr(product_row, "roaming_days_bonus", 0) or 0
-        p_streaming = getattr(product_row, "streaming_gb_bonus", 0) or 0
-        p_call = getattr(product_row, "call_minutes_bonus", 0) or 0
-        p_data = getattr(product_row, "data_gb", 0) or 0
-        p_price = getattr(product_row, "price", 0) or 0
+        # Ambil data produk (safely)
+        p_roaming = float(getattr(product_row, "roaming_days_bonus", 0) or 0)
+        p_streaming = float(getattr(product_row, "streaming_gb_bonus", 0) or 0)
+        p_social = float(getattr(product_row, "social_gb_bonus", 0) or 0)
+        p_call = float(getattr(product_row, "call_minutes_bonus", 0) or 0)
+        p_data = float(getattr(product_row, "data_gb", 0) or 0)
+        p_price = float(getattr(product_row, "price", 0) or 0)
 
-        # 3. Logika Pencocokan
+        # Prioritas content-based:
+        # - jika user heavy video AND product punya streaming/social -> sebutkan
+        if pct_video > 0.6 and (p_streaming > 0 or p_social > 0):
+            if p_streaming > 0 and p_social > 0:
+                reasons.append("kuota streaming + sosmed cocok buat kamu yang suka video")
+            elif p_streaming > 0:
+                reasons.append("kuota khusus streaming untuk nonton video")
+            else:
+                reasons.append("bonus sosmed yang pas untuk konsumsi video pendek di sosial media")
+
+        # roaming
         if travel_score > 0.6 and p_roaming > 0:
             reasons.append("bonus roaming untuk traveling")
-        if pct_video > 0.6 and p_streaming > 0:
-            reasons.append("kuota ekstra khusus streaming")
+
+        # telepon
         if avg_call > 300 and p_call > 0:
             reasons.append("bonus nelpon yang besar")
-        if avg_data > 20 and p_data >= 20:
-            reasons.append(f"kuota internet besar ({p_data}GB)")
 
+        # penggunaan data tinggi
+        if avg_data > 20 and p_data >= 20:
+            reasons.append(f"kuota internet besar ({int(p_data)}GB)")
+
+        # harga relatif terhadap kebiasaan belanja
         if monthly_spend > 0:
             if p_price < monthly_spend * 0.8:
                 reasons.append("harganya lebih hemat dari pola belanjamu")
             elif p_price > monthly_spend * 1.5:
-                reasons.append("peningkatan fitur yang lebih maksimal dibanding paket biasa")
+                reasons.append("fitur lebih lengkap untuk upgrade pengalamanmu")
 
         if not reasons:
-            if p_streaming > 0: return "Paket populer dengan bonus hiburan."
-            if p_data > 50: return "Pilihan terbaik untuk kamu yang butuh internetan puas."
-            if p_price < 25000: return "Paket hemat yang ramah di kantong."
+            # fallback short messages
+            if p_streaming > 0:
+                return "Paket populer dengan bonus hiburan."
+            if p_social > 0:
+                return "Paket dengan bonus sosial media yang sering dicari."
+            if p_data > 50:
+                return "Pilihan terbaik untuk kamu yang butuh internetan puas."
+            if p_price < 25000:
+                return "Paket hemat yang ramah di kantong."
             return "Rekomendasi terbaik berdasarkan pola penggunaanmu."
 
-        return "Cocok untukmu karena ada " + " dan ".join(reasons) + "."
+        return "Cocok untukmu karena " + " dan ".join(reasons) + "."
+
+    # --------------------- CONTENT-BASED HELPERS ---------------------
+    def _compute_content_score(self, user_features: dict, product_row) -> float:
+        """
+        Hitung skor content-based sederhana: seberapa relevan produk untuk profile user.
+        - Menghubungkan pct_video_usage dengan streaming & social bonus.
+        - Memperhitungkan kesesuaian kuota data.
+        - Memberi poin kecil untuk roaming jika user sering traveling.
+        Output: float di sekitar -1.0 sampai +1.5 (nanti dinormalkan).
+        """
+        score = 0.0
+
+        pct_video = float(user_features.get("pct_video_usage", 0) or 0)
+        travel_score = float(user_features.get("travel_score", 0) or 0)
+        avg_data = float(user_features.get("avg_data_usage_gb", 0) or 0)
+        user_spend = float(user_features.get("monthly_spend", 0) or 0)
+
+        p_streaming = float(getattr(product_row, "streaming_gb_bonus", 0) or 0)
+        p_social = float(getattr(product_row, "social_gb_bonus", 0) or 0)
+        p_data = float(getattr(product_row, "data_gb", 0) or 0)
+        p_roaming = float(getattr(product_row, "roaming_days_bonus", 0) or 0)
+        p_price = float(getattr(product_row, "price", 0) or 0)
+
+        # === 1. User video-heavy: kasih reward ke streaming/socmed (lebih soft) ===
+        if pct_video > 0.55:
+            if p_streaming > 0:
+                score += 0.35   # dulu 0.6
+            if p_social > 0:
+                score += 0.25   # dulu 0.5
+
+        # === 2. User BUKAN video-heavy: penalti halus untuk produk yang "video-ish" ===
+        if pct_video < 0.25 and (p_streaming > 0 or p_social > 0):
+            # user jarang video, tapi produk ini jualan streaming/socmed
+            score -= 0.20
+
+        # === 3. Data match: bila product data >= kebutuhan user, kasih poin kecil ===
+        if avg_data > 0:
+            diff = (p_data - avg_data) / max(avg_data, 1)
+            score += max(min(diff * 0.25, 0.25), -0.2)
+
+        # Jika user heavy data tapi tidak terlalu video-centric,
+        # paket pure data besar tetap dapat poin
+        if pct_video <= 0.55 and avg_data > 15 and p_data >= avg_data:
+            score += 0.2
+
+        # === 4. Travel: reward roaming presence ===
+        if travel_score > 0.6 and p_roaming > 0:
+            score += 0.4
+
+        # === 5. Price sensitivity ===
+        if user_spend > 0:
+            if user_spend < 50000 and p_price > 100000:
+                score -= 0.6
+            else:
+                price_ratio = p_price / max(user_spend, 1)
+                if 0.6 <= price_ratio <= 1.2:
+                    score += 0.15
+
+        return score
 
     # --------------------- REKOMENDASI ---------------------
     def get_recommendations(self, customer_id: str, top_k: int = 8):
-        # 0. Cek user_features
+        # 0. Ambil user features
         user_df = self._get_user_features(customer_id)
         if user_df.empty:
             return {"status": "COLD", "recommendations": []}
 
-        # 1. Ambil kandidat produk
         candidate_products_df = self._get_candidate_products()
         if candidate_products_df.empty:
             return {"status": "NO_PRODUCTS", "recommendations": []}
 
+        # copy
         test_df = candidate_products_df.copy()
 
-        # 1.1. Ambil fitur user
+        # 1. Ambil fitur user (baris pertama)
         user_row = user_df.iloc[0]
         user_features_dict = user_row.to_dict()
 
@@ -116,7 +197,22 @@ class PredictionService:
         user_avg_call = float(user_features_dict.get("avg_call_duration", 0) or 0)
         user_spend = float(user_features_dict.get("monthly_spend", 0) or 0)
 
-        # 1.2. Filter budget
+        # === 1.b Soft gating produk pure streaming untuk user non-video-heavy ===
+        # Definisi "pure streaming": data_gb = 0, tidak ada call/sms/roaming,
+        # cuma jual streaming (dan mungkin sedikit social).
+        is_non_video_user = user_pct_video < 0.30
+        if is_non_video_user:
+            mask_pure_stream = (
+                (test_df["streaming_gb_bonus"] > 0) &
+                (test_df["data_gb"] == 0) &
+                (test_df["call_minutes_bonus"] == 0) &
+                (test_df["roaming_days_bonus"] == 0)
+            )
+            filtered = test_df[~mask_pure_stream].copy()
+            if not filtered.empty:
+                test_df = filtered
+
+        # 2. Filter budget awal (safety)
         if user_spend > 0:
             max_price = max(user_spend * 1.5, 20000)
             test_df = test_df[test_df["price"] <= max_price].copy()
@@ -124,68 +220,134 @@ class PredictionService:
         if test_df.empty:
             test_df = candidate_products_df.copy()
 
-        # 1.3. Broadcast fitur user
+        # 3. Broadcast fitur user (so each product row has user context)
         for col, value in user_features_dict.items():
             if col != "customer_id":
                 test_df[col] = value
 
-        # 2. PREPROCESSING UNTUK MODEL
-        # [PERBAIKAN 2]: Menambahkan field bonus ke metadata agar tidak hilang
-        result_metadata = test_df[
-            [
-                "product_id",
-                "product_name",
-                "price",
-                "data_gb",
-                "duration_days",
-                "roaming_days_bonus",
-                "streaming_gb_bonus",
-                "gaming_gb_bonus",     # <-- Ditambahkan
-                "call_minutes_bonus",  # <-- Ditambahkan
-                "sms_bonus"            # <-- Ditambahkan
-            ]
-        ].copy()
+        # 4. PREPROCESSING & METADATA
+        metadata_cols = [
+            "product_id",
+            "product_name",
+            "price",
+            "data_gb",
+            "duration_days",
+            "roaming_days_bonus",
+            "streaming_gb_bonus",
+            "gaming_gb_bonus",
+            "social_gb_bonus",
+            "call_minutes_bonus",
+            "sms_bonus",
+        ]
+        # Pastikan metadata ada (jika ada kolom hilang di DB, kita fill dengan 0)
+        for c in metadata_cols:
+            if c not in test_df.columns:
+                test_df[c] = 0
 
+        result_metadata = test_df[metadata_cols].copy()
+
+        # 5. Siapkan DataFrame untuk model (drop kolom non-feature jika ada)
         drop_cols_ml = ["customer_id", "product_name", "plan_type", "general_offer", "duration_days"]
         test_df_ml = test_df.drop(columns=drop_cols_ml, errors="ignore")
         test_df_enc = pd.get_dummies(test_df_ml)
 
+        # Pastikan semua kolom yang diharapkan model ada dengan urutan MODEL_COLS
         if MODEL_COLS is not None:
             test_df_final = test_df_enc.reindex(columns=MODEL_COLS, fill_value=0)
         else:
             test_df_final = None
 
-        # 3. PREDIKSI (ML SCORE) + HYBRID RERANKING
+        # 6. PREDIKSI ML (jika tersedia) + Hybrid reranking (rule + content)
         if MODEL is not None and test_df_final is not None:
             try:
                 ml_scores = MODEL.predict_proba(test_df_final)[:, 1]
                 result_metadata["ml_score"] = ml_scores
             except Exception:
+                # jika model gagal prediksi, beri skor tengah
                 result_metadata["ml_score"] = 0.5
 
-            # 3.1. Hitung rule_score
+            # 6.1. Rule-based scorer (lebih soft, plus penalti untuk streaming jika user non-video)
             def rule_score(row):
                 score = 0.0
+
+                p_socmed = row.get("social_gb_bonus", 0)
+                p_stream = row.get("streaming_gb_bonus", 0)
+                p_roam = row.get("roaming_days_bonus", 0)
+                p_call = row.get("call_minutes_bonus", 0)
+                price = row.get("price", 0)
+
+                # Baseline kecil jika ada salah satu bonus
+                if p_socmed > 0 or p_stream > 0 or p_roam > 0:
+                    score += 0.05
+
+                # --- Penalti tambahan: user non-video, produk streaming/socmed heavy ---
+                if is_non_video_user and (p_stream > 0 or p_socmed > 0):
+                    # Kalau produk ini tidak punya call/roaming, artinya benar-benar entertainment,
+                    # kita tekan lebih keras
+                    if p_call == 0 and p_roam == 0:
+                        score -= 0.4
+                    else:
+                        score -= 0.2
+
+                # 1. Travel Logic
                 if user_travel_score > 0.6:
-                    score += 1.0 if row["roaming_days_bonus"] > 0 else -0.5
-                elif user_pct_video > 0.6:
-                    score += 0.7 if row["streaming_gb_bonus"] > 0 else -0.1
-                elif user_avg_call > 300:
-                    score += 0.5 if row["call_minutes_bonus"] > 0 else 0
-                if user_spend < 50000 and row["price"] > 100000:
+                    if p_roam > 0:
+                        score += 0.8
+                    else:
+                        score -= 0.3
+
+                # 2. Video / Social Logic (naik threshold, bonus dikurangi)
+                if user_pct_video > 0.5:
+                    if p_stream > 0 and p_socmed > 0:
+                        score += 0.4
+                    elif p_stream > 0 or p_socmed > 0:
+                        score += 0.25
+
+                # 3. Voice Logic
+                if user_avg_call > 300 and p_call > 0:
+                    score += 0.4
+
+                # 4. Penalty Mahal
+                if user_spend < 50000 and price > 100000:
                     score -= 0.8
+
                 return score
 
             result_metadata["rule_score"] = result_metadata.apply(rule_score, axis=1)
 
-            # 3.2. Kombinasi
-            alpha = 0.85
+            # 6.2. Content-based score
+            content_scores = []
+            for r in test_df.itertuples():
+                content_scores.append(self._compute_content_score(user_features_dict, r))
+            result_metadata["content_score"] = content_scores
+
+            # 6.3. Normalize scores to comparable ranges
+            def _normalize_series(s, clip_min=0.0, clip_max=1.0):
+                if s is None or len(s) == 0:
+                    return s
+                minv = s.min()
+                maxv = s.max()
+                if pd.isna(minv) or pd.isna(maxv) or minv == maxv:
+                    return pd.Series([0.5] * len(s), index=s.index)
+                norm = (s - minv) / (maxv - minv)
+                return norm.clip(clip_min, clip_max)
+
+            result_metadata["ml_score_n"] = _normalize_series(result_metadata["ml_score"])
+            result_metadata["rule_score_n"] = _normalize_series(result_metadata["rule_score"], clip_min=0.0, clip_max=1.0)
+            result_metadata["content_score_n"] = _normalize_series(result_metadata["content_score"], clip_min=0.0, clip_max=1.0)
+
+            # --- BOBOT: ML utama, rule + content sebagai penyesuai bisnis ---
+            ml_w = 0.60
+            rule_w = 0.25
+            content_w = 0.15
+
             result_metadata["final_score"] = (
-                alpha * result_metadata["ml_score"]
-                + (1 - alpha) * result_metadata["rule_score"]
+                ml_w * result_metadata["ml_score_n"]
+                + rule_w * result_metadata["rule_score_n"]
+                + content_w * result_metadata["content_score_n"]
             )
 
-            # 4. Urutkan & format output
+            # 7. Sort & format output
             all_recs_df = result_metadata.sort_values(by="final_score", ascending=False)
             top = all_recs_df.head(top_k)
 
@@ -197,23 +359,22 @@ class PredictionService:
             items = []
             for row in top.itertuples():
                 reason_text = self._generate_explanation(user_features_dict, row)
-                
-                # [PERBAIKAN 3]: Memasukkan data bonus ke dalam JSON output
+
                 items.append({
                     "product_id": int(row.product_id),
                     "product_name": row.product_name,
                     "price": int(row.price),
                     "data_gb": int(row.data_gb),
                     "duration_days": int(row.duration_days) if pd.notnull(row.duration_days) else 30,
-                    
-                    # --- DATA BONUS YANG DIPERBAIKI ---
+
+                    # --- bonus fields ---
                     "streaming_gb_bonus": int(row.streaming_gb_bonus or 0),
-                    "gaming_gb_bonus": int(row.gaming_gb_bonus or 0),       # <-- Fix
-                    "call_minutes_bonus": int(row.call_minutes_bonus or 0), # <-- Fix
-                    "roaming_days_bonus": int(row.roaming_days_bonus or 0), # <-- Fix
-                    "sms_bonus": int(row.sms_bonus or 0),                   # <-- Fix
-                    # ----------------------------------
-                    
+                    "gaming_gb_bonus": int(row.gaming_gb_bonus or 0),
+                    "social_gb_bonus": int(row.social_gb_bonus or 0),
+                    "call_minutes_bonus": int(row.call_minutes_bonus or 0),
+                    "roaming_days_bonus": int(row.roaming_days_bonus or 0),
+                    "sms_bonus": int(row.sms_bonus or 0),
+
                     "final_score": float(row.final_score),
                     "ml_score": float(row.ml_score),
                     "reason": reason_text,
@@ -225,28 +386,27 @@ class PredictionService:
                 "items": items,
             }
 
-        # 4. Fallback
+        # 8. Fallback (jika model tidak siap)
         else:
             print("⚠️ MODEL tidak siap, fallback ke produk termurah.")
             fallback = candidate_products_df.sort_values("price").head(top_k).copy()
             recommendations = [f"(fallback) {name}" for name in fallback["product_name"].tolist()]
-            
+
             items = []
             for row in fallback.itertuples():
-                # Pastikan fallback juga mengirim data bonus
                 items.append({
                     "product_id": int(row.product_id),
                     "product_name": row.product_name,
                     "price": int(row.price),
                     "data_gb": int(row.data_gb),
                     "duration_days": int(row.duration_days) if pd.notnull(row.duration_days) else 30,
-                    
-                    # --- DATA BONUS FALLBACK ---
+
                     "streaming_gb_bonus": int(row.streaming_gb_bonus or 0),
                     "gaming_gb_bonus": int(row.gaming_gb_bonus or 0),
+                    "social_gb_bonus": int(row.social_gb_bonus or 0),
                     "call_minutes_bonus": int(row.call_minutes_bonus or 0),
                     "roaming_days_bonus": int(row.roaming_days_bonus or 0),
-                    # ---------------------------
+                    "sms_bonus": int(row.sms_bonus or 0),
 
                     "reason": "Paket hemat rekomendasi kami.",
                 })
@@ -293,6 +453,7 @@ class PredictionService:
                     spending_tier      = EXCLUDED.spending_tier;
             """
             cursor.execute(sql, (customer_id,))
+
             conn.commit()
             if cursor.rowcount > 0:
                 return {"message": f"Pipeline sukses. Profil {customer_id} diperbarui."}
@@ -300,10 +461,12 @@ class PredictionService:
                 return {"message": "Pipeline berjalan, tapi belum ada history."}, 200
         except Exception:
             traceback.print_exc()
-            if conn: conn.rollback()
+            if conn:
+                conn.rollback()
             return {"error": "Terjadi kesalahan pada Data Pipeline."}, 500
         finally:
-            if conn: conn.close()
+            if conn:
+                conn.close()
 
     def submit_cold_start_preference(self, customer_id, preference):
         conn = None
@@ -311,10 +474,14 @@ class PredictionService:
             conn = get_db_connection()
             cursor = conn.cursor()
             pct_video, avg_call, travel_score, spending_tier = 0.1, 10.0, 0.0, "mid"
-            if preference == "Streaming": pct_video = 0.9
-            elif preference == "Voice": avg_call = 500.0
-            elif preference == "Travel": travel_score = 0.9
-            elif preference == "Hemat": spending_tier = "low"
+            if preference == "Streaming":
+                pct_video = 0.9
+            elif preference == "Voice":
+                avg_call = 500.0
+            elif preference == "Travel":
+                travel_score = 0.9
+            elif preference == "Hemat":
+                spending_tier = "low"
 
             sql = """
                 INSERT INTO user_features (
@@ -334,9 +501,12 @@ class PredictionService:
             conn.commit()
             return {"message": f"Preferensi '{preference}' disimpan!"}
         except Exception:
-            if conn: conn.rollback()
+            if conn:
+                conn.rollback()
             raise
         finally:
-            if conn: conn.close()
+            if conn:
+                conn.close()
+
 
 prediction_service = PredictionService()

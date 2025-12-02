@@ -8,9 +8,6 @@ prediction_bp = Blueprint('prediction_bp', __name__)
 # Contoh: GET /api/v1/recommend?customer_id=CUST-001
 @prediction_bp.route('/recommend', methods=['GET', 'POST'])
 def recommend():
-    # Mendukung dua cara pemanggilan:
-    # - GET /api/v1/recommend?customer_id=...
-    # - POST /api/v1/recommend  with JSON {"customer_id": "..."}
     if request.method == 'GET':
         customer_id = request.args.get('customer_id')
     else:
@@ -28,7 +25,6 @@ def recommend():
         return jsonify({"error": str(e)}), 500
 
 # 3. Route: Trigger Pipeline Data (Update Profil User)
-# Contoh: POST /api/v1/trigger-pipeline body: {"customer_id": "CUST-001"}
 @prediction_bp.route('/trigger-pipeline', methods=['POST'])
 def pipeline():
     data = request.get_json()

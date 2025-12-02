@@ -117,7 +117,6 @@ function renderBehavior(stats) {
 }
 
 // 4. Render History Cards
-// 4. Render History Cards (Scrollable)
 function renderHistory(historyList) {
   const container = document.getElementById("history-container");
   const fmtMoney = new Intl.NumberFormat("id-ID", {
@@ -140,15 +139,25 @@ function renderHistory(historyList) {
       let borderClass = "border-gray-300";
       let tagClass = "bg-gray-100 text-gray-600";
 
-      if (item.category === "Streaming") {
+      const cat = item.category || ""; 
+
+      if (cat.includes("Streaming")) {
         borderClass = "border-red-500";
         tagClass = "bg-red-50 text-red-600";
-      } else if (item.category === "Roaming") {
+      } else if (cat.includes("Roaming") || cat.includes("Travel")) {
         borderClass = "border-yellow-500";
         tagClass = "bg-yellow-50 text-yellow-600";
-      } else if (item.category === "Voice") {
+      } else if (cat.includes("Voice") || cat.includes("Call")) {
         borderClass = "border-blue-500";
         tagClass = "bg-blue-50 text-blue-600";
+      }
+      else if (cat.includes("Social") || cat.includes("Socmed")) {
+        borderClass = "border-pink-500";
+        tagClass = "bg-pink-50 text-pink-600";
+      }
+      else if (cat.includes("Gaming") || cat.includes("Game")) {
+        borderClass = "border-purple-500"; 
+        tagClass = "bg-purple-50 text-purple-600";
       }
 
       // Format Tanggal
@@ -161,16 +170,16 @@ function renderHistory(historyList) {
             <div>
                 <div class="flex items-center gap-2 mb-1">
                     <span class="text-xs text-gray-400 font-mono">${dateStr}</span>
-                    <span class="${tagClass} text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide">${
-        item.category
-      }</span>
+                    <span class="${tagClass} text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide">
+                        ${item.category}
+                    </span>
                 </div>
-                <h4 class="font-bold text-gray-800 text-sm group-hover:text-blue-600 transition">${
-                  item.product_name
-                }</h4>
+                <h4 class="font-bold text-gray-800 text-sm group-hover:text-primary transition">
+                    ${item.product_name}
+                </h4>
                 <p class="text-xs text-gray-500 mt-1">
-                    Data: <b>${item.data_gb} GB</b> | Validity: ${
-        item.validity_days
+                    Data: <b>${item.data_gb} GB</b> | Durasi: ${
+        item.duration_days
       } Hari
                 </p>
             </div>
@@ -178,7 +187,7 @@ function renderHistory(historyList) {
                 <p class="font-bold text-gray-800 text-sm">${fmtMoney.format(
                   item.price
                 )}</p>
-                <a href="/products" class="text-[10px] text-blue-500 hover:underline">Beli Lagi</a>
+                <a href="/products" class="text-[10px] text-primary hover:underline font-semibold">Beli Lagi</a>
             </div>
         </div>
         `;

@@ -106,10 +106,9 @@ def get_top_products():
 @admin_bp.route('/users', methods=['GET'])
 def get_all_users():
     try:
-        # Ambil user dan hitung total spending mereka (Lifetime Value)
-        # Kita join user_features dengan purchase_history untuk data akurat
         query = """
             SELECT 
+                u.firstname,
                 uf.customer_id,
                 uf.device_brand,
                 uf.plan_type,
@@ -121,9 +120,10 @@ def get_all_users():
                 END as persona,
                 COALESCE(SUM(p.price), 0) as total_spend
             FROM user_features uf
+            JOIN users u ON uf.customer_id = u.customer_id
             LEFT JOIN purchase_history ph ON uf.customer_id = ph.customer_id
             LEFT JOIN products p ON ph.product_id = p.product_id
-            GROUP BY uf.customer_id, uf.device_brand, uf.plan_type, uf.pct_video_usage, uf.travel_score, uf.avg_call_duration
+            GROUP BY u.firstname, uf.customer_id, uf.device_brand, uf.plan_type, uf.pct_video_usage, uf.travel_score, uf.avg_call_duration
             ORDER BY total_spend DESC
         """
         df = get_db_dataframe(query)
@@ -161,14 +161,10 @@ def add_product():
     cursor = conn.cursor()
     
     try:
-        # --- [DEBUGGING] CEK NAMA DATABASE ---
-        # Ini akan mencetak nama database yang sedang aktif di terminal Flask
         cursor.execute("SELECT current_database();")
         db_name = cursor.fetchone()[0]
         print(f"👀 [DEBUG] Menyimpan produk ke database: {db_name}")
-        # -------------------------------------
 
-        # Generate product_id (max + 1)
         cursor.execute("SELECT MAX(product_id) FROM products")
         row = cursor.fetchone()
         max_id = row[0] if row and row[0] is not None else 0

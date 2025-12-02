@@ -139,7 +139,10 @@ async function fetchUsers() {
     const tr = document.createElement("tr");
     tr.className = "border-b hover:bg-gray-50 transition";
     tr.innerHTML = `
-                    <td class="px-6 py-4 font-medium text-gray-900">${
+                    <td class="px-6 py-4 font-bold text-gray-800">${
+                      u.firstname || "User"
+                    }</td>
+                    <td class="px-6 py-4 font-medium text-gray-600">${
                       u.customer_id
                     }</td>
                     <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${
@@ -156,11 +159,9 @@ async function fetchUsers() {
     tbody.appendChild(tr);
   });
 
-  // Render Chart (Top 5 vs Bottom 5)
-  // Sort by spend
   const sorted = [...users].sort((a, b) => b.total_spend - a.total_spend);
   const top5 = sorted.slice(0, 5);
-  const bottom5 = sorted.slice(-5).reverse(); // Reverse agar urutannya bagus di chart
+  const bottom5 = sorted.slice(-5).reverse();
 
   const chartLabels = [
     ...top5.map((u) => u.customer_id),
@@ -173,10 +174,10 @@ async function fetchUsers() {
   const chartColors = [
     ...top5.map(() => "#10B981"),
     ...bottom5.map(() => "#EF4444"),
-  ]; // Hijau Top, Merah Bottom
+  ];
 
   const ctx = document.getElementById("userSpendChart").getContext("2d");
-  if (userChartInstance) userChartInstance.destroy(); // Hapus chart lama sebelum buat baru
+  if (userChartInstance) userChartInstance.destroy();
   userChartInstance = new Chart(ctx, {
     type: "bar",
     data: {
@@ -200,7 +201,6 @@ async function fetchUsers() {
 }
 
 // --- PRODUCT MANAGEMENT LOGIC ---
-// Database lokal sementara untuk preview
 let adminProductStore = {};
 
 function toggleProductModal() {
@@ -328,8 +328,6 @@ document
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
 
-    // --- FITUR AUTO FIX DATA ---
-    // 1. Map nama field lama (jika HTML belum update) ke field baru
     if (data.streaming_gb && !data.streaming_gb_bonus)
       data.streaming_gb_bonus = data.streaming_gb;
     if (data.call_minutes && !data.call_minutes_bonus)
@@ -337,14 +335,12 @@ document
     if (data.roaming_days && !data.roaming_days_bonus)
       data.roaming_days_bonus = data.roaming_days;
 
-    // 2. Fungsi helper untuk memastikan angka valid (Bukan NaN/Null)
     const parseSafeFloat = (val) => {
       if (val === undefined || val === null || val === "") return 0;
       const num = parseFloat(val);
-      return isNaN(num) ? 0 : num; // Jika NaN, paksa jadi 0
+      return isNaN(num) ? 0 : num; 
     };
 
-    // 3. Konversi dan sanitasi semua field angka
     const numericFields = [
       "price",
       "data_gb",
@@ -361,7 +357,6 @@ document
       data[key] = parseSafeFloat(data[key]);
     });
 
-    // 4. FIX: Pastikan Duration minimal 30 jika 0 (mencegah error DB constraint)
     if (data.duration_days <= 0) {
       data.duration_days = 30;
     }
@@ -371,6 +366,8 @@ document
     if (data.streaming_gb_bonus > 0) data["target_offer"] = "Streaming Offer";
     if (data.gaming_gb_bonus > 0) data["target_offer"] = "Gaming Offer";
     if (data.roaming_days_bonus > 0) data["target_offer"] = "Roaming Offer";
+    if (data.social_gb_bonus > 0) data["target_offer"] = "Social Offer";
+    if (data.call_minutes_bonus > 0) data["target_offer"] = "Voice Offer";
 
     try {
       const res = await fetch(`${API_URL}/products`, {

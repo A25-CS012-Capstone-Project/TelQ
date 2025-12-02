@@ -28,6 +28,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+    volumes:
+      - .:/app
+
     environment:
       - DB_HOST=db
       - DB_PORT=5432
@@ -37,9 +41,7 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       
-      # --- [PERBAIKAN DISINI] ---
-      # Ubah nama file sesuai dengan file asli kamu (.pkl)
-      # Pastikan nama depannya (telq_model) juga sesuai dengan file kamu
+      # Path Model ML
       - ML_MODEL_PATH=backend/ml/output/XGBoost_v3_25Nov2025/xgb_telco_optimal_v1.pkl
       - ML_COLUMNS_PATH=backend/ml/output/XGBoost_v3_25Nov2025/xgb_feature_columns_v1.pkl
 
