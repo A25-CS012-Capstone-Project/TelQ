@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadProductsByCategory("Hemat", "hemat-container");
   loadProductsByCategory("Voice", "voice-container");
   loadProductsByCategory("Roaming", "roaming-container");
-  loadProductsByCategory("Social", "sosmed-container");
+  loadProductsByCategory("Social", "social-container");
 
   setupMobileMenu();
 });
