@@ -2,7 +2,7 @@ TelQ - Intelligent Telecommunication Plan Recommender
 
 TelQ adalah aplikasi web cerdas yang membantu pengguna menemukan paket telekomunikasi (Internet, Telepon, Roaming) terbaik berdasarkan pola penggunaan mereka menggunakan Machine Learning (Hybrid Recommendation System).
 
-Project ini dibuat sebagai Capstone Project untuk program Dicoding - Pengembang Machine Learning & Front-End.
+Project ini dibuat sebagai Capstone Project untuk program Asah lied by Dicoding
 
 🚀 Fitur Utama
 
@@ -24,127 +24,67 @@ Backend: Python Flask.
 
 Database: PostgreSQL.
 
-Machine Learning: Scikit-Learn, Pandas, NumPy.
+Machine Learning: Scikit-Learn, Pandas, NumPy (Model XGBoost).
 
-ORM: SQLAlchemy.
+Infrastructure: Docker & Docker Compose.
 
-📋 Prasyarat (Requirements)
+🐳 Cara Menjalankan Project (Metode Docker - Disarankan)
 
-Sebelum memulai, pastikan laptop kamu sudah terinstall:
+Ini adalah cara termudah dan tercepat. Tidak perlu install Python atau PostgreSQL secara manual di laptopmu.
 
-Python 3.8+: Download di sini
+1. Prasyarat
 
-PostgreSQL: Download di sini (Install juga pgAdmin 4).
+Pastikan kamu sudah menginstall:
 
-Git: (Opsional, untuk clone repo).
+Docker Desktop: Download di sini
 
-⚡ Cara Instalasi & Menjalankan (Langkah demi Langkah)
+Pastikan Docker sudah berjalan (Cek ikon paus di taskbar).
 
-1. Clone atau Download Project
+2. Konfigurasi Environment (.env)
 
-Download source code project ini dan ekstrak ke folder di laptop kamu.
-Buka terminal (CMD/PowerShell/Terminal) dan arahkan ke folder project tersebut.
-
-cd path/to/TelQ
-
-
-
-2. Buat Virtual Environment (Sangat Disarankan)
-
-Agar library project tidak bentrok dengan sistem laptopmu.
-
-Windows:
-
-python -m venv venv
-venv\Scripts\activate
-
-
-
-Mac/Linux:
-
-python3 -m venv venv
-source venv/bin/activate
-
-
-
-(Tanda berhasil: muncul tulisan (venv) di sebelah kiri terminal).
-
-3. Install Library Python
-
-Install semua kebutuhan backend dan machine learning.
-
-pip install -r requirements.txt
-
-
-
-4. Setup Database PostgreSQL
-
-Buka aplikasi pgAdmin 4.
-
-Buat database baru: Klik Kanan Databases > Create > Database.
-
-Beri nama: telq_recommender_db (atau nama lain, bebas).
-
-Klik Save.
-
-5. Konfigurasi Environment (.env)
-
-Buat file baru bernama .env di folder root project (sejajar dengan app.py).
-
-Salin isi berikut dan sesuaikan dengan konfigurasi lokal kamu:
+Buat file baru bernama .env di folder paling luar (sejajar dengan docker-compose.yml). Copy isi di bawah ini:
 
 SECRET_KEY=calon_best_capstone
 GEMINI_API_KEY=AIzaSyCQT1OUBsBgG_EAjYTP2RW-spyIIrX4jKE
 
-# Konfigurasi Database
+# Konfigurasi Database (Untuk Docker)
 DB_USER=postgres
-DB_PASSWORD=postgres
-DB_HOST=localhost
+DB_PASSWORD=password123
+DB_HOST=db
 DB_PORT=5432
 DB_NAME=telq_recommender_db
 
-# Konfigurasi ML (Sesuaikan path jika perlu)
-ML_MODEL_PATH=backend/models/telq_model.joblib
-ML_COLUMNS_PATH=backend/models/telq_model_columns.joblib
+# Konfigurasi Model ML
+ML_MODEL_PATH=backend/models/telq_model.pkl
+ML_COLUMNS_PATH=backend/models/telq_model_columns.pkl
 
 
-6. Inisialisasi Database (Membuat Tabel & Data Awal)
+3. Jalankan Aplikasi
 
-Jalankan script python ini untuk membuat tabel (Users, Products, History) dan mengisi data dummy produk secara otomatis.
+Buka terminal di folder project, lalu jalankan perintah ini:
 
-cd backend/models
-python database.py
-
+docker-compose up --build
 
 
-Jika berhasil, akan muncul pesan: ✅ SUKSES: Database berhasil diinisialisasi!
+Tunggu proses download dan instalasi selesai hingga muncul pesan Running on http://0.0.0.0:5000.
 
-Kembali ke folder root:
+4. Isi Database (Hanya Sekali di Awal)
 
-cd ../..
+Buka Terminal Baru (biarkan terminal pertama tetap jalan), lalu jalankan perintah ini untuk membuat tabel dan data dummy:
 
-
-
-7. Jalankan Aplikasi 🚀
-
-Sekarang saatnya menyalakan server!
-
-python app.py
+docker-compose exec web python backend/models/database.py
 
 
+Jika muncul pesan ✅ SUKSES: Database berhasil diinisialisasi!, berarti aplikasi siap digunakan.
 
-Atau:
+5. Akses Aplikasi 🚀
 
-flask run
-
-
-
-Buka browser (Chrome/Edge) dan akses:
-👉 https://www.google.com/search?q=http://127.0.0.1:5000
+Buka browser dan kunjungi:
+👉 http://localhost:5000
 
 👤 Akun Demo
 
-Kamu bisa menggunakan akun ini untuk login:
+Gunakan akun ini untuk masuk ke dashboard:
 
 Admin (Dashboard)
 
@@ -158,14 +98,33 @@ User (Pelanggan)
 
 Silakan Register akun baru di halaman Login.
 
-Atau gunakan user demo (jika ada di database).
+
+🔧 Alternatif: Instalasi Manual (Tanpa Docker)
+
+Jika kamu ingin menjalankan tanpa Docker, ikuti langkah ini:
+
+Install Python 3.10+ & PostgreSQL.
+
+Buat Database di pgAdmin dengan nama telq_recommender_db.
+
+Update .env: Ubah DB_HOST=db menjadi DB_HOST=localhost.
+
+Install Library:
+
+pip install -r backend/requirements.txt
+
+
+Jalankan Aplikasi:
+
+python -m backend.app
+
 
 ❓ Troubleshooting (Masalah Umum)
 
-Error ModuleNotFoundError: Pastikan kamu sudah menjalankan pip install -r requirements.txt dalam kondisi (venv) aktif.
+Error bind: address already in use: Port 5000 atau 5432 sedang dipakai. Matikan service PostgreSQL lokal di laptopmu jika bentrok.
 
-Error Database Connection: Cek kembali file .env. Pastikan password PostgreSQL benar dan nama database sesuai dengan yang dibuat di pgAdmin.
+Error ML Model not found: Pastikan file .pkl model sudah ada di folder backend/models/.
 
-Produk tidak muncul saat ditambah: Pastikan di .env nama database sudah benar. Data mungkin masuk ke database yang salah jika ada banyak database di pgAdmin.
+Database Kosong: Jangan lupa jalankan langkah No. 4 (Isi Database) setelah Docker menyala.
 
 Selamat Mencoba! 🎉
