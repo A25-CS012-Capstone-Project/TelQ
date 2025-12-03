@@ -23,14 +23,14 @@ Project ini dibuat sebagai Capstone Project untuk program Asah lied by Dicoding
 
 Ini adalah cara termudah dan tercepat. Tidak perlu install Python atau PostgreSQL secara manual di laptopmu.
 
-1. Prasyarat
+**1.Prasyarat**
 
 Pastikan kamu sudah menginstall:
 
 - Docker Desktop
 - Pastikan Docker sudah berjalan (Cek ikon paus di taskbar).
 
-2. Konfigurasi Environment (.env)
+**2.Konfigurasi Environment (.env)**
 
 Buat file baru bernama .env di folder paling luar (sejajar dengan docker-compose.yml). Copy isi di bawah ini:
 
@@ -50,8 +50,7 @@ ML_MODEL_PATH=backend/models/telq_model.pkl
 ML_COLUMNS_PATH=backend/models/telq_model_columns.pkl
 ```
 
-
-3. Jalankan Aplikasi
+**3.Jalankan Aplikasi**
 
 Buka terminal di folder project, lalu jalankan perintah ini:
 
@@ -59,7 +58,7 @@ Buka terminal di folder project, lalu jalankan perintah ini:
 
 Tunggu proses download sampai muncul pesan `Running on` lalu buka `http://0.0.0.0:5000`.
 
-4. Isi Database (Hanya Sekali di Awal)
+**4.Isi Database (Hanya Sekali di Awal)**
 
 Buka Terminal Baru (biarkan terminal pertama tetap jalan), lalu jalankan perintah ini untuk membuat tabel dan data dummy:
 
@@ -67,7 +66,7 @@ Buka Terminal Baru (biarkan terminal pertama tetap jalan), lalu jalankan perinta
 
 Jika muncul pesan `✅ SUKSES: Database berhasil diinisialisasi!`, berarti aplikasi siap digunakan.
 
-5. Akses Aplikasi 🚀
+**5.Akses Aplikasi 🚀**
 
 Buka browser dan kunjungi:
 **👉 `http://localhost:5000`**
@@ -90,12 +89,12 @@ Gunakan akun ini untuk masuk ke dashboard:
 # 🔧 Alternatif: Instalasi Manual (Tanpa Docker)
 
 Jika kamu ingin menjalankan tanpa Docker, ikuti langkah ini:
-1. Install Python 3.10+ & PostgreSQL.
-2. Buat Database di pgAdmin dengan nama telq_recommender_db.
-3. Update .env: Ubah DB_HOST=db menjadi DB_HOST=localhost. -> INI PENTING
-3. Install Library:
+1.Install Python 3.10+ & PostgreSQL.
+2.Buat Database di pgAdmin dengan nama telq_recommender_db.
+3.Update .env: Ubah DB_HOST=db menjadi DB_HOST=localhost. -> INI PENTING
+3.Install Library:
 pip install -r backend/requirements.txt
-4. Jalankan Aplikasi:
+4.Jalankan Aplikasi:
 python -m backend.app
 
 
