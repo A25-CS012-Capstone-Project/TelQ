@@ -82,18 +82,15 @@ Jika muncul pesan `✅ SUKSES: Database berhasil diinisialisasi!`, berarti aplik
 Buka browser dan kunjungi:
 **👉 `http://localhost:5000`**
 
-👤 Akun Demo
-
+👤 Akun Demo<br>
 Gunakan akun ini untuk masuk ke dashboard:
 
-**Admin (Dashboard)**
-
+**Admin (Dashboard)**<br>
 - Email: `admin@super.com`
 - Password: `admin123`
 - Akses: Manajemen Produk, User Analytics, Sales Report.
 
-**User (Pelanggan)**
-
+**User (Pelanggan)**<br>
 - Silakan Register akun baru.
 
 
@@ -105,7 +102,7 @@ Jika kamu ingin menjalankan tanpa Docker, ikuti langkah ini:
 2.Buat Database di pgAdmin dengan nama telq_recommender_db.<br>
 3.Update `.env`: Ubah **DB_HOST=db** menjadi **DB_HOST=localhost**. -> **INI PENTING**<br>
 4.Install Library:
-`pip install -r backend/requirements.txt`
+`pip install -r backend/requirements.txt` <br>
 5.Jalankan Aplikasi:
 `python -m backend.app`
 
