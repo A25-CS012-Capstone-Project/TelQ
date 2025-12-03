@@ -15,7 +15,46 @@ def get_db_dataframe(query, params=None):
 @product_bp.route('/products/filter', methods=['POST'])
 def filter_products_by_preference():
     """
-    Mencari produk berdasarkan preferensi kuesioner (Rule-Based).
+    Rekomendasi Produk Berdasarkan Kuesioner (Rule-Based)
+    ---
+    tags:
+      - Products
+    parameters:
+      - in: body
+        name: body
+        required: true
+        description: Preferensi user dari kuesioner
+        schema:
+          type: object
+          required:
+            - preference
+          properties:
+            preference:
+              type: string
+              enum: [Streaming, Gaming, Voice, Hemat, Travel, Social]
+              example: Gaming
+    responses:
+      200:
+        description: Daftar produk rekomendasi
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: RULE_BASED
+            recommendations:
+              type: array
+              items:
+                type: object
+                properties:
+                  product_name:
+                    type: string
+                  price:
+                    type: integer
+                  data_gb:
+                    type: integer
+      400:
+        description: Preferensi tidak valid
     """
     data = request.get_json()
     preference = data.get('preference') 
@@ -24,7 +63,6 @@ def filter_products_by_preference():
         return jsonify({"error": "Preferensi wajib diisi"}), 400
 
     try:
-        # Mapping Pilihan Kuesioner -> Kolom 'target_offer' di Database
         category_map = {
             "Streaming": "Streaming Offer",
             "Gaming": "Gaming Offer",
@@ -55,8 +93,41 @@ def filter_products_by_preference():
 @product_bp.route('/products', methods=['GET'])
 def get_all_products():
     """
-    Mengambil produk, bisa semua atau difilter berdasarkan kategori (GET param).
-    Contoh: /api/v1/products?category=Streaming
+    Mengambil Semua Produk (Katalog)
+    ---
+    tags:
+      - Products
+    parameters:
+      - in: query
+        name: category
+        type: string
+        required: false
+        description: Filter kategori (Streaming, Gaming, Voice, Roaming, Social, Hemat)
+        enum: [Streaming, Gaming, Voice, Roaming, Social, Hemat]
+    responses:
+      200:
+        description: List produk berhasil diambil
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              product_id:
+                type: integer
+              product_name:
+                type: string
+              price:
+                type: integer
+              data_gb:
+                type: integer
+              streaming_gb_bonus:
+                type: integer
+              gaming_gb_bonus:
+                type: integer
+              social_gb_bonus:
+                type: integer
+      500:
+        description: Internal Server Error
     """
     category = request.args.get('category') 
 
@@ -73,6 +144,7 @@ def get_all_products():
                 conditions.append("(roaming_days_bonus > 0 OR product_name ILIKE '%%Roam%%')")
             elif category == 'Voice':
                 conditions.append("(call_minutes_bonus > 0 OR product_name ILIKE '%%Nelpon%%')")
+            # --- [TAMBAHAN] ---
             elif category == 'Social':
                 conditions.append("(social_gb_bonus > 0 OR product_name ILIKE '%%Soc%%')")
             elif category == 'Hemat':
@@ -95,7 +167,27 @@ def get_all_products():
 
 @product_bp.route('/products/best-deal', methods=['GET'])
 def get_best_deals():
-    """Mengambil 4 produk terlaris."""
+    """
+    Mengambil Produk Terlaris (Best Deals)
+    ---
+    tags:
+      - Products
+    responses:
+      200:
+        description: List 4 produk terlaris berdasarkan history pembelian
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              product_name:
+                type: string
+              price:
+                type: integer
+              popularity:
+                type: integer
+                description: Jumlah terjual
+    """
     try:
         with db_engine.connect() as conn:
             result = conn.execute(text("SELECT COUNT(*) FROM purchase_history"))
@@ -129,7 +221,42 @@ def get_best_deals():
 
 @product_bp.route('/simulate-purchase', methods=['POST'])
 def simulate_purchase():
-    """Simulasi pembelian produk dengan data lengkap."""
+    """
+    Simulasi Pembelian Paket
+    ---
+    tags:
+      - Transactions
+    parameters:
+      - in: body
+        name: body
+        required: true
+        description: Data transaksi pembelian
+        schema:
+          type: object
+          required:
+            - customer_id
+            - product_id
+          properties:
+            customer_id:
+              type: string
+              example: CUST-001
+            product_id:
+              type: integer
+              example: 10
+    responses:
+      201:
+        description: Pembelian Berhasil Dicatat
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Pembelian berhasil disimulasikan!
+      404:
+        description: Produk Tidak Ditemukan
+      500:
+        description: Gagal Transaksi (Foreign Key Error, dll)
+    """
     data = request.get_json()
     customer_id = data.get('customer_id')
     product_id = data.get('product_id')

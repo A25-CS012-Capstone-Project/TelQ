@@ -24,6 +24,14 @@ Project ini dibuat sebagai Capstone Project untuk program Asah lied by Dicoding
 5. **Infrastructure**: Docker & Docker Compose.
 
 
+| Dokumentasi | Link Akses | Deskripsi |
+|-------------|------------|-----------|
+| 🎨 **Style Guide** | [Buka di Figma](https://www.figma.com/board/Yavux6azRsJ62ol9yr90jn/Design-System?node-id=0-1&t=DpJtLRRvMaudXn37-1) | Panduan warna, tipografi, dan komponen UI. |
+| 🧩 **Architecture** | [Buka di Figma](https://www.figma.com/design/gX2yRDWUo8Deq5kVlFJEQR/Capstone---Telco?node-id=0-1&t=EPUbDHP5tCjCcNdw-1) | Diagram alur sistem dan arsitektur database. |
+| 📘 **API Docs** | [http://localhost:5000/apidocs/](http://localhost:5000/apidocs/) | Dokumentasi interaktif (Swagger UI) untuk semua endpoint Backend. <br> *(Hanya bisa diakses saat aplikasi berjalan).* |
+
+
+
 
 # 🐳 Cara Menjalankan Project (Metode Docker - Disarankan)
 
@@ -179,5 +187,13 @@ Buka browser di `http://127.0.0.1:5000`
 - **Error bind**: address already in use: Port 5000 atau 5432 sedang dipakai. Matikan service - - PostgreSQL lokal di laptopmu jika bentrok.
 - **Error ML Model not found**: Pastikan file .pkl model sudah ada di folder backend/models/.
 - **Database Kosong**: Jangan lupa jalankan langkah No. 4 (Isi Database) setelah Docker menyala.
+
+## 📚 Dokumentasi Lengkap
+
+Project ini dilengkapi dengan dokumentasi teknis mendalam:
+
+* **📖 [Dokumentasi API (Swagger/OpenAPI)](API_DOCS.md)** - Panduan lengkap endpoint Backend.
+* **🎨 [Style Guide Figma](https://www.figma.com/...)** - Pedoman desain antarmuka.
+* **🐳 [Panduan Docker](TUTORIAL_DOCKER.md)** - Cara menjalankan menggunakan Docker.
 
 Selamat Mencoba! 🎉

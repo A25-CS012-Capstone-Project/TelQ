@@ -162,6 +162,54 @@ def detect_reco_intent(msg_lower: str) -> bool:
 # 💬 ROUTE CHATBOT
 @chatbot_bp.route("/chat", methods=["POST"])
 def chat():
+    """
+    Chat dengan Asisten AI (Chatbot)
+    ---
+    tags:
+      - Chatbot
+    parameters:
+      - in: body
+        name: body
+        required: true
+        description: Pesan dari user dan konteks tambahan
+        schema:
+          type: object
+          required:
+            - message
+          properties:
+            message:
+              type: string
+              example: "Paket apa yang cocok buat main game?"
+            context:
+              type: object
+              properties:
+                user_name:
+                  type: string
+                  example: "Budi"
+                top_product:
+                  type: string
+                  example: "Gaming Max"
+                reason:
+                  type: string
+                  example: "Suka main game"
+    responses:
+      200:
+        description: Balasan dari Chatbot
+        schema:
+          type: object
+          properties:
+            reply:
+              type: string
+              example: "Untuk gaming, saya sarankan paket Gaming Max..."
+            sender:
+              type: string
+              example: "bot"
+            method:
+              type: string
+              example: "AI"
+      400:
+        description: Pesan kosong
+    """
     data = request.get_json(silent=True) or {}
     user_message = (data.get("message") or "").strip()
     user_context = data.get("context") or {}

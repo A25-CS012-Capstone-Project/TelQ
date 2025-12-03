@@ -3,11 +3,104 @@ from backend.models.database import get_db_connection
 import pandas as pd
 # Import service prediksi untuk bagian rekomendasi di bawah profil
 from backend.services.prediction_service import prediction_service
+import traceback
 
 user_bp = Blueprint('user_bp', __name__)
 
 @user_bp.route('/profile', methods=['GET'])
 def get_user_profile():
+    """
+    Mengambil Profil Pengguna Lengkap
+    ---
+    tags:
+      - User Profile
+    parameters:
+      - in: query
+        name: customer_id
+        type: string
+        required: true
+        description: ID pelanggan yang ingin dilihat profilnya
+        example: CUST-001
+    responses:
+      200:
+        description: Data profil berhasil diambil
+        schema:
+          type: object
+          properties:
+            header:
+              type: object
+              properties:
+                customer_id:
+                  type: string
+                device:
+                  type: string
+                plan:
+                  type: string
+                spending_tier:
+                  type: string
+            persona_list:
+              type: array
+              items:
+                type: object
+                properties:
+                  desc:
+                    type: string
+                  icon:
+                    type: string
+                  title:
+                    type: string
+            behavior_stats:
+              type: object
+              properties:
+                avg_data_gb:
+                  type: number
+                monthly_spend:
+                  type: number
+                pct_video:
+                  type: number
+                topup_freq:
+                  type: integer
+                travel_score:
+                  type: number
+            history_list:
+              type: array
+              items:
+                type: object
+                properties:
+                  category:
+                    type: string
+                    description: Kategori untuk warna badge (Social Offer, Gaming Offer, dll)
+                  data_gb:
+                    type: integer
+                  duration_days:
+                    type: integer
+                  price:
+                    type: integer
+                  product_name:
+                    type: string
+                  purchase_date:
+                    type: string
+            history_summary:
+              type: object
+              properties:
+                favorite_product:
+                  type: string
+                total_spend:
+                  type: integer
+                total_trx:
+                  type: integer
+            recommendations:
+              type: array
+              items:
+                type: string
+                description: String rekomendasi singkat
+      400:
+        description: Parameter customer_id tidak ada
+      404:
+        description: User tidak ditemukan
+      500:
+        description: Internal Server Error
+    """
     customer_id = request.args.get('customer_id')
     
     if not customer_id:
@@ -23,6 +116,7 @@ def get_user_profile():
             return jsonify({"error": "User tidak ditemukan"}), 404
 
         # 2. AMBIL HISTORY PEMBELIAN (Lengkap dengan kategori untuk filter)
+        # [PENTING] Pastikan 'target_offer' di-alias menjadi 'category' agar frontend JS bisa membacanya
         sql_history = """
             SELECT 
                 p.product_name,
@@ -80,6 +174,7 @@ def get_user_profile():
         # --- LOGIKA RINGKASAN HISTORY ---
         total_trx = len(history_df)
         total_spend = int(history_df['price'].sum()) if not history_df.empty else 0
+        # mode() returns Series, take first
         fav_product = history_df['product_name'].mode()[0] if not history_df.empty else "-"
 
         # --- AMBIL REKOMENDASI (Untuk section bawah) ---
@@ -119,6 +214,8 @@ def get_user_profile():
 
     except Exception as e:
         print(f"Error Profile: {e}")
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
     finally:
-        conn.close()
+        if conn:
+            conn.close()
