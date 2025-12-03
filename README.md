@@ -110,33 +110,35 @@ Pastikan sudah terinstall:
 2. Buat database baru dengan nama: `telq_recommender_db`.  
 3. Pastikan kamu ingat password superuser (postgres) kamu.
 
-3. Setup Virtual Environment (PENTING)  
+**3.Setup Virtual Environment (PENTING)**  
 Agar library tidak bentrok dengan sistem lain, wajib gunakan virtual environment.
 
 Buka terminal di folder project `TelQ/`:
 
 **Windows:**
 
-```python -m venv venv
+```
+python -m venv venv
 .\venv\Scripts\activate
 ```
 
 
 **Mac/Linux:**
 
-```python3 -m venv venv
+```
+python3 -m venv venv
 source venv/bin/activate
 ```
 
 *(Pastikan muncul tulisan `(venv)` di sebelah kiri terminal sebelum lanjut).*
 
-4. Install Dependencies  
+**4.Install Dependencies**  
 Install semua library yang dibutuhkan project:
 
-pip install -r backend/requirements.txt`
+`pip install -r backend/requirements.txt`
 
 
-5. Konfigurasi Environment Lokal  
+**5.Konfigurasi Environment Lokal**  
 Buat file `.env` di folder root project, tapi sesuaikan isinya untuk lokal (bukan Docker):
 
 ```SECRET_KEY=rahasia_lokal
@@ -154,7 +156,7 @@ ML_MODEL_PATH=backend/models/telq_model.pkl
 ML_COLUMNS_PATH=backend/models/telq_model_columns.pkl
 ```
 
-6. Inisialisasi Database Manual
+**6.Inisialisasi Database Manual**
 
 Karena kita tidak pakai Docker, kita harus menjalankan script inisialisasi database secara manual agar tabel terbentuk.
 
@@ -165,7 +167,7 @@ python backend/models/database.py
 
 *Tunggu sampai muncul pesan sukses.*
 
-7. Jalankan Aplikasi  
+**7.Jalankan Aplikasi**  
 Jalankan server Flask sebagai module:
 
 `python -m backend.app`
