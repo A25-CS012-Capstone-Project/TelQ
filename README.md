@@ -11,7 +11,7 @@ Project ini dibuat sebagai Capstone Project untuk program Asah lied by Dicoding
 - 📊 Admin Dashboard: Halaman admin lengkap untuk memantau penjualan, menambah produk, dan melihat analitik user.
 - 🔐 Multi-Role Auth: Sistem login aman untuk User dan Admin.
 
-🛠️ Teknologi yang Digunakan
+# 🛠️ Teknologi yang Digunakan
 
 1. Frontend: HTML5, Tailwind CSS, Vanilla JavaScript.
 2. Backend: Python Flask.
@@ -19,7 +19,7 @@ Project ini dibuat sebagai Capstone Project untuk program Asah lied by Dicoding
 4. Machine Learning: Scikit-Learn, Pandas, NumPy (Model XGBoost).
 5. Infrastructure: Docker & Docker Compose.
 
-🐳 Cara Menjalankan Project (Metode Docker - Disarankan)
+# 🐳 Cara Menjalankan Project (Metode Docker - Disarankan)
 
 Ini adalah cara termudah dan tercepat. Tidak perlu install Python atau PostgreSQL secara manual di laptopmu.
 
@@ -86,7 +86,7 @@ Gunakan akun ini untuk masuk ke dashboard:
 - Silakan Register akun baru di halaman Login.
 
 
-🔧 Alternatif: Instalasi Manual (Tanpa Docker)
+# 🔧 Alternatif: Instalasi Manual (Tanpa Docker)
 
 Jika kamu ingin menjalankan tanpa Docker, ikuti langkah ini:
 1. Install Python 3.10+ & PostgreSQL.
@@ -98,7 +98,7 @@ pip install -r backend/requirements.txt
 python -m backend.app
 
 
-❓ Troubleshooting (Masalah Umum)
+# ❓ Troubleshooting (Masalah Umum)
 
 - Error bind: address already in use: Port 5000 atau 5432 sedang dipakai. Matikan service - - PostgreSQL lokal di laptopmu jika bentrok.
 - Error ML Model not found: Pastikan file .pkl model sudah ada di folder backend/models/.
