@@ -156,8 +156,7 @@ ML_MODEL_PATH=backend/models/telq_model.pkl
 ML_COLUMNS_PATH=backend/models/telq_model_columns.pkl
 ```
 
-**6.Inisialisasi Database Manual**
-
+**6.Inisialisasi Database Manual**  
 Karena kita tidak pakai Docker, kita harus menjalankan script inisialisasi database secara manual agar tabel terbentuk.
 
 ```
