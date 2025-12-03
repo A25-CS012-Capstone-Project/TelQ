@@ -11,6 +11,8 @@ Project ini dibuat sebagai Capstone Project untuk program Asah lied by Dicoding
 - 📊 Admin Dashboard: Halaman admin lengkap untuk memantau penjualan, menambah produk, dan melihat analitik user.
 - 🔐 Multi-Role Auth: Sistem login aman untuk User dan Admin.
 
+
+
 # 🛠️ Teknologi yang Digunakan
 
 1. Frontend: HTML5, Tailwind CSS, Vanilla JavaScript.
@@ -18,6 +20,8 @@ Project ini dibuat sebagai Capstone Project untuk program Asah lied by Dicoding
 3. Database: PostgreSQL.
 4. Machine Learning: Scikit-Learn, Pandas, NumPy (Model XGBoost).
 5. Infrastructure: Docker & Docker Compose.
+
+
 
 # 🐳 Cara Menjalankan Project (Metode Docker - Disarankan)
 
@@ -29,6 +33,8 @@ Pastikan kamu sudah menginstall:
 
 - Docker Desktop
 - Pastikan Docker sudah berjalan (Cek ikon paus di taskbar).
+
+
 
 **2.Konfigurasi Environment (.env)**
 
@@ -50,6 +56,7 @@ ML_MODEL_PATH=backend/models/telq_model.pkl
 ML_COLUMNS_PATH=backend/models/telq_model_columns.pkl
 ```
 
+
 **3.Jalankan Aplikasi**
 
 Buka terminal di folder project, lalu jalankan perintah ini:
@@ -58,6 +65,8 @@ Buka terminal di folder project, lalu jalankan perintah ini:
 
 Tunggu proses download sampai muncul pesan `Running on` lalu buka `http://0.0.0.0:5000`.
 
+
+
 **4.Isi Database (Hanya Sekali di Awal)**
 
 Buka Terminal Baru (biarkan terminal pertama tetap jalan), lalu jalankan perintah ini untuk membuat tabel dan data dummy:
@@ -65,6 +74,8 @@ Buka Terminal Baru (biarkan terminal pertama tetap jalan), lalu jalankan perinta
 ```docker-compose exec web python backend/models/database.py```
 
 Jika muncul pesan `✅ SUKSES: Database berhasil diinisialisasi!`, berarti aplikasi siap digunakan.
+
+
 
 **5.Akses Aplikasi 🚀**
 
