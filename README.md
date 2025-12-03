@@ -55,19 +55,22 @@ ML_COLUMNS_PATH=backend/models/telq_model_columns.pkl
 
 Buka terminal di folder project, lalu jalankan perintah ini:
 
-- docker-compose up --build
-- Tunggu proses download dan instalasi selesai hingga muncul pesan Running on http://0.0.0.0:5000.
+```docker-compose up --build```
+
+Tunggu proses download sampai muncul pesan `Running on` lalu buka `http://0.0.0.0:5000`.
 
 4. Isi Database (Hanya Sekali di Awal)
 
 Buka Terminal Baru (biarkan terminal pertama tetap jalan), lalu jalankan perintah ini untuk membuat tabel dan data dummy:
-- docker-compose exec web python backend/models/database.py
-- Jika muncul pesan ✅ SUKSES: Database berhasil diinisialisasi!, berarti aplikasi siap digunakan.
+
+```docker-compose exec web python backend/models/database.py```
+
+Jika muncul pesan `✅ SUKSES: Database berhasil diinisialisasi!`, berarti aplikasi siap digunakan.
 
 5. Akses Aplikasi 🚀
 
 Buka browser dan kunjungi:
-👉 http://localhost:5000
+**👉 `http://localhost:5000`**
 
 👤 Akun Demo
 
@@ -75,13 +78,13 @@ Gunakan akun ini untuk masuk ke dashboard:
 
 **Admin (Dashboard)**
 
-- Email: admin@super.com
-- Password: admin123
+- Email: `admin@super.com`
+- Password: `admin123`
 - Akses: Manajemen Produk, User Analytics, Sales Report.
 
 **User (Pelanggan)**
 
-- Silakan Register akun baru di halaman Login.
+- Silakan Register akun baru.
 
 
 # 🔧 Alternatif: Instalasi Manual (Tanpa Docker)
