@@ -188,12 +188,4 @@ Buka browser di `http://127.0.0.1:5000`
 - **Error ML Model not found**: Pastikan file .pkl model sudah ada di folder backend/models/.
 - **Database Kosong**: Jangan lupa jalankan langkah No. 4 (Isi Database) setelah Docker menyala.
 
-## 📚 Dokumentasi Lengkap
-
-Project ini dilengkapi dengan dokumentasi teknis mendalam:
-
-* **📖 [Dokumentasi API (Swagger/OpenAPI)](API_DOCS.md)** - Panduan lengkap endpoint Backend.
-* **🎨 [Style Guide Figma](https://www.figma.com/...)** - Pedoman desain antarmuka.
-* **🐳 [Panduan Docker](TUTORIAL_DOCKER.md)** - Cara menjalankan menggunakan Docker.
-
 Selamat Mencoba! 🎉
