@@ -103,8 +103,8 @@ python -m backend.app
 
 ❓ Troubleshooting (Masalah Umum)
 
-Error bind: address already in use: Port 5000 atau 5432 sedang dipakai. Matikan service PostgreSQL lokal di laptopmu jika bentrok.
-Error ML Model not found: Pastikan file .pkl model sudah ada di folder backend/models/.
-Database Kosong: Jangan lupa jalankan langkah No. 4 (Isi Database) setelah Docker menyala.
+- Error bind: address already in use: Port 5000 atau 5432 sedang dipakai. Matikan service - - - PostgreSQL lokal di laptopmu jika bentrok.
+- Error ML Model not found: Pastikan file .pkl model sudah ada di folder backend/models/.
+- Database Kosong: Jangan lupa jalankan langkah No. 4 (Isi Database) setelah Docker menyala.
 
 Selamat Mencoba! 🎉
