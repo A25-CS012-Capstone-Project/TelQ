@@ -100,6 +100,7 @@ Gunakan akun ini untuk masuk ke dashboard:
 # 🔧 Alternatif: Instalasi Manual (Tanpa Docker)
 
 Jika kamu ingin menjalankan tanpa Docker, ikuti langkah ini:
+
 1.Install Python 3.10+ & PostgreSQL.
 2.Buat Database di pgAdmin dengan nama telq_recommender_db.
 3.Update .env: Ubah DB_HOST=db menjadi DB_HOST=localhost. -> INI PENTING
