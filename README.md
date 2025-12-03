@@ -69,10 +69,8 @@ Tunggu proses download sampai muncul pesan `Running on` lalu buka `http://0.0.0.
 
 **4.Isi Database (Hanya Sekali di Awal)**
 
-Buka Terminal Baru (biarkan terminal pertama tetap jalan), lalu jalankan perintah ini untuk membuat tabel dan data dummy:
-
-```docker-compose exec web python backend/models/database.py```
-
+Buka Terminal Baru (biarkan terminal pertama tetap jalan), lalu jalankan perintah ini untuk membuat tabel dan data dummy:  
+```docker-compose exec web python backend/models/database.py```  
 Jika muncul pesan `✅ SUKSES: Database berhasil diinisialisasi!`, berarti aplikasi siap digunakan.
 
 
