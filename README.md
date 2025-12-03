@@ -34,19 +34,21 @@ Pastikan kamu sudah menginstall:
 
 Buat file baru bernama .env di folder paling luar (sejajar dengan docker-compose.yml). Copy isi di bawah ini:
 
+```env
 SECRET_KEY=calon_best_capstone
 GEMINI_API_KEY=AIzaSyCQT1OUBsBgG_EAjYTP2RW-spyIIrX4jKE
 
-**Konfigurasi Database (Untuk Docker)**
+# Konfigurasi Database (Untuk Docker)
 DB_USER=postgres
 DB_PASSWORD=password123
 DB_HOST=db
 DB_PORT=5432
 DB_NAME=telq_recommender_db
 
-**Konfigurasi Model ML**
+# Konfigurasi Model ML
 ML_MODEL_PATH=backend/models/telq_model.pkl
 ML_COLUMNS_PATH=backend/models/telq_model_columns.pkl
+```
 
 
 3. Jalankan Aplikasi
@@ -71,13 +73,13 @@ Buka browser dan kunjungi:
 
 Gunakan akun ini untuk masuk ke dashboard:
 
-**Admin (Dashboard)
+**Admin (Dashboard)**
 
 - Email: admin@super.com
 - Password: admin123
 - Akses: Manajemen Produk, User Analytics, Sales Report.
 
-**User (Pelanggan)
+**User (Pelanggan)**
 
 - Silakan Register akun baru di halaman Login.
 
