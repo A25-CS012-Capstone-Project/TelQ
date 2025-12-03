@@ -100,13 +100,77 @@ Gunakan akun ini untuk masuk ke dashboard:
 
 Jika kamu ingin menjalankan tanpa Docker, ikuti langkah ini:
 
-1.Install Python 3.10+ & PostgreSQL.<br>
-2.Buat Database di pgAdmin dengan nama ``telq_recommender_db``.<br>
-3.Update `.env`: Ubah ``DB_HOST=db`` menjadi ``DB_HOST=localhost``. -> **INI PENTING**<br>
-4.Install Library:
-`pip install -r backend/requirements.txt` <br>
-5.Jalankan Aplikasi:
+**1.Persiapan Sistem**  
+Pastikan sudah terinstall:  
+- Python 3.10 ke atas (Wajib, versi di bawahnya mungkin error tipe data).  
+- PostgreSQL & pgAdmin 4.
+
+**2.Buat Database**
+1. Buka pgAdmin.  
+2. Buat database baru dengan nama: `telq_recommender_db`.  
+3. Pastikan kamu ingat password superuser (postgres) kamu.
+
+3. Setup Virtual Environment (PENTING)  
+Agar library tidak bentrok dengan sistem lain, wajib gunakan virtual environment.
+
+Buka terminal di folder project `TelQ/`:
+
+**Windows:**
+
+```python -m venv venv
+.\venv\Scripts\activate
+```
+
+
+**Mac/Linux:**
+
+```python3 -m venv venv
+source venv/bin/activate
+```
+
+*(Pastikan muncul tulisan `(venv)` di sebelah kiri terminal sebelum lanjut).*
+
+4. Install Dependencies  
+Install semua library yang dibutuhkan project:
+
+pip install -r backend/requirements.txt`
+
+
+5. Konfigurasi Environment Lokal  
+Buat file `.env` di folder root project, tapi sesuaikan isinya untuk lokal (bukan Docker):
+
+```SECRET_KEY=rahasia_lokal
+GEMINI_API_KEY=MASUKKAN_API_KEY_DISINI
+
+# Konfigurasi Database LOKAL
+DB_USER=postgres
+DB_PASSWORD=password_postgres_kamu_disini
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=telq_recommender_db
+
+# Path Model ML (Sesuaikan path lokal windows/mac)
+ML_MODEL_PATH=backend/models/telq_model.pkl
+ML_COLUMNS_PATH=backend/models/telq_model_columns.pkl
+```
+
+6. Inisialisasi Database Manual
+
+Karena kita tidak pakai Docker, kita harus menjalankan script inisialisasi database secara manual agar tabel terbentuk.
+
+```
+# Jalankan dari folder root project
+python backend/models/database.py
+```
+
+*Tunggu sampai muncul pesan sukses.*
+
+7. Jalankan Aplikasi  
+Jalankan server Flask sebagai module:
+
 `python -m backend.app`
+
+Buka browser di `http://127.0.0.1:5000`
 
 
 # ❓ Troubleshooting (Masalah Umum)
