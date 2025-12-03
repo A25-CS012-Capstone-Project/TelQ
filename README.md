@@ -5,28 +5,18 @@ TelQ adalah aplikasi web cerdas yang membantu pengguna menemukan paket telekomun
 Project ini dibuat sebagai Capstone Project untuk program Asah lied by Dicoding
 
 🚀 Fitur Utama
-
 🛒 Rekomendasi Cerdas: Menggunakan algoritma Hybrid (Content-Based + Rule-Based) untuk mencocokkan paket dengan profil user.
-
 🤖 Smart Chatbot: Asisten virtual yang siap menjawab pertanyaan seputar paket.
-
 📊 Admin Dashboard: Halaman admin lengkap untuk memantau penjualan, menambah produk, dan melihat analitik user.
-
-📱 Responsif UI: Tampilan modern dan ramah seluler menggunakan Tailwind CSS.
-
 🔐 Multi-Role Auth: Sistem login aman untuk User dan Admin.
 
 🛠️ Teknologi yang Digunakan
 
-Frontend: HTML5, Tailwind CSS, Vanilla JavaScript.
-
-Backend: Python Flask.
-
-Database: PostgreSQL.
-
-Machine Learning: Scikit-Learn, Pandas, NumPy (Model XGBoost).
-
-Infrastructure: Docker & Docker Compose.
+1. Frontend: HTML5, Tailwind CSS, Vanilla JavaScript.
+2. Backend: Python Flask.
+3. Database: PostgreSQL.
+4. Machine Learning: Scikit-Learn, Pandas, NumPy (Model XGBoost).
+5. Infrastructure: Docker & Docker Compose.
 
 🐳 Cara Menjalankan Project (Metode Docker - Disarankan)
 
@@ -102,29 +92,19 @@ Silakan Register akun baru di halaman Login.
 🔧 Alternatif: Instalasi Manual (Tanpa Docker)
 
 Jika kamu ingin menjalankan tanpa Docker, ikuti langkah ini:
-
-Install Python 3.10+ & PostgreSQL.
-
-Buat Database di pgAdmin dengan nama telq_recommender_db.
-
-Update .env: Ubah DB_HOST=db menjadi DB_HOST=localhost.
-
-Install Library:
-
+1. Install Python 3.10+ & PostgreSQL.
+2. Buat Database di pgAdmin dengan nama telq_recommender_db.
+3. Update .env: Ubah DB_HOST=db menjadi DB_HOST=localhost. -> INI PENTING
+3. Install Library:
 pip install -r backend/requirements.txt
-
-
-Jalankan Aplikasi:
-
+4. Jalankan Aplikasi:
 python -m backend.app
 
 
 ❓ Troubleshooting (Masalah Umum)
 
 Error bind: address already in use: Port 5000 atau 5432 sedang dipakai. Matikan service PostgreSQL lokal di laptopmu jika bentrok.
-
 Error ML Model not found: Pastikan file .pkl model sudah ada di folder backend/models/.
-
 Database Kosong: Jangan lupa jalankan langkah No. 4 (Isi Database) setelah Docker menyala.
 
 Selamat Mencoba! 🎉
