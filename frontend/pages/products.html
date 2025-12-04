@@ -26,25 +26,64 @@
 
     <!-- Header -->
     <header class="bg-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-6 py-1 flex justify-between items-center">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+    
+            <!-- Logo -->
             <a href="/" aria-label="TelQ Home">
-                <div class="w-24 h-16 bg-[url('/assets/img/Logo_TelQ.png')] bg-contain bg-no-repeat bg-center"></div>
+                <div class="w-24 h-12 md:h-16 bg-[url('/assets/img/Logo_TelQ.png')] bg-contain bg-no-repeat bg-center">
+                </div>
             </a>
-            <div class="flex-grow">
-                <nav class="hidden md:flex items-center justify-center space-x-8">
-                    <a href="/" class="text-gray-700 font-medium hover:text-primary">Home</a>
-                    <a href="#" class="text-gray-700 font-medium hover:text-primary">Promo</a>
-                    <a href="/products" class="text-primary font-bold scroll-link">Product</a>
+    
+            <!-- Center: Desktop Menu -->
+            <div class="hidden md:flex flex-grow justify-center">
+                <nav class="flex items-center space-x-8">
+                    <a href="/" class="text-gray-700 font-medium hover:text-primary transition">Home</a>
+                    <!-- Link ke Section di Home Page -->
+                    <a href="/#best-deal-section" class="text-gray-700 font-medium hover:text-primary transition">Promo</a>
+                    <a href="/#rekomendasi-section"
+                        class="text-gray-700 font-medium hover:text-primary transition">Rekomendasi</a>
+                    <!-- Halaman Aktif -->
+                    <a href="/products" class="text-primary font-bold">Produk</a>
                 </nav>
             </div>
+    
+            <!-- Right side: User & Mobile Menu Button -->
             <div class="flex items-center space-x-4">
+                <!-- User Icon (Desktop) -->
                 <div class="hidden md:flex">
-                    <a class="flex items-center space-x-2 " aria-label="User Profile" href="/profile">
-                        <iconify-icon icon="icon-park-solid:people"
-                            class="text-3xl text-primary hover:text-gray-700"></iconify-icon>
-                        <span id="user-name" class="hidden sm:inline">User</span>
+                    <a class="flex items-center space-x-2 group" aria-label="User Profile" href="/profile">
+                        <div class="p-2 rounded-full bg-orange-50 group-hover:bg-orange-100 transition">
+                            <iconify-icon icon="icon-park-solid:people" class="text-2xl text-primary"></iconify-icon>
+                        </div>
+                        <span id="user-name"
+                            class="hidden lg:inline text-sm font-semibold text-gray-700 group-hover:text-primary transition">User</span>
                     </a>
                 </div>
+    
+                <!-- Mobile Menu Button (Hamburger) -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-600 hover:text-primary focus:outline-none p-2">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg">
+            <div class="flex flex-col px-6 py-4 space-y-3">
+                <a href="/" class="text-gray-700 hover:text-primary font-medium py-2 border-b border-gray-50">Home</a>
+                <a href="/#best-deal-section"
+                    class="text-gray-700 hover:text-primary font-medium py-2 border-b border-gray-50">Promo</a>
+                <a href="/#rekomendasi-section"
+                    class="text-gray-700 hover:text-primary font-medium py-2 border-b border-gray-50">Rekomendasi</a>
+                <a href="/products" class="text-primary font-bold py-2 border-b border-gray-50">Produk</a>
+                <a href="/profile" class="text-gray-700 hover:text-primary font-medium py-2 flex items-center gap-2">
+                    <iconify-icon icon="icon-park-solid:people"></iconify-icon> Profile Saya
+                </a>
             </div>
         </div>
     </header>
@@ -97,7 +136,7 @@
                 <h3 class="text-center text-2xl md:text-3xl font-bold text-gray-800 mb-2">Pilih Kategori Paket</h3>
                 <p class="text-center text-lg text-gray-600 mb-8">Sesuaikan dengan aktivitas harianmu</p>
 
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                     <button onclick="scrollToSection('streaming-section')"
                         class="p-3 rounded-xl bg-[#EF4444] text-white flex flex-col items-center gap-2 hover:scale-105 transition shadow-md">
                         <iconify-icon icon="si:movie-fill" class="text-2xl"></iconify-icon><span>Streaming</span>
@@ -107,7 +146,7 @@
                         <iconify-icon icon="fluent-emoji-high-contrast:video-game"
                             class="text-2xl"></iconify-icon><span>Gaming</span>
                     </button>
-                    <button onclick="scrollToSection('voice-section')"
+                    <button onclick="scrollToSection('hemat-section')"
                         class="p-3 rounded-xl bg-[#5C3E94] text-white flex flex-col items-center gap-2 hover:scale-105 transition shadow-md">
                         <iconify-icon icon="fluent-emoji-high-contrast:money-bag"
                             class="text-2xl"></iconify-icon><span>Hemat</span>
@@ -120,6 +159,10 @@
                         class="p-3 rounded-xl bg-[#F1C40F] text-white flex flex-col items-center gap-2 hover:scale-105 transition shadow-md">
                         <iconify-icon icon="ion:call" class="text-2xl"></iconify-icon><span>Voice</span>
                     </button>
+                    <button onclick="scrollToSection('social-section')"
+                        class="p-3 rounded-xl bg-[#4E56C0] text-white flex flex-col items-center gap-2 hover:scale-105 transition shadow-md">
+                        <iconify-icon icon="mdi:instagram" class="text-2xl"></iconify-icon><span>Social</span>
+                    </button>
                 </div>
             </div>
         </section>
@@ -129,8 +172,20 @@
             <div class="container mx-auto px-6 relative z-10">
                 <h2 class="text-4xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span
                         class="text-primary">Streaming</span> Non-Stop</h2>
-                <div id="streaming-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div id="streaming-container" class="flex overflow-x-auto space-x-6 pb-8 px-2 snap-x snap-mandatory no-scrollbar cursor-pointer">
                     <p class="col-span-full text-center text-gray-400">Memuat paket streaming...</p>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="hemat-section" class="relative bg-50 py-16">
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-3xl md:text-4xl font-semibold text-center text-[#3E3B3B] mb-8">Paket <span
+                        class="text-primary">Super Hemat</span></h2>
+                <div id="hemat-container"
+                    class="flex overflow-x-auto space-x-6 pb-8 px-2 snap-x snap-mandatory no-scrollbar cursor-pointer">
+                    <p class="w-full text-center text-gray-400">Memuat paket hemat...</p>
                 </div>
             </div>
         </section>
@@ -139,7 +194,7 @@
             <div class="container mx-auto px-6 relative z-10">
                 <h2 class="text-4xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span
                         class="text-primary">Gaming</span> Anti Lag</h2>
-                <div id="gaming-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div id="gaming-container" class="flex overflow-x-auto space-x-6 pb-8 px-2 snap-x snap-mandatory no-scrollbar cursor-pointer">
                     <p class="col-span-full text-center text-gray-400">Memuat paket gaming...</p>
                 </div>
             </div>
@@ -148,8 +203,8 @@
         <section id="voice-section" class="relative bg-50 py-20">
             <div class="container mx-auto px-6 relative z-10">
                 <h2 class="text-4xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span
-                        class="text-primary">Hemat & Voice</span></h2>
-                <div id="voice-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        class="text-primary">Voice</span></h2>
+                <div id="voice-container" class="flex overflow-x-auto space-x-6 pb-8 px-2 snap-x snap-mandatory no-scrollbar cursor-pointer">
                     <p class="col-span-full text-center text-gray-400">Memuat paket lainnya...</p>
                 </div>
             </div>
@@ -159,8 +214,18 @@
             <div class="container mx-auto px-6 relative z-10">
                 <h2 class="text-4xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span
                         class="text-primary">Roaming</span> Internasional</h2>
-                <div id="roaming-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div id="roaming-container" class="flex overflow-x-auto space-x-6 pb-8 px-2 snap-x snap-mandatory no-scrollbar cursor-pointer">
                     <p class="col-span-full text-center text-gray-400">Memuat paket roaming...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="social-section" class="relative bg-white py-20">
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-4xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span
+                        class="text-primary">Sosmed</span> FYP</h2>
+                <div id="social-container" class="flex overflow-x-auto space-x-6 pb-8 px-2 snap-x snap-mandatory no-scrollbar cursor-pointer">
+                    <p class="col-span-full text-center text-gray-400">Memuat paket sosmed...</p>
                 </div>
             </div>
         </section>

@@ -5,12 +5,51 @@ from backend.services.prediction_service import prediction_service
 prediction_bp = Blueprint('prediction_bp', __name__)
 
 # 2. Route: Mendapatkan Rekomendasi
-# Contoh: GET /api/v1/recommend?customer_id=CUST-001
 @prediction_bp.route('/recommend', methods=['GET', 'POST'])
 def recommend():
-    # Mendukung dua cara pemanggilan:
-    # - GET /api/v1/recommend?customer_id=...
-    # - POST /api/v1/recommend  with JSON {"customer_id": "..."}
+    """
+    Mendapatkan Rekomendasi Personal (AI)
+    ---
+    tags:
+      - Recommendation AI
+    parameters:
+      - in: body
+        name: body
+        required: true
+        description: ID pelanggan untuk mendapatkan rekomendasi
+        schema:
+          type: object
+          required:
+            - customer_id
+          properties:
+            customer_id:
+              type: string
+              example: CUST-001
+    responses:
+      200:
+        description: Rekomendasi berhasil dibuat
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: WARM
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  product_name:
+                    type: string
+                  final_score:
+                    type: number
+                  reason:
+                    type: string
+      400:
+        description: Parameter customer_id hilang
+      500:
+        description: Internal Server Error
+    """
     if request.method == 'GET':
         customer_id = request.args.get('customer_id')
     else:
@@ -28,9 +67,38 @@ def recommend():
         return jsonify({"error": str(e)}), 500
 
 # 3. Route: Trigger Pipeline Data (Update Profil User)
-# Contoh: POST /api/v1/trigger-pipeline body: {"customer_id": "CUST-001"}
 @prediction_bp.route('/trigger-pipeline', methods=['POST'])
 def pipeline():
+    """
+    Update Profil User (Trigger Pipeline)
+    ---
+    tags:
+      - Recommendation AI
+    parameters:
+      - in: body
+        name: body
+        required: true
+        description: ID pelanggan untuk memperbarui profil setelah transaksi
+        schema:
+          type: object
+          required:
+            - customer_id
+          properties:
+            customer_id:
+              type: string
+              example: CUST-001
+    responses:
+      200:
+        description: Profil berhasil diperbarui
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Pipeline sukses. Profil CUST-001 diperbarui.
+      500:
+        description: Gagal menjalankan pipeline
+    """
     data = request.get_json()
     customer_id = data.get('customer_id')
     
@@ -44,9 +112,45 @@ def pipeline():
         return jsonify({"error": str(e)}), 500
 
 # 4. Route: Cold Start (Simpan Preferensi User Baru)
-# Contoh: POST /api/v1/cold-start body: {"customer_id": "CUST-999", "preference": "Hemat"}
 @prediction_bp.route('/cold-start', methods=['POST'])
 def cold_start():
+    """
+    Simpan Preferensi User Baru (Cold Start)
+    ---
+    tags:
+      - Recommendation AI
+    parameters:
+      - in: body
+        name: body
+        required: true
+        description: Data preferensi awal dari kuesioner
+        schema:
+          type: object
+          required:
+            - customer_id
+            - preference
+          properties:
+            customer_id:
+              type: string
+              example: CUST-999
+            preference:
+              type: string
+              enum: [Streaming, Voice, Travel, Hemat, Social, Gaming]
+              example: Hemat
+    responses:
+      200:
+        description: Preferensi berhasil disimpan
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Preferensi 'Hemat' disimpan!
+      400:
+        description: Data input tidak lengkap
+      500:
+        description: Internal Server Error
+    """
     data = request.get_json()
     customer_id = data.get('customer_id')
     preference = data.get('preference') # Streaming, Voice, Travel, Hemat

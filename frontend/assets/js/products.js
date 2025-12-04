@@ -1,15 +1,37 @@
 const API_BASE_URL = "/api/v1";
 let currentUserName = "User";
-let productsStore = {}; // Database lokal sementara untuk modal
+let productsStore = {}; 
 
 document.addEventListener("DOMContentLoaded", () => {
   checkAuth();
-  // Load Semua Kategori
+
   loadProductsByCategory("Streaming", "streaming-container");
   loadProductsByCategory("Gaming", "gaming-container");
+  loadProductsByCategory("Hemat", "hemat-container");
   loadProductsByCategory("Voice", "voice-container");
   loadProductsByCategory("Roaming", "roaming-container");
+  loadProductsByCategory("Social", "social-container");
+
+  setupMobileMenu();
 });
+
+function setupMobileMenu() {
+  const btn = document.getElementById("mobile-menu-button");
+  const menu = document.getElementById("mobile-menu");
+
+  if (btn && menu) {
+    btn.addEventListener("click", () => {
+      menu.classList.toggle("hidden");
+    });
+
+    const links = menu.querySelectorAll("a");
+    links.forEach((link) => {
+      link.addEventListener("click", () => {
+        menu.classList.add("hidden");
+      });
+    });
+  }
+}
 
 function checkAuth() {
   const userStr = localStorage.getItem("user");
@@ -76,17 +98,13 @@ function renderCategoryCards(items, container) {
     let priceDisplay = `Rp ${item.price.toLocaleString("id-ID")}`;
     let dataGb = item.data_gb || 0;
     let duration = item.duration_days || 30;
-    let bonusStream = item.streaming_gb_bonus || 0;
-    let bonusGame = item.gaming_gb_bonus || 0;
-    let bonusCall = item.call_minutes_bonus || 0;
-    let bonusRoam = item.roaming_days_bonus || 0;
 
     const nameParts = parseProductName(name);
     const displayName = `${nameParts.line1}<br>${nameParts.line2}`;
 
     const card = document.createElement("div");
     card.className =
-      "bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)] flex flex-col justify-between h-full group hover:scale-[1.02] transition-transform duration-300";
+      "bg-[linear-gradient(270deg,#FFFFFF_22.18%,rgba(255,125,0,0.76)_98.14%)] rounded-xl shadow-[5px_7px_4px_rgba(0,0,0,0.25)] flex flex-col justify-between h-full group hover:scale-[1.02] transition-transform duration-300 min-w-[85vw] sm:min-w-[350px] snap-center flex-shrink-0";
 
     card.innerHTML = `
             <div class="p-6 relative overflow-hidden rounded-t-xl">
@@ -101,31 +119,6 @@ function renderCategoryCards(items, container) {
                 <ul class="space-y-2 text-black text-sm flex-grow">
                     <li class="flex items-center"><iconify-icon icon="iconoir:clock" class="mr-2 text-xl text-gray-400"></iconify-icon>Masa berlaku ${duration} Hari</li>
                     <li class="flex items-center"><iconify-icon icon="mdi:database-outline" class="mr-2 text-xl text-gray-400"></iconify-icon>Kuota utama ${dataGb} GB</li>
-                    
-                    ${
-                      bonusStream > 0
-                        ? `<li class="flex items-center text-primary"><iconify-icon icon="mdi:youtube" class="mr-2 text-xl"></iconify-icon>Bonus Streaming ${bonusStream} GB</li>`
-                        : ""
-                    }
-                    
-                    ${
-                      bonusGame > 0
-                        ? `<li class="flex items-center text-primary"><iconify-icon icon="ion:game-controller" class="mr-2 text-xl"></iconify-icon>Bonus Gaming ${bonusGame} GB</li>`
-                        : ""
-                    }
-
-                    ${
-                      bonusCall > 0
-                        ? `<li class="flex items-center text-primary"><iconify-icon icon="mdi:phone-in-talk" class="mr-2 text-xl"></iconify-icon>Bonus Nelfon ${bonusCall} Menit</li>`
-                        : ""
-                    }
-
-                    ${
-                      /* Logic Bonus Roaming (BARU) */
-                      bonusRoam > 0
-                        ? `<li class="flex items-center text-primary"><iconify-icon icon="mdi:airplane" class="mr-2 text-xl"></iconify-icon>Bonus Roaming ${bonusRoam} Hari</li>`
-                        : ""
-                    }
                 </ul>
                 <div class="mt-6 border-t pt-4">
                     <p class="font-semibold text-gray-500 text-xs">HARGA</p>
@@ -209,11 +202,11 @@ window.showProductDetail = function (productId) {
   if (modal && container) {
     const priceDisplay = `Rp ${product.price.toLocaleString("id-ID")}`;
 
-    // Ambil bonus untuk modal
     let bonusStream = product.streaming_gb_bonus || 0;
     let bonusGame = product.gaming_gb_bonus || 0;
     let bonusCall = product.call_minutes_bonus || 0;
     let bonusRoam = product.roaming_days_bonus || 0;
+    let bonusSocmed = product.social_gb_bonus || 0;
 
     container.innerHTML = `
             <div class="p-8">
@@ -247,7 +240,7 @@ window.showProductDetail = function (productId) {
                     </div>
                     <div class="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100 mt-4">
                         <p class="font-semibold text-gray-800">Termasuk:</p>
-                        <ul class="list-disc ml-4 mt-1">
+                        <ul class="list-disc ml-4 mt-1 text-primary">
                             <li>Kuota Utama ${product.data_gb || 0} GB</li>
                             ${
                               bonusStream > 0
@@ -266,7 +259,12 @@ window.showProductDetail = function (productId) {
                             }
                             ${
                               bonusRoam > 0
-                                ? `<li>Roaming ${bonusRoam} Hari</li>`
+                                ? `<li>Bonus Roaming ${bonusRoam} Hari</li>`
+                                : ""
+                            }
+                            ${
+                              bonusSocmed > 0
+                                ? `<li>Bonus Sosmed ${bonusSocmed} GB</li>`
                                 : ""
                             }
                         </ul>

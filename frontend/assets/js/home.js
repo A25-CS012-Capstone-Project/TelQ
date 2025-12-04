@@ -4,7 +4,7 @@ const API_BASE_URL = "/api/v1";
 let currentTopRecommendation = null;
 let currentReason = null;
 let currentUserName = "User";
-let productsStore = {}; // Simpan data produk untuk modal detail
+let productsStore = {};
 
 document.addEventListener("DOMContentLoaded", () => {
   const userStr = localStorage.getItem("user");
@@ -310,11 +310,11 @@ function renderProductCards(items, container) {
       reasonHtml = "",
       dataGb = 0,
       duration = 30,
-      // Inisialisasi variabel bonus (default 0)
       bonusStream = 0,
       bonusGame = 0,
       bonusCall = 0,
       bonusRoam = 0,
+      bonusSocmed = 0,
       matchBadge = "";
 
     if (typeof item === "string") {
@@ -326,19 +326,37 @@ function renderProductCards(items, container) {
       dataGb = item.data_gb || 0;
       duration = item.duration_days || 30;
 
-      // --- AMBIL DATA BONUS SESUAI products.js ---
       bonusStream = item.streaming_gb_bonus || 0;
-      bonusGame = item.gaming_gb_bonus || 0; // Mengambil bonus Gaming
-      bonusCall = item.call_minutes_bonus || 0; // Mengambil bonus Telepon
-      bonusRoam = item.roaming_days_bonus || 0; // Mengambil bonus Roaming
+      bonusGame = item.gaming_gb_bonus || 0; 
+      bonusCall = item.call_minutes_bonus || 0; 
+      bonusRoam = item.roaming_days_bonus || 0;
+      bonusSocmed = item.social_gb_bonus || 0;
 
       if (item.final_score) {
-        const scorePct = (
-          Math.max(Math.min(item.final_score, 0.999), 0.01) * 100
-        ).toFixed(0);
+        const scoreVal = Math.max(Math.min(item.final_score, 0.999), 0.01);
+        const scorePct = (scoreVal * 100).toFixed(0);
+
+        // --- LOGIKA WARNA DINAMIS ---
+        let badgeClass = "";
+        let icon = "";
+
+        if (scorePct >= 80) {
+          // Hijau (Sangat Cocok)
+          badgeClass = "bg-green-100 text-green-700 border-green-200";
+          icon = "🔥";
+        } else if (scorePct >= 60) {
+          // Kuning/Oranye (Lumayan)
+          badgeClass = "bg-yellow-100 text-yellow-700 border-yellow-200";
+          icon = "👍";
+        } else {
+          // Abu-abu (Biasa aja)
+          badgeClass = "bg-gray-100 text-gray-600 border-gray-200";
+          icon = "✨";
+        }
+
         matchBadge = `
-            <div class="absolute top-6 left-6 z-20 bg-white/95 text-primary px-3 py-1.5 rounded-full text-[11px] font-bold shadow-sm border border-orange-100 backdrop-blur-sm tracking-wide uppercase">
-                Match ${scorePct}%
+            <div class="absolute top-6 left-6 z-20 ${badgeClass} px-3 py-1.5 rounded-full text-[11px] font-bold shadow-sm border backdrop-blur-sm tracking-wide uppercase flex items-center gap-1">
+                <span>${icon}</span> Match ${scorePct}%
             </div>`;
       }
 
@@ -385,43 +403,6 @@ function renderProductCards(items, container) {
                         <div class="w-6 flex justify-center mr-2"><iconify-icon icon="mdi:database-outline" class="text-lg text-gray-400"></iconify-icon></div>
                         <span>Kuota utama <b class="text-gray-900">${dataGb} GB</b></span>
                     </li>
-
-                    ${
-                      bonusStream > 0
-                        ? `
-                    <li class="flex items-center text-primary text-sm font-medium">
-                        <div class="w-6 flex justify-center mr-2"><iconify-icon icon="mdi:youtube" class="text-lg"></iconify-icon></div>
-                        <span>Bonus Streaming <b>${bonusStream} GB</b></span>
-                    </li>`
-                        : ""
-                    }
-                    ${
-                      bonusGame > 0
-                        ? `
-                    <li class="flex items-center text-primary text-sm font-medium">
-                        <div class="w-6 flex justify-center mr-2"><iconify-icon icon="ion:game-controller" class="text-lg"></iconify-icon></div>
-                        <span>Bonus Gaming <b>${bonusGame} GB</b></span>
-                    </li>`
-                        : ""
-                    }
-                    ${
-                      bonusCall > 0
-                        ? `
-                    <li class="flex items-center text-primary text-sm font-medium">
-                        <div class="w-6 flex justify-center mr-2"><iconify-icon icon="mdi:phone-in-talk" class="text-lg"></iconify-icon></div>
-                        <span>Bonus Nelfon <b>${bonusCall} Menit</b></span>
-                    </li>`
-                        : ""
-                    }
-                    ${
-                      bonusRoam > 0
-                        ? `
-                    <li class="flex items-center text-primary text-sm font-medium">
-                        <div class="w-6 flex justify-center mr-2"><iconify-icon icon="mdi:airplane" class="text-lg"></iconify-icon></div>
-                        <span>Bonus Roaming <b>${bonusRoam} Hari</b></span>
-                    </li>`
-                        : ""
-                    }
                 </ul>
             </div>
             
@@ -457,7 +438,6 @@ function renderBestDealsCards(items, container, isGridMode = false) {
   container.innerHTML = "";
 
   items.forEach((item) => {
-    // Simpan ke store
     productsStore[item.product_id] = item;
 
     let name = item.product_name || item;
@@ -585,11 +565,11 @@ window.showProductDetail = function (productId) {
   if (modal && container) {
     const priceDisplay = `Rp ${product.price.toLocaleString("id-ID")}`;
 
-    // --- SETUP VARIABEL BONUS UNTUK MODAL ---
     let bonusStream = product.streaming_gb_bonus || 0;
     let bonusGame = product.gaming_gb_bonus || 0; 
     let bonusCall = product.call_minutes_bonus || 0;
     let bonusRoam = product.roaming_days_bonus || 0;
+    let bonusSocmed = product.social_gb_bonus || 0;
 
     container.innerHTML = `
         <div class="p-8">
@@ -628,7 +608,7 @@ window.showProductDetail = function (productId) {
 
                 <div class="text-sm text-gray-600 bg-gray-50 p-4 rounded-xl border border-gray-100 mt-6">
                     <p class="font-bold text-gray-800 mb-2">Termasuk:</p>
-                    <ul class="list-disc ml-4 space-y-1">
+                    <ul class="list-disc ml-4 space-y-1 text-primary">
                         <li>Kuota Utama ${product.data_gb || 0} GB</li>
                         
                         ${
@@ -649,6 +629,11 @@ window.showProductDetail = function (productId) {
                         ${
                           bonusRoam > 0
                             ? `<li>Bonus Roaming ${bonusRoam} Hari</li>`
+                            : ""
+                        }
+                        ${
+                          bonusSocmed > 0
+                            ? `<li>Bonus Socmed ${bonusSocmed} GB</li>`
                             : ""
                         }
                         

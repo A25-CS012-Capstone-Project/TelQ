@@ -10,13 +10,51 @@ db_engine = create_engine(DATABASE_URL)
 # Helper function
 def get_db_dataframe(query, params=None):
     with db_engine.connect() as conn:
-        # Menggunakan pandas read_sql dengan koneksi SQLAlchemy
         return pd.read_sql(query, conn, params=params)
 
 @product_bp.route('/products/filter', methods=['POST'])
 def filter_products_by_preference():
     """
-    Mencari produk berdasarkan preferensi kuesioner (Rule-Based).
+    Rekomendasi Produk Berdasarkan Kuesioner (Rule-Based)
+    ---
+    tags:
+      - Products
+    parameters:
+      - in: body
+        name: body
+        required: true
+        description: Preferensi user dari kuesioner
+        schema:
+          type: object
+          required:
+            - preference
+          properties:
+            preference:
+              type: string
+              enum: [Streaming, Gaming, Voice, Hemat, Travel, Social]
+              example: Gaming
+    responses:
+      200:
+        description: Daftar produk rekomendasi
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: RULE_BASED
+            recommendations:
+              type: array
+              items:
+                type: object
+                properties:
+                  product_name:
+                    type: string
+                  price:
+                    type: integer
+                  data_gb:
+                    type: integer
+      400:
+        description: Preferensi tidak valid
     """
     data = request.get_json()
     preference = data.get('preference') 
@@ -25,13 +63,13 @@ def filter_products_by_preference():
         return jsonify({"error": "Preferensi wajib diisi"}), 400
 
     try:
-        # Mapping Pilihan Kuesioner -> Kolom 'target_offer' di Database
         category_map = {
             "Streaming": "Streaming Offer",
             "Gaming": "Gaming Offer",
             "Voice": "Voice Offer",
             "Hemat": "General Offer",
-            "Travel": "Roaming Offer"
+            "Travel": "Roaming Offer",
+            "Social": "Social Offer"
         }
         
         target = category_map.get(preference, "General Offer")
@@ -52,23 +90,53 @@ def filter_products_by_preference():
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
-# --- [BAGIAN YANG DIPERBAIKI] ---
 @product_bp.route('/products', methods=['GET'])
 def get_all_products():
     """
-    Mengambil produk, bisa semua atau difilter berdasarkan kategori (GET param).
-    Contoh: /api/v1/products?category=Streaming
+    Mengambil Semua Produk (Katalog)
+    ---
+    tags:
+      - Products
+    parameters:
+      - in: query
+        name: category
+        type: string
+        required: false
+        description: Filter kategori (Streaming, Gaming, Voice, Roaming, Social, Hemat)
+        enum: [Streaming, Gaming, Voice, Roaming, Social, Hemat]
+    responses:
+      200:
+        description: List produk berhasil diambil
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              product_id:
+                type: integer
+              product_name:
+                type: string
+              price:
+                type: integer
+              data_gb:
+                type: integer
+              streaming_gb_bonus:
+                type: integer
+              gaming_gb_bonus:
+                type: integer
+              social_gb_bonus:
+                type: integer
+      500:
+        description: Internal Server Error
     """
-    category = request.args.get('category') # Tangkap parameter category
+    category = request.args.get('category') 
 
     try:
         query_str = "SELECT * FROM products"
         conditions = []
         
-        # Logika Filter SQL Manual (Agar sesuai dengan JS)
         if category:
             if category == 'Streaming':
-                # Cari yang punya bonus streaming ATAU namanya mengandung 'Stream'
                 conditions.append("(streaming_gb_bonus > 0 OR product_name ILIKE '%%Stream%%')")
             elif category == 'Gaming':
                 conditions.append("(gaming_gb_bonus > 0 OR product_name ILIKE '%%Game%%' OR product_name ILIKE '%%Play%%')")
@@ -76,6 +144,9 @@ def get_all_products():
                 conditions.append("(roaming_days_bonus > 0 OR product_name ILIKE '%%Roam%%')")
             elif category == 'Voice':
                 conditions.append("(call_minutes_bonus > 0 OR product_name ILIKE '%%Nelpon%%')")
+            # --- [TAMBAHAN] ---
+            elif category == 'Social':
+                conditions.append("(social_gb_bonus > 0 OR product_name ILIKE '%%Soc%%')")
             elif category == 'Hemat':
                 conditions.append("price < 25000")
         
@@ -96,7 +167,27 @@ def get_all_products():
 
 @product_bp.route('/products/best-deal', methods=['GET'])
 def get_best_deals():
-    """Mengambil 4 produk terlaris."""
+    """
+    Mengambil Produk Terlaris (Best Deals)
+    ---
+    tags:
+      - Products
+    responses:
+      200:
+        description: List 4 produk terlaris berdasarkan history pembelian
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              product_name:
+                type: string
+              price:
+                type: integer
+              popularity:
+                type: integer
+                description: Jumlah terjual
+    """
     try:
         with db_engine.connect() as conn:
             result = conn.execute(text("SELECT COUNT(*) FROM purchase_history"))
@@ -130,7 +221,42 @@ def get_best_deals():
 
 @product_bp.route('/simulate-purchase', methods=['POST'])
 def simulate_purchase():
-    """Simulasi pembelian produk dengan data lengkap."""
+    """
+    Simulasi Pembelian Paket
+    ---
+    tags:
+      - Transactions
+    parameters:
+      - in: body
+        name: body
+        required: true
+        description: Data transaksi pembelian
+        schema:
+          type: object
+          required:
+            - customer_id
+            - product_id
+          properties:
+            customer_id:
+              type: string
+              example: CUST-001
+            product_id:
+              type: integer
+              example: 10
+    responses:
+      201:
+        description: Pembelian Berhasil Dicatat
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Pembelian berhasil disimulasikan!
+      404:
+        description: Produk Tidak Ditemukan
+      500:
+        description: Gagal Transaksi (Foreign Key Error, dll)
+    """
     data = request.get_json()
     customer_id = data.get('customer_id')
     product_id = data.get('product_id')
@@ -141,10 +267,7 @@ def simulate_purchase():
         return jsonify({"error": "customer_id dan product_id wajib diisi"}), 400
 
     try:
-        # 2. Gunakan Transaction Block
         with db_engine.connect() as conn:
-            # Cek dulu apakah produknya beneran ada?
-            # (Kita tidak perlu ambil price lagi untuk di-insert, cukup cek keberadaan produk)
             check_sql = text("SELECT product_id FROM products WHERE product_id = :pid")
             result = conn.execute(check_sql, {"pid": product_id}).fetchone()
             
@@ -152,15 +275,13 @@ def simulate_purchase():
                 print(f"❌ Error: Product ID {product_id} tidak ditemukan di DB")
                 return jsonify({"error": "Produk tidak valid"}), 404
                 
-            # 3. Insert ke purchase_history
-            # PERBAIKAN: Hapus kolom 'price' karena tidak ada di tabel database kamu
             insert_sql = text("""
                 INSERT INTO purchase_history (customer_id, product_id, purchase_date) 
                 VALUES (:cid, :pid, NOW())
             """)
             
             conn.execute(insert_sql, {"cid": customer_id, "pid": product_id})
-            conn.commit() # Wajib commit
+            conn.commit()
             
             print(f"✅ Sukses: User {customer_id} beli Produk ID {product_id}")
 
@@ -168,5 +289,5 @@ def simulate_purchase():
 
     except Exception as e:
         print("❌ CRITICAL ERROR saat Beli:", str(e))
-        traceback.print_exc() # Ini akan memunculkan detail error di terminal kamu
+        traceback.print_exc()
         return jsonify({"error": f"Gagal memproses transaksi: {str(e)}"}), 500

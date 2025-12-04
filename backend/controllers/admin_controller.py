@@ -18,6 +18,28 @@ def get_db_dataframe(query, params=None):
 
 @admin_bp.route('/stats/overview', methods=['GET'])
 def get_overview():
+    """
+    Mendapatkan Ringkasan Statistik Bisnis
+    ---
+    tags:
+      - Admin Dashboard
+    responses:
+      200:
+        description: Data overview berhasil diambil
+        schema:
+          type: object
+          properties:
+            total_revenue:
+              type: number
+            active_users:
+              type: integer
+            conversion_rate:
+              type: number
+            model_accuracy:
+              type: number
+      500:
+        description: Internal Server Error
+    """
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
@@ -44,6 +66,30 @@ def get_overview():
 
 @admin_bp.route('/stats/sales-trend', methods=['GET'])
 def get_sales_trend():
+    """
+    Mendapatkan Tren Penjualan (Grafik)
+    ---
+    tags:
+      - Admin Dashboard
+    responses:
+      200:
+        description: Data tren penjualan AI vs Organik
+        schema:
+          type: object
+          properties:
+            labels:
+              type: array
+              items:
+                type: string
+            series_ai:
+              type: array
+              items:
+                type: integer
+            series_organic:
+              type: array
+              items:
+                type: integer
+    """
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT COALESCE(SUM(p.price), 0) FROM purchase_history ph JOIN products p ON ph.product_id = p.product_id")
@@ -68,6 +114,26 @@ def get_sales_trend():
 
 @admin_bp.route('/stats/segments', methods=['GET'])
 def get_user_segments():
+    """
+    Mendapatkan Segmentasi User (Pie Chart)
+    ---
+    tags:
+      - Admin Dashboard
+    responses:
+      200:
+        description: Distribusi segmen user
+        schema:
+          type: object
+          properties:
+            labels:
+              type: array
+              items:
+                type: string
+            data:
+              type: array
+              items:
+                type: integer
+    """
     try:
         query = """
             SELECT 
@@ -88,6 +154,26 @@ def get_user_segments():
 
 @admin_bp.route('/stats/top-products', methods=['GET'])
 def get_top_products():
+    """
+    Mendapatkan 5 Produk Terlaris
+    ---
+    tags:
+      - Admin Dashboard
+    responses:
+      200:
+        description: Data top products
+        schema:
+          type: object
+          properties:
+            labels:
+              type: array
+              items:
+                type: string
+            data:
+              type: array
+              items:
+                type: integer
+    """
     try:
         query = """
             SELECT p.product_name, COUNT(ph.product_id) as total_sold
@@ -105,11 +191,34 @@ def get_top_products():
 
 @admin_bp.route('/users', methods=['GET'])
 def get_all_users():
+    """
+    Mengambil Daftar Semua User & Analitiknya
+    ---
+    tags:
+      - Admin Management
+    responses:
+      200:
+        description: List user dengan persona dan total belanja
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              firstname:
+                type: string
+              customer_id:
+                type: string
+              device_brand:
+                type: string
+              persona:
+                type: string
+              total_spend:
+                type: number
+    """
     try:
-        # Ambil user dan hitung total spending mereka (Lifetime Value)
-        # Kita join user_features dengan purchase_history untuk data akurat
         query = """
             SELECT 
+                u.firstname,
                 uf.customer_id,
                 uf.device_brand,
                 uf.plan_type,
@@ -121,9 +230,10 @@ def get_all_users():
                 END as persona,
                 COALESCE(SUM(p.price), 0) as total_spend
             FROM user_features uf
+            JOIN users u ON uf.customer_id = u.customer_id
             LEFT JOIN purchase_history ph ON uf.customer_id = ph.customer_id
             LEFT JOIN products p ON ph.product_id = p.product_id
-            GROUP BY uf.customer_id, uf.device_brand, uf.plan_type, uf.pct_video_usage, uf.travel_score, uf.avg_call_duration
+            GROUP BY u.firstname, uf.customer_id, uf.device_brand, uf.plan_type, uf.pct_video_usage, uf.travel_score, uf.avg_call_duration
             ORDER BY total_spend DESC
         """
         df = get_db_dataframe(query)
@@ -140,6 +250,30 @@ def get_all_users():
 
 @admin_bp.route('/products', methods=['GET'])
 def get_products():
+    """
+    Mengambil Semua Produk (Admin View)
+    ---
+    tags:
+      - Admin Management
+    responses:
+      200:
+        description: List lengkap produk
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              product_id:
+                type: integer
+              product_name:
+                type: string
+              price:
+                type: integer
+              data_gb:
+                type: integer
+              duration_days:
+                type: integer
+    """
     try:
         query = "SELECT * FROM products ORDER BY price ASC"
         df = get_db_dataframe(query)
@@ -150,6 +284,56 @@ def get_products():
 
 @admin_bp.route('/products', methods=['POST'])
 def add_product():
+    """
+    Menambah Produk Baru (Admin)
+    ---
+    tags:
+      - Admin Management
+    parameters:
+      - in: body
+        name: body
+        required: true
+        description: Data produk baru lengkap dengan bonus
+        schema:
+          type: object
+          required:
+            - product_name
+            - price
+            - data_gb
+          properties:
+            product_name:
+              type: string
+            price:
+              type: integer
+            data_gb:
+              type: integer
+            duration_days:
+              type: integer
+            streaming_gb_bonus:
+              type: integer
+            gaming_gb_bonus:
+              type: integer
+            social_gb_bonus:
+              type: integer
+            call_minutes_bonus:
+              type: integer
+            roaming_days_bonus:
+              type: integer
+    responses:
+      200:
+        description: Produk berhasil ditambahkan
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+            id:
+              type: integer
+      400:
+        description: Data tidak lengkap
+      500:
+        description: Gagal menyimpan ke DB
+    """
     data = request.get_json()
     
     # Validasi sederhana
@@ -161,14 +345,10 @@ def add_product():
     cursor = conn.cursor()
     
     try:
-        # --- [DEBUGGING] CEK NAMA DATABASE ---
-        # Ini akan mencetak nama database yang sedang aktif di terminal Flask
         cursor.execute("SELECT current_database();")
         db_name = cursor.fetchone()[0]
         print(f"👀 [DEBUG] Menyimpan produk ke database: {db_name}")
-        # -------------------------------------
 
-        # Generate product_id (max + 1)
         cursor.execute("SELECT MAX(product_id) FROM products")
         row = cursor.fetchone()
         max_id = row[0] if row and row[0] is not None else 0
@@ -198,7 +378,9 @@ def add_product():
             target_offer = "General Offer"
             if streaming_gb_bonus > 0: target_offer = "Streaming Offer"
             elif gaming_gb_bonus > 0: target_offer = "Gaming Offer"
+            elif social_gb_bonus > 0: target_offer = "Social Offer"
             elif roaming_days_bonus > 0: target_offer = "Roaming Offer"
+            elif call_minutes_bonus > 0: target_offer = "Voice Offer"
 
         sql = """
             INSERT INTO products (
