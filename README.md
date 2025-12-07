@@ -22,7 +22,7 @@ Project ini dibuat sebagai Capstone Project untuk program Asah lied by Dicoding
 3. **Database**: PostgreSQL.
 4. **Machine Learning**: Scikit-Learn, Pandas, NumPy (Model XGBoost).
 5. **Infrastructure**: Docker & Docker Compose.
-
+6. **Mobile**: Flutter API, State Managemenet & Clean Architecture
 
 | Dokumentasi | Link Akses | Deskripsi |
 |-------------|------------|-----------|
@@ -187,5 +187,13 @@ Buka browser di `http://127.0.0.1:5000`
 - **Error bind**: address already in use: Port 5000 atau 5432 sedang dipakai. Matikan service - - PostgreSQL lokal di laptopmu jika bentrok.
 - **Error ML Model not found**: Pastikan file .pkl model sudah ada di folder backend/models/.
 - **Database Kosong**: Jangan lupa jalankan langkah No. 4 (Isi Database) setelah Docker menyala.
+
+## 📚 Dokumentasi Lengkap
+
+Project ini dilengkapi dengan dokumentasi teknis mendalam:
+
+* **📖 [Dokumentasi API (Swagger/OpenAPI)](API_DOCS.md)** - Panduan lengkap endpoint Backend.
+* **🎨 [Style Guide Figma](https://www.figma.com/...)** - Pedoman desain antarmuka.
+* **🐳 [Panduan Docker](TUTORIAL_DOCKER.md)** - Cara menjalankan menggunakan Docker.
 
 Selamat Mencoba! 🎉
