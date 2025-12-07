@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from backend.services.prediction_service import prediction_service
 
-# 1. Definisi Blueprint (Ini yang dicari oleh app.py)
+# 1. Definisi Blueprint 
 prediction_bp = Blueprint('prediction_bp', __name__)
 
 # 2. Route: Mendapatkan Rekomendasi
@@ -60,7 +60,6 @@ def recommend():
         return jsonify({"error": "Parameter customer_id wajib diisi"}), 400
 
     try:
-        # Panggil logika dari file prediction_service.py
         result = prediction_service.get_recommendations(customer_id)
         return jsonify(result), 200
     except Exception as e:
@@ -153,7 +152,7 @@ def cold_start():
     """
     data = request.get_json()
     customer_id = data.get('customer_id')
-    preference = data.get('preference') # Streaming, Voice, Travel, Hemat
+    preference = data.get('preference') 
     
     if not customer_id or not preference:
         return jsonify({"error": "customer_id dan preference wajib diisi"}), 400

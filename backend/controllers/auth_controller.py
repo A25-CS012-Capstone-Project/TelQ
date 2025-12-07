@@ -131,9 +131,7 @@ def login():
     email_input = data.get('email')
     password_input = data.get('password')
 
-    # =========================================================
-    # 1. CEK KHUSUS ADMIN (Hardcoded Credentials)
-    # =========================================================
+    # 1. CEK KHUSUS ADMIN 
     if email_input == 'admin@super.com' and password_input == 'admin123':
         return jsonify({
             "success": True,
@@ -147,9 +145,7 @@ def login():
             }
         }), 200
 
-    # =========================================================
-    # 2. LOGIN USER BIASA (Via Database Service)
-    # =========================================================
+    # 2. LOGIN USER BIASA 
     result = auth_service.login_user(
         email=email_input,
         password=password_input

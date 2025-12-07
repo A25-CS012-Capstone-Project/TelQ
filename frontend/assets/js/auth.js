@@ -2,7 +2,7 @@ const API_BASE_URL = "/api/v1/auth";
 
 // --- FUNGSI REGISTER ---
 async function handleRegister(event) {
-  event.preventDefault(); // Mencegah reload halaman
+  event.preventDefault();
 
   // Ambil data dari form
   const firstname = document.getElementById("firstname").value;
@@ -126,7 +126,6 @@ async function handleLogin(event) {
         }
       });
     } else {
-      // SWAL ERROR LOGIN
       Swal.fire({
         icon: "error",
         title: "Login Gagal",
@@ -136,7 +135,6 @@ async function handleLogin(event) {
     }
   } catch (error) {
     console.error("Error:", error);
-    // SWAL ERROR SERVER
     Swal.fire({
       icon: "warning",
       title: "Server Tidak Merespon",

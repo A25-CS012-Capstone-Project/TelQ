@@ -1,4 +1,4 @@
-TelQ - Intelligent Telecommunication Plan Recommender
+# TelQ - Query Intelligence for Telecom Plans
 
 TelQ adalah aplikasi web cerdas yang membantu pengguna menemukan paket telekomunikasi (Internet, Telepon, Roaming) terbaik berdasarkan pola penggunaan mereka menggunakan Machine Learning (Hybrid Recommendation System).
 

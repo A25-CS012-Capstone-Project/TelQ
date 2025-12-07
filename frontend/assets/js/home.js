@@ -1,6 +1,5 @@
 const API_BASE_URL = "/api/v1";
 
-// --- Variabel Global ---
 let currentTopRecommendation = null;
 let currentReason = null;
 let currentUserName = "User";
@@ -493,7 +492,7 @@ function renderBestDealsCards(items, container, isGridMode = false) {
   }
 }
 
-// 5. Logic Pembelian Real (Update DB + Pipeline)
+// 5. Logic Pembelian Real 
 window.buyProduct = async function (id, name) {
   const userStr = localStorage.getItem("user");
   if (!userStr) {
@@ -525,7 +524,7 @@ window.buyProduct = async function (id, name) {
 
         if (!purchaseRes.ok) throw new Error("Gagal memproses transaksi");
 
-        // 2. Trigger Pipeline (Update Profil User)
+        // 2. Trigger Pipeline 
         await fetch(`${API_BASE_URL}/trigger-pipeline`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -554,7 +553,7 @@ window.buyProduct = async function (id, name) {
   });
 };
 
-// 6. Show Detail (Modal Dinamis)
+// 6. Show Detail 
 window.showProductDetail = function (productId) {
   const product = productsStore[productId];
   if (!product) return;

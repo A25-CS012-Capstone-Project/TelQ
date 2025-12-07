@@ -12,10 +12,7 @@ def get_db_dataframe(query, params=None):
     conn.close()
     return df
 
-# ==========================================
 # 1. STATISTIK DASHBOARD (EXISTING)
-# ==========================================
-
 @admin_bp.route('/stats/overview', methods=['GET'])
 def get_overview():
     """
@@ -185,10 +182,7 @@ def get_top_products():
         return jsonify({"labels": df['product_name'].tolist(), "data": df['total_sold'].tolist()})
     except Exception as e: return jsonify({"error": str(e)}), 500
 
-# ==========================================
-# 2. MANAJEMEN USER (BARU)
-# ==========================================
-
+# 2. MANAJEMEN USER 
 @admin_bp.route('/users', methods=['GET'])
 def get_all_users():
     """
@@ -238,16 +232,12 @@ def get_all_users():
         """
         df = get_db_dataframe(query)
         
-        # Konversi ke Dictionary
         users = df.to_dict(orient='records')
         return jsonify(users)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ==========================================
-# 3. MANAJEMEN PRODUK (BARU)
-# ==========================================
-
+# 3. MANAJEMEN PRODUK BARU
 @admin_bp.route('/products', methods=['GET'])
 def get_products():
     """
@@ -397,7 +387,7 @@ def add_product():
         )
 
         cursor.execute(sql, vals)
-        conn.commit() # Simpan permanen
+        conn.commit() 
         
         print(f"✅ [SUCCESS] Produk ID {new_id} ({product_name}) tersimpan!")
         

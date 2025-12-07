@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 from backend.models.database import get_db_connection
 import pandas as pd
-# Import service prediksi untuk bagian rekomendasi di bawah profil
 from backend.services.prediction_service import prediction_service
 import traceback
 
@@ -115,8 +114,7 @@ def get_user_profile():
         if profile_df.empty:
             return jsonify({"error": "User tidak ditemukan"}), 404
 
-        # 2. AMBIL HISTORY PEMBELIAN (Lengkap dengan kategori untuk filter)
-        # [PENTING] Pastikan 'target_offer' di-alias menjadi 'category' agar frontend JS bisa membacanya
+        # 2. AMBIL HISTORY PEMBELIAN 
         sql_history = """
             SELECT 
                 p.product_name,
@@ -134,8 +132,7 @@ def get_user_profile():
         """
         history_df = pd.read_sql(sql_history, conn, params=(customer_id,))
         
-        # --- LOGIKA PERSONA (Backend Side) ---
-        # Kita hitung di sini biar Frontend tinggal render
+        # LOGIKA PERSONA 
         row = profile_df.iloc[0]
         personas = []
         
@@ -171,18 +168,15 @@ def get_user_profile():
         if not personas:
             personas.append({"icon": "📱", "title": "Digital Native", "desc": "Pengguna internet aktif sehari-hari."})
 
-        # --- LOGIKA RINGKASAN HISTORY ---
+        # LOGIKA RINGKASAN HISTORY 
         total_trx = len(history_df)
         total_spend = int(history_df['price'].sum()) if not history_df.empty else 0
-        # mode() returns Series, take first
         fav_product = history_df['product_name'].mode()[0] if not history_df.empty else "-"
 
-        # --- AMBIL REKOMENDASI (Untuk section bawah) ---
-        # Kita panggil service ML yang sudah Anda buat
+        # AMBIL REKOMENDASI
         recs_data = prediction_service.get_recommendations(customer_id)
         recommendations = []
         if recs_data.get("status") != "COLD":
-             # Ambil 3 rekomendasi teratas (parse string output model Anda)
              recommendations = recs_data.get("recommendations", [])[:3]
 
         # 3. SUSUN RESPONSE FINAL
