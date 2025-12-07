@@ -89,7 +89,7 @@ TELCO_KNOWLEDGE_BASE = [
     },
 ]
 
-# 🔧 DOMAIN GUARD – HANYA PERTANYAAN TELQ
+# HANYA PERTANYAAN TELQ
 def is_telco_related(msg_lower: str) -> bool:
     """
     Deteksi kasar apakah pesan masih seputar TelQ/telco.
@@ -105,7 +105,7 @@ def is_telco_related(msg_lower: str) -> bool:
     ]
     return any(kw in msg_lower for kw in telco_keywords)
 
-# 🔧 HELPER: CEK KEYWORD KB DENGAN WORD-BOUNDARY
+# HELPER: CEK KEYWORD KB DENGAN WORD-BOUNDARY
 def contains_keyword(msg_lower: str, keyword: str) -> bool:
     """
     - Kalau keyword mengandung spasi -> pakai substring biasa (frasa).
@@ -126,7 +126,7 @@ def search_knowledge_base(msg_lower: str) -> str | None:
     return None
 
 
-# 🔧 HELPER: INTENT DETECTION
+# HELPER: INTENT DETECTION
 def detect_gaming_intent(msg_lower: str) -> bool:
     gaming_keywords = [
         "game", "gaming", "mlbb", "mobile legend", "mobile legends",
@@ -242,7 +242,7 @@ def chat():
     response_text = None
     method = "RuleBased"
 
-    # SPECIAL CASE: GREETING TANPA KATA TELCO
+    # SPECIAL CASE
     if detect_greeting(msg_lower) and not is_telco_related(msg_lower):
         return jsonify(
             {
@@ -256,7 +256,7 @@ def chat():
             }
         )
 
-    # DOMAIN GUARD: JIKA BUKAN PERTANYAAN TELCO → TOLAK
+    # DOMAIN GUARD
     if not is_telco_related(msg_lower):
         return jsonify(
             {
@@ -356,7 +356,7 @@ def chat():
                 "lebih personal di halaman utama 😉"
             )
 
-    # F. Knowledge base general (FAQ telco kecil)
+    # F. Knowledge base general 
     if not response_text:
         kb_answer = search_knowledge_base(msg_lower)
         if kb_answer:
@@ -393,7 +393,7 @@ ATURAN JAWABAN:
         except Exception as e:
             print(f"[Chatbot] Gemini Error, fallback ke rule-based. Detail: {e}")
 
-    # LAYER 3: FALLBACK TERAKHIR (MASIH DALAM DOMAIN TELQ)
+    # LAYER 3: FALLBACK TERAKHIR 
     if not response_text:
         fallbacks = [
             "Maaf, aku belum bisa memahami pertanyaanmu sepenuhnya. "

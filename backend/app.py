@@ -17,7 +17,7 @@ from backend.controllers.chatbot_controller import chatbot_bp
 from backend.controllers.admin_controller import admin_bp
 
 def create_app():
-    # --- 1. SETUP PATH (JANGAN DIUBAH) ---
+    # --- 1. SETUP PATH ---
     base_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(base_dir)
     frontend_dir = os.path.join(project_root, 'frontend')

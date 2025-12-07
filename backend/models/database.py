@@ -1,19 +1,11 @@
-"""
-File ini berisi skema SQL untuk inisiasi database PostgreSQL,
-ditambah helper koneksi Python.
-"""
 import psycopg2
 import os
 import sys
 
-# Tambahkan direktori root backend ke sys.path untuk impor config
-# Karena file ini dipanggil dari luar backend/
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from backend.config import DATABASE_URL
 
-# =================================================================
 # FUNGSI HELPER PYTHON UNTUK KONEKSI
-# =================================================================
 def get_db_connection():
     """Mengembalikan objek koneksi psycopg2 baru menggunakan DATABASE_URL."""
     try:
@@ -127,9 +119,6 @@ INSERT INTO products (
 (23, 'Super Plan 50GB All-in-One', 160000, 30, 50, 10, 10, 10, 500, 200, 3, 'Premium Offer');
 """
 
-# =================================================================
-# BAGIAN EKSEKUSI (Jalankan ini agar tabel terbuat)
-# =================================================================
 def init_db():
     """Fungsi untuk menjalankan Query SQL ke Database."""
     conn = None
@@ -138,13 +127,12 @@ def init_db():
         conn = get_db_connection()
         cur = conn.cursor()
 
-        print("🔨 (1/2) Membuat tabel (DROP & CREATE)...")
+        print("(1/2) Membuat tabel (DROP & CREATE)...")
         cur.execute(CREATE_TABLES_SQL)
         
-        print("📦 (2/2) Mengisi data produk awal...")
+        print("(2/2) Mengisi data produk awal...")
         cur.execute(INSERT_PRODUCTS_SQL)
 
-        # COMMIT adalah langkah terpenting! Tanpa ini data tidak tersimpan.
         conn.commit()
         
         print("\n✅ SUKSES: Database berhasil diinisialisasi!")
@@ -163,5 +151,4 @@ def init_db():
             print("🔌 Koneksi database ditutup.")
 
 if __name__ == "__main__":
-    # Kode di bawah ini hanya jalan jika file dipanggil langsung: python database.py
     init_db()

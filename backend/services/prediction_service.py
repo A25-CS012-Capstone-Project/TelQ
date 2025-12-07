@@ -185,7 +185,6 @@ class PredictionService:
         if candidate_products_df.empty:
             return {"status": "NO_PRODUCTS", "recommendations": []}
 
-        # copy
         test_df = candidate_products_df.copy()
 
         # 1. Ambil fitur user (baris pertama)
@@ -197,9 +196,6 @@ class PredictionService:
         user_avg_call = float(user_features_dict.get("avg_call_duration", 0) or 0)
         user_spend = float(user_features_dict.get("monthly_spend", 0) or 0)
 
-        # === 1.b Soft gating produk pure streaming untuk user non-video-heavy ===
-        # Definisi "pure streaming": data_gb = 0, tidak ada call/sms/roaming,
-        # cuma jual streaming (dan mungkin sedikit social).
         is_non_video_user = user_pct_video < 0.30
         if is_non_video_user:
             mask_pure_stream = (
@@ -239,7 +235,7 @@ class PredictionService:
             "call_minutes_bonus",
             "sms_bonus",
         ]
-        # Pastikan metadata ada (jika ada kolom hilang di DB, kita fill dengan 0)
+        # Pastikan metadata ada 
         for c in metadata_cols:
             if c not in test_df.columns:
                 test_df[c] = 0
@@ -257,7 +253,7 @@ class PredictionService:
         else:
             test_df_final = None
 
-        # 6. PREDIKSI ML (jika tersedia) + Hybrid reranking (rule + content)
+        # 6. PREDIKSI ML + Hybrid reranking (rule + content)
         if MODEL is not None and test_df_final is not None:
             try:
                 ml_scores = MODEL.predict_proba(test_df_final)[:, 1]
@@ -280,10 +276,9 @@ class PredictionService:
                 if p_socmed > 0 or p_stream > 0 or p_roam > 0:
                     score += 0.05
 
-                # --- Penalti tambahan: user non-video, produk streaming/socmed heavy ---
+                # --- Penalti tambahan:
                 if is_non_video_user and (p_stream > 0 or p_socmed > 0):
                     # Kalau produk ini tidak punya call/roaming, artinya benar-benar entertainment,
-                    # kita tekan lebih keras
                     if p_call == 0 and p_roam == 0:
                         score -= 0.4
                     else:
@@ -386,7 +381,7 @@ class PredictionService:
                 "items": items,
             }
 
-        # 8. Fallback (jika model tidak siap)
+        # 8. Fallback 
         else:
             print("⚠️ MODEL tidak siap, fallback ke produk termurah.")
             fallback = candidate_products_df.sort_values("price").head(top_k).copy()
