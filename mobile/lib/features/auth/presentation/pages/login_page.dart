@@ -47,7 +47,16 @@ class LoginPage extends StatelessWidget {
                               confirmBtnColor: const Color(0xFFF5821F),
                               confirmBtnTextStyle: const TextStyle(color: Colors.white),
                               autoCloseDuration: const Duration(seconds: 2),
-                            );
+                              onConfirmBtnTap: () {
+                                Navigator.pop(context); // Close the alert
+                                Navigator.pushReplacementNamed(context, AppRoute.product.path);
+                              },
+                            ).then((_) {
+                              // Navigate after auto-close if user didn't tap confirm
+                              if (context.mounted) {
+                                Navigator.pushReplacementNamed(context, AppRoute.product.path);
+                              }
+                            });
                           } else if (state.status == LoginStatus.failure && state.error != null) {
                             QuickAlert.show(
                               context: context,

@@ -2,6 +2,7 @@ enum AppRoute {
   onboarding,
   login,
   register,
+  product,
 }
 
 extension AppRoutePath on AppRoute {
@@ -13,6 +14,8 @@ extension AppRoutePath on AppRoute {
         return '/login';
       case AppRoute.register:
         return '/register';
+      case AppRoute.product:
+        return '/product';
     }
   }
 }

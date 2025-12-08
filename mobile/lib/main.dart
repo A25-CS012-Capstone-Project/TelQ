@@ -9,6 +9,8 @@ import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/pages/register_page.dart';
 import 'features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import 'features/onboarding/presentation/pages/onboarding_page.dart';
+import 'features/product/presentation/cubit/product_cubit.dart';
+import 'features/product/presentation/pages/product_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +43,10 @@ class MyApp extends StatelessWidget {
         AppRoute.register.path: (_) => BlocProvider(
               create: (_) => getIt<RegisterCubit>(),
               child: const RegisterPage(),
+            ),
+        AppRoute.product.path: (_) => BlocProvider(
+              create: (_) => getIt<ProductCubit>(),
+              child: const ProductPage(),
             ),
       },
     );
