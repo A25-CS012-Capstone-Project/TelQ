@@ -28,7 +28,7 @@ class OnboardingRepository {
     return 'http://localhost:5000/api/v1';
   }
 
-  /// Fetch best deal products (matches web's fetchBestDeals)
+  /// ambil best deal products
   Future<List<OnboardingProduct>> fetchBestDeals() async {
     try {
       print('Fetching best deals from: $_baseUrl/products/best-deal');
@@ -49,7 +49,7 @@ class OnboardingRepository {
     }
   }
 
-  /// Fetch filtered products by preference (matches web's submitPreference)
+  /// ambil filtered products sesuai preferensi user (biar kaya web)
   Future<List<OnboardingProduct>> fetchProductsByPreference(String preference) async {
     try {
       print('Fetching filtered products from: $_baseUrl/products/filter');

@@ -20,6 +20,16 @@ import '../features/product/domain/usecases/get_all_products.dart';
 import '../features/product/domain/usecases/get_products_by_category.dart';
 import '../features/product/presentation/cubit/product_cubit.dart';
 
+// Promo feature imports
+import '../features/promo/data/datasources/promo_remote_data_source.dart';
+import '../features/promo/data/repositories/promo_repository_impl.dart';
+import '../features/promo/domain/repositories/promo_repository.dart';
+import '../features/promo/domain/usecases/get_recommendations.dart';
+import '../features/promo/domain/usecases/get_best_deals.dart';
+import '../features/promo/domain/usecases/submit_cold_start.dart';
+import '../features/promo/domain/usecases/trigger_pipeline.dart';
+import '../features/promo/presentation/cubit/promo_cubit.dart';
+
 final getIt = GetIt.instance;
 
 void configureDependencies() {
@@ -71,6 +81,33 @@ void configureDependencies() {
     () => ProductCubit(
       getAllProducts: getIt(),
       getProductsByCategory: getIt(),
+    ),
+  );
+
+  // ==================== Promo Feature ====================
+  // Data sources
+  getIt.registerLazySingleton<PromoRemoteDataSource>(
+    () => PromoRemoteDataSourceImpl(api: getIt()),
+  );
+
+  // Repositories
+  getIt.registerLazySingleton<PromoRepository>(
+    () => PromoRepositoryImpl(getIt()),
+  );
+
+  // Use cases
+  getIt.registerLazySingleton<GetRecommendations>(() => GetRecommendations(getIt()));
+  getIt.registerLazySingleton<GetBestDeals>(() => GetBestDeals(getIt()));
+  getIt.registerLazySingleton<SubmitColdStart>(() => SubmitColdStart(getIt()));
+  getIt.registerLazySingleton<TriggerPipeline>(() => TriggerPipeline(getIt()));
+
+  // Presentation
+  getIt.registerFactory<PromoCubit>(
+    () => PromoCubit(
+      getRecommendations: getIt(),
+      getBestDeals: getIt(),
+      submitColdStart: getIt(),
+      triggerPipeline: getIt(),
     ),
   );
 }

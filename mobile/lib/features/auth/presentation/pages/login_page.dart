@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telQ_mobile/core/routes/app_route.dart';
 
 import '../cubit/login_cubit.dart';
@@ -38,8 +39,14 @@ class LoginPage extends StatelessWidget {
                       padding: const EdgeInsets.all(24),
                       child: BlocListener<LoginCubit, LoginState>(
                         listenWhen: (previous, current) => previous.status != current.status,
-                        listener: (context, state) {
+                        listener: (context, state) async {
                           if (state.status == LoginStatus.success) {
+                            // Save customer_id to SharedPreferences for promo page
+                            if (state.user?.customerId != null) {
+                              final prefs = await SharedPreferences.getInstance();
+                              await prefs.setString('customer_id', state.user!.customerId);
+                            }
+                            if (!context.mounted) return;
                             QuickAlert.show(
                               context: context,
                               type: QuickAlertType.success,
@@ -49,12 +56,12 @@ class LoginPage extends StatelessWidget {
                               autoCloseDuration: const Duration(seconds: 2),
                               onConfirmBtnTap: () {
                                 Navigator.pop(context); // Close the alert
-                                Navigator.pushReplacementNamed(context, AppRoute.product.path);
+                                Navigator.pushReplacementNamed(context, AppRoute.home.path);
                               },
                             ).then((_) {
                               // Navigate after auto-close if user didn't tap confirm
                               if (context.mounted) {
-                                Navigator.pushReplacementNamed(context, AppRoute.product.path);
+                                Navigator.pushReplacementNamed(context, AppRoute.home.path);
                               }
                             });
                           } else if (state.status == LoginStatus.failure && state.error != null) {

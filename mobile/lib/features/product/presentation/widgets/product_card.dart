@@ -61,13 +61,13 @@ class ProductCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header with gradient circles decorations
+          // headernya ya biar bagus
           Container(
             padding: const EdgeInsets.all(20),
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                // Decorative circles
+                // dekorasi yang bulet2 itu apalah
                 Positioned(
                   top: -10,
                   right: -30,
@@ -106,7 +106,7 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Product name
+                // nama produk
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.5,
                   child: Text(
@@ -122,7 +122,7 @@ class ProductCard extends StatelessWidget {
               ],
             ),
           ),
-          // Content area
+          // area yang ada kontenya
           Container(
             padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
@@ -157,7 +157,7 @@ class ProductCard extends StatelessWidget {
                   'Kuota utama ${product.dataGb} GB',
                 ),
                 const SizedBox(height: 16),
-                // Price section
+                // ini yang ada harganya
                 Container(
                   padding: const EdgeInsets.only(top: 12),
                   decoration: BoxDecoration(
@@ -194,7 +194,7 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Action buttons
+                // ini button aksi atau action button
                 Row(
                   children: [
                     Expanded(

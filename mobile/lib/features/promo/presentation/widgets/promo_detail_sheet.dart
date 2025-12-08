@@ -2,12 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../domain/entities/product.dart';
+import '../../../product/domain/entities/product.dart';
+import '../../domain/entities/recommendation.dart';
 
-class ProductDetailSheet extends StatelessWidget {
-  final Product product;
+/// detail sheet buat promo dan product jadi satu aja
+class PromoDetailSheet extends StatelessWidget {
+  final Product? product;
+  final Recommendation? recommendation;
+  final VoidCallback? onBuy;
 
-  const ProductDetailSheet({super.key, required this.product});
+  const PromoDetailSheet({
+    super.key,
+    this.product,
+    this.recommendation,
+    this.onBuy,
+  }) : assert(product != null || recommendation != null, 'Either product or recommendation must be provided');
+
+  // Getters
+  String get productName => recommendation?.productName ?? product!.productName;
+  int get price => recommendation?.price ?? product!.price;
+  int get dataGb => recommendation?.dataGb ?? product!.dataGb;
+  int get durationDays => recommendation?.durationDays ?? product!.durationDays;
+  int get streamingGbBonus => recommendation?.streamingGbBonus ?? product!.streamingGbBonus;
+  int get gamingGbBonus => recommendation?.gamingGbBonus ?? product!.gamingGbBonus;
+  int get socialGbBonus => recommendation?.socialGbBonus ?? product!.socialGbBonus;
+  int get callMinutesBonus => recommendation?.callMinutesBonus ?? product!.callMinutesBonus;
+  int get roamingDaysBonus => recommendation?.roamingDaysBonus ?? product!.roamingDaysBonus;
+  int get smsBonus => recommendation?.smsBonus ?? product?.smsBonus ?? 0;
+  
+  // yang ini cuman buat rekomendasi
+  String? get reason => recommendation?.reason;
+  int? get matchPercentage => recommendation?.matchPercentage;
 
   String _formatPrice(int price) {
     final formatter = NumberFormat.currency(
@@ -21,8 +46,8 @@ class ProductDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.7,
-      maxChildSize: 0.9,
+      initialChildSize: 0.75,
+      maxChildSize: 0.95,
       minChildSize: 0.5,
       builder: (context, scrollController) {
         return Container(
@@ -75,10 +100,14 @@ class ProductDetailSheet extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 24),
-                  // nama produk
+                  // product name yang sesuai dengan rekomendasi
+                  if (matchPercentage != null) ...[
+                    Center(child: _buildMatchBadge()),
+                    const SizedBox(height: 12),
+                  ],
                   Center(
                     child: Text(
-                      product.productName,
+                      productName,
                       style: GoogleFonts.outfit(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
@@ -88,49 +117,49 @@ class ProductDetailSheet extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  // detail
+                  // yang ini AI insight
+                  if (reason != null) ...[
+                    _buildInsightSection(),
+                    const SizedBox(height: 24),
+                  ],
+                  // tombol detail
                   _buildDetailRow(
                     Icons.timer,
                     'Masa aktif',
-                    '${product.durationDays} HARI',
+                    '$durationDays HARI',
                   ),
                   const SizedBox(height: 16),
                   _buildDetailRow(
                     Icons.public,
                     'Kuota Internet',
-                    '${product.dataGb} GB',
+                    '$dataGb GB',
                   ),
                   const SizedBox(height: 24),
                   // bonus section
                   _buildBonusesSection(),
                   const SizedBox(height: 24),
-                  // ini yang harganya
+                  // section harga
                   Container(
                     padding: const EdgeInsets.only(top: 16),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       border: Border(
-                        top: BorderSide(color: const Color(0xFFFF7D00), width: 2),
+                        top: BorderSide(color: Color(0xFFFF7D00), width: 2),
                       ),
                     ),
                     child: _buildDetailRow(
                       Icons.attach_money,
                       'Total Harga',
-                      _formatPrice(product.price),
+                      _formatPrice(price),
                     ),
                   ),
                   const SizedBox(height: 24),
-                  // tombol beli coy
+                  // tombol beli
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Membeli ${product.productName}...'),
-                            backgroundColor: const Color(0xFFFF7D00),
-                          ),
-                        );
+                        onBuy?.call();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFF7D00),
@@ -156,6 +185,101 @@ class ProductDetailSheet extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildMatchBadge() {
+    final pct = matchPercentage!;
+    Color bgColor;
+    Color textColor;
+    String icon;
+
+    if (pct >= 80) {
+      bgColor = const Color(0xFFD1FAE5);
+      textColor = const Color(0xFF047857);
+      icon = '🔥';
+    } else if (pct >= 60) {
+      bgColor = const Color(0xFFFEF3C7);
+      textColor = const Color(0xFFB45309);
+      icon = '👍';
+    } else {
+      bgColor = const Color(0xFFF3F4F6);
+      textColor = const Color(0xFF4B5563);
+      icon = '✨';
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: textColor.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(icon, style: const TextStyle(fontSize: 14)),
+          const SizedBox(width: 6),
+          Text(
+            'Match $pct%',
+            style: GoogleFonts.outfit(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInsightSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF8F0),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color(0xFFFF7D00).withValues(alpha: 0.2),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.lightbulb_outline,
+            size: 24,
+            color: Color(0xFFFF7D00),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'AI INSIGHT',
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFFFF7D00),
+                    letterSpacing: 1,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  reason!,
+                  style: GoogleFonts.outfit(
+                    fontSize: 14,
+                    color: Colors.grey[700],
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -190,23 +314,26 @@ class ProductDetailSheet extends StatelessWidget {
     final bonuses = <Widget>[];
 
     bonuses.add(
-      _buildBonusItem('Kuota Utama', '${product.dataGb} GB'),
+      _buildBonusItem('Kuota Utama', '$dataGb GB'),
     );
 
-    if (product.streamingGbBonus > 0) {
-      bonuses.add(_buildBonusItem('Bonus Streaming', '${product.streamingGbBonus} GB'));
+    if (streamingGbBonus > 0) {
+      bonuses.add(_buildBonusItem('Bonus Streaming', '$streamingGbBonus GB'));
     }
-    if (product.gamingGbBonus > 0) {
-      bonuses.add(_buildBonusItem('Bonus Gaming', '${product.gamingGbBonus} GB'));
+    if (gamingGbBonus > 0) {
+      bonuses.add(_buildBonusItem('Bonus Gaming', '$gamingGbBonus GB'));
     }
-    if (product.callMinutesBonus > 0) {
-      bonuses.add(_buildBonusItem('Bonus Telepon', '${product.callMinutesBonus} Menit'));
+    if (callMinutesBonus > 0) {
+      bonuses.add(_buildBonusItem('Bonus Telepon', '$callMinutesBonus Menit'));
     }
-    if (product.roamingDaysBonus > 0) {
-      bonuses.add(_buildBonusItem('Bonus Roaming', '${product.roamingDaysBonus} Hari'));
+    if (roamingDaysBonus > 0) {
+      bonuses.add(_buildBonusItem('Bonus Roaming', '$roamingDaysBonus Hari'));
     }
-    if (product.socialGbBonus > 0) {
-      bonuses.add(_buildBonusItem('Bonus Sosmed', '${product.socialGbBonus} GB'));
+    if (socialGbBonus > 0) {
+      bonuses.add(_buildBonusItem('Bonus Sosmed', '$socialGbBonus GB'));
+    }
+    if (smsBonus > 0) {
+      bonuses.add(_buildBonusItem('Bonus SMS', '$smsBonus SMS'));
     }
 
     return Container(
@@ -219,7 +346,6 @@ class ProductDetailSheet extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           // yang ada termasuknyaa
           Text(
             'Termasuk:',
             style: GoogleFonts.outfit(

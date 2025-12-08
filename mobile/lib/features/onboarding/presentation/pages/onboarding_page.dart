@@ -23,7 +23,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   void initState() {
     super.initState();
-    // Initialize with default preference
+    // init pake default pref
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<OnboardingCubit>().initialize();
     });
@@ -286,7 +286,6 @@ class _PageThree extends StatelessWidget {
                 style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800, color: Colors.black87),
               ),
               const SizedBox(height: 14),
-              // Fixed: Use Row with Expanded for equal width cards
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
@@ -327,7 +326,7 @@ class _PageThree extends StatelessWidget {
                 style: theme.textTheme.bodySmall?.copyWith(color: Colors.black54),
               ),
               const SizedBox(height: 12),
-              // Payment method images
+              // gambar payment method
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
