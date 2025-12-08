@@ -23,76 +23,6 @@ def get_user_profile():
     responses:
       200:
         description: Data profil berhasil diambil
-        schema:
-          type: object
-          properties:
-            header:
-              type: object
-              properties:
-                customer_id:
-                  type: string
-                device:
-                  type: string
-                plan:
-                  type: string
-                spending_tier:
-                  type: string
-            persona_list:
-              type: array
-              items:
-                type: object
-                properties:
-                  desc:
-                    type: string
-                  icon:
-                    type: string
-                  title:
-                    type: string
-            behavior_stats:
-              type: object
-              properties:
-                avg_data_gb:
-                  type: number
-                monthly_spend:
-                  type: number
-                pct_video:
-                  type: number
-                topup_freq:
-                  type: integer
-                travel_score:
-                  type: number
-            history_list:
-              type: array
-              items:
-                type: object
-                properties:
-                  category:
-                    type: string
-                    description: Kategori untuk warna badge (Social Offer, Gaming Offer, dll)
-                  data_gb:
-                    type: integer
-                  duration_days:
-                    type: integer
-                  price:
-                    type: integer
-                  product_name:
-                    type: string
-                  purchase_date:
-                    type: string
-            history_summary:
-              type: object
-              properties:
-                favorite_product:
-                  type: string
-                total_spend:
-                  type: integer
-                total_trx:
-                  type: integer
-            recommendations:
-              type: array
-              items:
-                type: string
-                description: String rekomendasi singkat
       400:
         description: Parameter customer_id tidak ada
       404:
@@ -107,14 +37,34 @@ def get_user_profile():
     
     conn = get_db_connection()
     try:
-        # 1. AMBIL DATA FITUR USER
+        # 1. AMBIL DATA FITUR USER (Basic Stats)
         sql_profile = "SELECT * FROM user_features WHERE customer_id = %s"
         profile_df = pd.read_sql(sql_profile, conn, params=(customer_id,))
         
         if profile_df.empty:
             return jsonify({"error": "User tidak ditemukan"}), 404
 
-        # 2. AMBIL HISTORY PEMBELIAN 
+        # 2. AMBIL STATISTIK TAMBAHAN (Untuk Persona Sosmed & Gaming)
+        # Kita hitung manual karena kolom ini tidak ada di tabel user_features
+        sql_persona_stats = """
+            SELECT 
+                COUNT(*) as total_trx,
+                COUNT(CASE WHEN p.social_gb_bonus > 0 THEN 1 END) as social_trx,
+                COUNT(CASE WHEN p.gaming_gb_bonus > 0 THEN 1 END) as gaming_trx
+            FROM purchase_history ph
+            JOIN products p ON ph.product_id = p.product_id
+            WHERE ph.customer_id = %s
+        """
+        cursor = conn.cursor()
+        cursor.execute(sql_persona_stats, (customer_id,))
+        stats_row = cursor.fetchone()
+        
+        total_trx_all = stats_row[0] or 1 # Hindari pembagian nol
+        social_ratio = (stats_row[1] or 0) / total_trx_all
+        gaming_ratio = (stats_row[2] or 0) / total_trx_all
+        cursor.close()
+
+        # 3. AMBIL HISTORY PEMBELIAN (Untuk List)
         sql_history = """
             SELECT 
                 p.product_name,
@@ -123,7 +73,6 @@ def get_user_profile():
                 p.duration_days,
                 ph.purchase_date,
                 p.target_offer AS category 
-                
             FROM purchase_history ph
             JOIN products p ON ph.product_id = p.product_id
             WHERE ph.customer_id = %s
@@ -132,54 +81,72 @@ def get_user_profile():
         """
         history_df = pd.read_sql(sql_history, conn, params=(customer_id,))
         
-        # LOGIKA PERSONA 
+        # --- LOGIKA PERSONA (Backend Side) ---
         row = profile_df.iloc[0]
         personas = []
         
         # Rule 1: Streaming Lover
-        if row['pct_video_usage'] > 0.6:
+        if float(row['pct_video_usage']) > 0.6:
             personas.append({
                 "icon": "🎬", "title": "Streaming Lover", 
                 "desc": "Hampir seluruh kuotamu habis untuk nonton film!"
             })
         
         # Rule 2: Traveler
-        if row['travel_score'] > 0.6:
+        if float(row['travel_score']) > 0.6:
             personas.append({
                 "icon": "🌍", "title": "Globe Trotter", 
                 "desc": "Sering bepergian dan butuh koneksi roaming."
             })
             
         # Rule 3: Heavy Caller
-        if row['avg_call_duration'] > 300: # menit
+        if float(row['avg_call_duration']) > 300: 
             personas.append({
                 "icon": "📞", "title": "Voice Friendly", 
                 "desc": "Lebih suka nelpon berjam-jam daripada chat."
             })
 
-        # Rule 4: Si Hemat (Budget Conscious)
+        # Rule 4: Si Hemat
         if row['spending_tier'] == 'low':
             personas.append({
                 "icon": "🛡️", "title": "Si Hemat", 
                 "desc": "Jago cari promo dan paket paling worth it."
             })
 
-        # Default Persona jika kosong
+        # Rule 5: Sosmed Master (Dihitung dari rasio pembelian)
+        if social_ratio > 0.3: # Jika > 30% pembelian adalah paket sosmed
+            personas.append({
+                "icon": "📸", "title": "Sosmed Master", 
+                "desc": "Kamu anaknya Sosmed banget!!"
+            })
+
+        # Rule 6: Gamer (Dihitung dari rasio pembelian)
+        if gaming_ratio > 0.3: # Jika > 30% pembelian adalah paket gaming
+            personas.append({
+                "icon": "🎮", "title": "Robot Push Rank", 
+                "desc": "Kamu butuh kuota Gaming dengan sinyal Stabil!"
+            })
+
+        # Default Persona
         if not personas:
             personas.append({"icon": "📱", "title": "Digital Native", "desc": "Pengguna internet aktif sehari-hari."})
 
-        # LOGIKA RINGKASAN HISTORY 
+        # --- LOGIKA RINGKASAN HISTORY ---
         total_trx = len(history_df)
         total_spend = int(history_df['price'].sum()) if not history_df.empty else 0
         fav_product = history_df['product_name'].mode()[0] if not history_df.empty else "-"
 
-        # AMBIL REKOMENDASI
-        recs_data = prediction_service.get_recommendations(customer_id)
-        recommendations = []
-        if recs_data.get("status") != "COLD":
-             recommendations = recs_data.get("recommendations", [])[:3]
+        # --- AMBIL REKOMENDASI ---
+        try:
+            recs_data = prediction_service.get_recommendations(customer_id)
+            recommendations = []
+            if recs_data.get("status") != "COLD":
+                 recommendations = recs_data.get("recommendations", [])[:3]
+        except Exception as e:
+            print(f"Warning ML Recs: {e}")
+            recommendations = []
 
-        # 3. SUSUN RESPONSE FINAL
+        # 4. SUSUN RESPONSE FINAL
         response = {
             "header": {
                 "customer_id": row['customer_id'],
