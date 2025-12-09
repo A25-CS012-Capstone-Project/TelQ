@@ -41,10 +41,12 @@ class LoginPage extends StatelessWidget {
                         listenWhen: (previous, current) => previous.status != current.status,
                         listener: (context, state) async {
                           if (state.status == LoginStatus.success) {
-                            // Save customer_id to SharedPreferences for promo page
-                            if (state.user?.customerId != null) {
+                            // Save customer_id and user name to SharedPreferences
+                            if (state.user != null) {
                               final prefs = await SharedPreferences.getInstance();
                               await prefs.setString('customer_id', state.user!.customerId);
+                              await prefs.setString('user_name', state.user!.firstname);
+                              await prefs.setString('user_email', state.user!.email);
                             }
                             if (!context.mounted) return;
                             QuickAlert.show(

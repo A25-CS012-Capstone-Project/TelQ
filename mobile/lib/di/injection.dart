@@ -30,6 +30,12 @@ import '../features/promo/domain/usecases/submit_cold_start.dart';
 import '../features/promo/domain/usecases/trigger_pipeline.dart';
 import '../features/promo/presentation/cubit/promo_cubit.dart';
 
+// Profile feature imports
+import '../features/profile/data/datasources/profile_remote_data_source.dart';
+import '../features/profile/data/repositories/profile_repository_impl.dart';
+import '../features/profile/domain/repositories/profile_repository.dart';
+import '../features/profile/presentation/cubit/profile_cubit.dart';
+
 final getIt = GetIt.instance;
 
 void configureDependencies() {
@@ -109,5 +115,21 @@ void configureDependencies() {
       submitColdStart: getIt(),
       triggerPipeline: getIt(),
     ),
+  );
+
+  // ==================== Profile Feature ====================
+  // Data sources
+  getIt.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSource(baseUrl: apiBaseUrl),
+  );
+
+  // Repositories
+  getIt.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(remoteDataSource: getIt()),
+  );
+
+  // Presentation
+  getIt.registerFactory<ProfileCubit>(
+    () => ProfileCubit(repository: getIt()),
   );
 }

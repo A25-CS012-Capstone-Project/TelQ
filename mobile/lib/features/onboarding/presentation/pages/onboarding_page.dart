@@ -41,10 +41,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
       backgroundColor: const Color(0xFFF6F2E9),
       body: Stack(
         children: [
-          const Bubble(size: 160, alignment: Alignment(-1.05, -1.05)),
-          const Bubble(size: 140, alignment: Alignment(1.05, -0.75)),
-          const Bubble(size: 130, alignment: Alignment(-1.0, 0.95)),
-          const Bubble(size: 150, alignment: Alignment(1.05, 1.05)),
+          // Enhanced bubble decorations with variety
+          ...BubblePresets.standardSet(),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
