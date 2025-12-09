@@ -11,7 +11,7 @@ import '../../features/promo/presentation/pages/promo_page.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 
-/// Home shell with IndexedStack for instant tab switching
+
 class HomeShell extends StatefulWidget {
   final int initialIndex;
 
@@ -38,10 +38,7 @@ class _HomeShellState extends State<HomeShell> {
   }
 
   Future<void> _initializeData() async {
-    // Load product data immediately
     _productCubit.loadProducts();
-
-    // Load promo and profile data if we have customer_id
     final prefs = await SharedPreferences.getInstance();
     final customerId = prefs.getString('customer_id');
     if (customerId != null) {
@@ -66,11 +63,8 @@ class _HomeShellState extends State<HomeShell> {
         body: IndexedStack(
           index: _currentIndex,
           children: const [
-            // Index 0: Promo
             PromoPageContent(),
-            // Index 1: Product
             ProductPageContent(),
-            // Index 2: Profile
             ProfilePage(),
           ],
         ),
