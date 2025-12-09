@@ -41,7 +41,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
       backgroundColor: const Color(0xFFF6F2E9),
       body: Stack(
         children: [
-          // Enhanced bubble decorations with variety
           ...BubblePresets.standardSet(),
           SafeArea(
             child: Padding(
@@ -290,7 +289,7 @@ class _PageThree extends StatelessWidget {
                   Expanded(
                     child: FeatureCard(
                       icon: Icons.wifi,
-                      title: 'Sinyal Genceng',
+                      title: 'Sinyal Qenceng',
                       subtitle: 'Akses internet lancar untuk streaming, chat, & kerja.',
                     ),
                   ),
