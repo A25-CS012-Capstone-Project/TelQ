@@ -8,7 +8,7 @@ import '../../../product/data/models/product_dto.dart';
 import '../models/recommendation_dto.dart';
 
 abstract class PromoRemoteDataSource {
-  /// ini biar kita bisa ngefetch AI buat rekomenadsi
+  /// ini biar kita bisa ngefetch AI buat rekomendasi
   Future<List<RecommendationDto>> getRecommendations(String customerId);
 
   /// ini biar kita bisa ngefetch produk terlaris
