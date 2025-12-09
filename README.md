@@ -2,7 +2,7 @@
 
 TelQ adalah aplikasi web cerdas yang membantu pengguna menemukan paket telekomunikasi (Internet, Telepon, Roaming) terbaik berdasarkan pola penggunaan mereka menggunakan Machine Learning (Hybrid Recommendation System).
 
-Project ini dibuat sebagai Capstone Project untuk program Asah lied by Dicoding
+Project ini dibuat sebagai Capstone Project untuk program Asah led by Dicoding
 
 # 🚀 Fitur Utama:
 
