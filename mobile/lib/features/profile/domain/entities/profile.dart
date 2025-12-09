@@ -18,7 +18,7 @@ class ProfileHeader extends Equatable {
   List<Object?> get props => [customerId, device, plan, spendingTier];
 }
 
-/// User persona based on behavior
+/// User persona
 class Persona extends Equatable {
   final String icon;
   final String title;
@@ -34,7 +34,7 @@ class Persona extends Equatable {
   List<Object?> get props => [icon, title, desc];
 }
 
-/// Behavior statistics
+/// Behavior
 class BehaviorStats extends Equatable {
   final double avgDataGb;
   final double monthlySpend;
@@ -54,7 +54,7 @@ class BehaviorStats extends Equatable {
   List<Object?> get props => [avgDataGb, monthlySpend, topupFreq, travelScore, pctVideo];
 }
 
-/// History summary
+/// History
 class HistorySummary extends Equatable {
   final int totalTrx;
   final int totalSpend;
@@ -70,7 +70,7 @@ class HistorySummary extends Equatable {
   List<Object?> get props => [totalTrx, totalSpend, favoriteProduct];
 }
 
-/// Individual purchase history item
+/// Individual purchase
 class PurchaseHistory extends Equatable {
   final String productName;
   final int price;
