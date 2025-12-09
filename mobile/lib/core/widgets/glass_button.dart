@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 
-/// Button variant styles
+
 enum GlassButtonVariant {
-  /// Filled button with solid background (primary actions like BELI)
   filled,
-  /// Outlined button with border (secondary actions like DETAIL)
   outline,
-  /// Text-only button (tertiary actions like links)
   text,
 }
 
-/// Reusable CTA button with consistent styling.
-/// Note: LiquidGlass temporarily disabled due to mouse tracker issues on Windows.
 class GlassButton extends StatelessWidget {
   final String label;
   final bool loading;
@@ -34,7 +29,7 @@ class GlassButton extends StatelessWidget {
     this.icon,
   });
 
-  /// Convenience constructor for filled variant
+
   const GlassButton.filled({
     super.key,
     required this.label,
@@ -46,7 +41,7 @@ class GlassButton extends StatelessWidget {
     this.icon,
   }) : variant = GlassButtonVariant.filled;
 
-  /// Convenience constructor for outline variant
+
   const GlassButton.outline({
     super.key,
     required this.label,
@@ -58,7 +53,7 @@ class GlassButton extends StatelessWidget {
     this.icon,
   }) : variant = GlassButtonVariant.outline;
 
-  /// Convenience constructor for text variant
+
   const GlassButton.text({
     super.key,
     required this.label,
