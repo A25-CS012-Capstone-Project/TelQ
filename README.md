@@ -22,7 +22,7 @@ Project ini dibuat sebagai Capstone Project untuk program Asah led by Dicoding
 3. **Database**: PostgreSQL.
 4. **Machine Learning**: Scikit-Learn, Pandas, NumPy (Model XGBoost).
 5. **Infrastructure**: Docker & Docker Compose.
-6. **Mobile**: Flutter API, State Managemenet & Clean Architecture
+6. **Mobile**: Flutter API, State Management, Clean Architecture
 
 | Dokumentasi | Link Akses | Deskripsi |
 |-------------|------------|-----------|
