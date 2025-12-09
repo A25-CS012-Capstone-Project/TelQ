@@ -1,0 +1,135 @@
+import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
+
+import '../core/config/app_config.dart';
+import '../core/network/api_client.dart';
+import '../features/auth/data/datasources/auth_remote_data_source.dart';
+import '../features/auth/data/repositories/auth_repository_impl.dart';
+import '../features/auth/domain/repositories/auth_repository.dart';
+import '../features/auth/domain/usecases/register_user.dart';
+import '../features/auth/domain/usecases/login_user.dart';
+import '../features/auth/presentation/cubit/login_cubit.dart';
+import '../features/auth/presentation/cubit/register_cubit.dart';
+import '../features/onboarding/presentation/cubit/onboarding_cubit.dart';
+
+// Product feature imports
+import '../features/product/data/datasources/product_remote_data_source.dart';
+import '../features/product/data/repositories/product_repository_impl.dart';
+import '../features/product/domain/repositories/product_repository.dart';
+import '../features/product/domain/usecases/get_all_products.dart';
+import '../features/product/domain/usecases/get_products_by_category.dart';
+import '../features/product/presentation/cubit/product_cubit.dart';
+
+// Promo feature imports
+import '../features/promo/data/datasources/promo_remote_data_source.dart';
+import '../features/promo/data/repositories/promo_repository_impl.dart';
+import '../features/promo/domain/repositories/promo_repository.dart';
+import '../features/promo/domain/usecases/get_recommendations.dart';
+import '../features/promo/domain/usecases/get_best_deals.dart';
+import '../features/promo/domain/usecases/submit_cold_start.dart';
+import '../features/promo/domain/usecases/trigger_pipeline.dart';
+import '../features/promo/presentation/cubit/promo_cubit.dart';
+
+// Profile feature imports
+import '../features/profile/data/datasources/profile_remote_data_source.dart';
+import '../features/profile/data/repositories/profile_repository_impl.dart';
+import '../features/profile/domain/repositories/profile_repository.dart';
+import '../features/profile/presentation/cubit/profile_cubit.dart';
+
+final getIt = GetIt.instance;
+
+void configureDependencies() {
+  // Core clients
+  getIt.registerLazySingleton<http.Client>(() => http.Client());
+
+  // API client (base URL configured in app_config.dart)
+  getIt.registerLazySingleton<ApiClient>(
+    () => ApiClient(client: getIt(), baseUrl: apiBaseUrl),
+  );
+
+  // ==================== Auth Feature ====================
+  // Data sources
+  getIt.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSourceImpl(api: getIt()),
+  );
+
+  // Repositories
+  getIt.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(getIt()));
+
+  // Use cases
+  getIt.registerLazySingleton<LoginUser>(() => LoginUser(getIt()));
+  getIt.registerLazySingleton<RegisterUser>(() => RegisterUser(getIt()));
+
+  // Presentation
+  getIt.registerFactory<LoginCubit>(() => LoginCubit(getIt()));
+  getIt.registerFactory<RegisterCubit>(() => RegisterCubit(getIt()));
+  getIt.registerFactory<OnboardingCubit>(() => OnboardingCubit());
+
+  // ==================== Product Feature ====================
+  // Data sources
+  getIt.registerLazySingleton<ProductRemoteDataSource>(
+    () => ProductRemoteDataSourceImpl(api: getIt()),
+  );
+
+  // Repositories
+  getIt.registerLazySingleton<ProductRepository>(
+    () => ProductRepositoryImpl(getIt()),
+  );
+
+  // Use cases
+  getIt.registerLazySingleton<GetAllProducts>(() => GetAllProducts(getIt()));
+  getIt.registerLazySingleton<GetProductsByCategory>(
+    () => GetProductsByCategory(getIt()),
+  );
+
+  // Presentation
+  getIt.registerFactory<ProductCubit>(
+    () => ProductCubit(
+      getAllProducts: getIt(),
+      getProductsByCategory: getIt(),
+    ),
+  );
+
+  // ==================== Promo Feature ====================
+  // Data sources
+  getIt.registerLazySingleton<PromoRemoteDataSource>(
+    () => PromoRemoteDataSourceImpl(api: getIt()),
+  );
+
+  // Repositories
+  getIt.registerLazySingleton<PromoRepository>(
+    () => PromoRepositoryImpl(getIt()),
+  );
+
+  // Use cases
+  getIt.registerLazySingleton<GetRecommendations>(() => GetRecommendations(getIt()));
+  getIt.registerLazySingleton<GetBestDeals>(() => GetBestDeals(getIt()));
+  getIt.registerLazySingleton<SubmitColdStart>(() => SubmitColdStart(getIt()));
+  getIt.registerLazySingleton<TriggerPipeline>(() => TriggerPipeline(getIt()));
+
+  // Presentation
+  getIt.registerFactory<PromoCubit>(
+    () => PromoCubit(
+      getRecommendations: getIt(),
+      getBestDeals: getIt(),
+      submitColdStart: getIt(),
+      triggerPipeline: getIt(),
+    ),
+  );
+
+  // ==================== Profile Feature ====================
+  // Data sources
+  getIt.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSource(baseUrl: apiBaseUrl),
+  );
+
+  // Repositories
+  getIt.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(remoteDataSource: getIt()),
+  );
+
+  // Presentation
+  getIt.registerFactory<ProfileCubit>(
+    () => ProfileCubit(repository: getIt()),
+  );
+}
