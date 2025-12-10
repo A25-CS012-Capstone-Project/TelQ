@@ -1,8 +1,8 @@
-TelQ - Intelligent Telecommunication Plan Recommender
+# TelQ - Query Intelligence for Telecom Plans
 
 TelQ adalah aplikasi web cerdas yang membantu pengguna menemukan paket telekomunikasi (Internet, Telepon, Roaming) terbaik berdasarkan pola penggunaan mereka menggunakan Machine Learning (Hybrid Recommendation System).
 
-Project ini dibuat sebagai Capstone Project untuk program Asah lied by Dicoding
+Project ini dibuat sebagai Capstone Project untuk program Asah led by Dicoding
 
 # 🚀 Fitur Utama:
 
@@ -22,7 +22,7 @@ Project ini dibuat sebagai Capstone Project untuk program Asah lied by Dicoding
 3. **Database**: PostgreSQL.
 4. **Machine Learning**: Scikit-Learn, Pandas, NumPy (Model XGBoost).
 5. **Infrastructure**: Docker & Docker Compose.
-6. **Mobile**: Flutter API, State Managemenet & Clean Architecture
+6. **Mobile**: Flutter API, State Management, Clean Architecture
 
 | Dokumentasi | Link Akses | Deskripsi |
 |-------------|------------|-----------|

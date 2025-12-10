@@ -197,13 +197,14 @@ function renderHistory(historyList) {
 
 // 5. Fitur Filter
 function filterHistory() {
-  const category = document.getElementById("history-filter").value;
-  if (category === "All") {
+  const filterValue = document.getElementById("history-filter").value;
+  if (filterValue === "All") {
     renderHistory(allHistoryData);
   } else {
-    const filtered = allHistoryData.filter(
-      (item) => item.category === category
-    );
+    const filtered = allHistoryData.filter((item) => {
+      const itemCat = (item.category || "").toString();
+      return itemCat.includes(filterValue);
+    })
     renderHistory(filtered);
   }
 }

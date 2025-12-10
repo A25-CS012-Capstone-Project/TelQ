@@ -30,7 +30,7 @@ function switchView(viewName) {
   if (viewName === "products") fetchProducts();
 }
 
-// --- DASHBOARD CHARTS (Existing) ---
+// DASHBOARD CHARTS
 document.addEventListener("DOMContentLoaded", () => {
   fetchOverview();
   fetchSalesChart();
