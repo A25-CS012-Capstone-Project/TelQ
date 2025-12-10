@@ -62,10 +62,14 @@ class _HomeShellState extends State<HomeShell> {
       child: Scaffold(
         body: IndexedStack(
           index: _currentIndex,
-          children: const [
-            PromoPageContent(),
-            ProductPageContent(),
-            ProfilePage(),
+          children: [
+            const PromoPageContent(),
+            const ProductPageContent(),
+            ProfilePage(
+              onNavigateToProduct: () {
+                setState(() => _currentIndex = 1); // Switch to Product tab
+              },
+            ),
           ],
         ),
         bottomNavigationBar: AnimatedBottomNav(

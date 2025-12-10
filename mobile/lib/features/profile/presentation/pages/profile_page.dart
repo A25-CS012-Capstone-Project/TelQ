@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 import '../../../../core/routes/app_route.dart';
 import '../../../auth/presentation/widgets/widget_bubble.dart';
@@ -15,7 +16,10 @@ const _orangeLight = Color(0xFFFFA600);
 const _orangeDark = Color(0xFFAF5920);
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  /// Callback to navigate to product tab from HomeShell
+  final VoidCallback? onNavigateToProduct;
+
+  const ProfilePage({super.key, this.onNavigateToProduct});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -122,6 +126,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         _buildPersonaSection(state.profile!.personas),
                         const SizedBox(height: 16),
                         _buildBehaviorStats(state.profile!.behaviorStats),
+                        const SizedBox(height: 16),
+                        _buildPurchaseChart(state.profile!.historyList),
                         const SizedBox(height: 16),
                         _buildHistorySummary(state.profile!.historySummary),
                         const SizedBox(height: 16),
@@ -499,6 +505,133 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget _buildPurchaseChart(List<PurchaseHistory> history) {
+    if (history.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    // Calculate category breakdown
+    final categoryCount = <String, int>{};
+    for (final h in history) {
+      final cat = h.category.isNotEmpty ? h.category : 'General';
+      categoryCount[cat] = (categoryCount[cat] ?? 0) + 1;
+    }
+
+    final total = history.length;
+    final sections = categoryCount.entries.map((e) {
+      final percentage = (e.value / total) * 100;
+      final color = _getCategoryColor(e.key);
+      
+      return PieChartSectionData(
+        value: e.value.toDouble(),
+        title: '${percentage.toStringAsFixed(0)}%',
+        color: color,
+        radius: 50,
+        titleStyle: GoogleFonts.outfit(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      );
+    }).toList();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('📈', style: TextStyle(fontSize: 20)),
+              const SizedBox(width: 8),
+              Text(
+                'Distribusi Pembelian',
+                style: GoogleFonts.outfit(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF3E3B3B),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              // Pie Chart
+              SizedBox(
+                width: 130,
+                height: 130,
+                child: PieChart(
+                  PieChartData(
+                    sections: sections,
+                    centerSpaceRadius: 25,
+                    sectionsSpace: 2,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 20),
+              // Legend
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: categoryCount.entries.map((e) {
+                    final color = _getCategoryColor(e.key);
+                    final percentage = ((e.value / total) * 100).toStringAsFixed(0);
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: color,
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              e.key,
+                              style: GoogleFonts.outfit(
+                                fontSize: 13,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '${e.value}x ($percentage%)',
+                            style: GoogleFonts.outfit(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF3E3B3B),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildHistorySummary(HistorySummary summary) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -659,59 +792,88 @@ class _ProfilePageState extends State<ProfilePage> {
         ? DateFormat('dd MMM yyyy').format(history.purchaseDate!)
         : '-';
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border(
-          left: BorderSide(color: borderColor, width: 4),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+    return GestureDetector(
+      onTap: () {
+        // Navigate to product page when card is tapped
+        if (widget.onNavigateToProduct != null) {
+          widget.onNavigateToProduct!();
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border(
+            left: BorderSide(color: borderColor, width: 4),
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      dateStr,
-                      style: GoogleFonts.outfit(
-                        fontSize: 11,
-                        color: Colors.grey[500],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: borderColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        history.category,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        dateStr,
                         style: GoogleFonts.outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: borderColor,
+                          fontSize: 11,
+                          color: Colors.grey[500],
                         ),
                       ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: borderColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          history.category,
+                          style: GoogleFonts.outfit(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: borderColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    history.productName,
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF3E3B3B),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 6),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Data: ${history.dataGb}GB | Durasi: ${history.durationDays} Hari',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
                 Text(
-                  history.productName,
+                  _formatCurrency(history.price),
                   style: GoogleFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -719,39 +881,32 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  'Data: ${history.dataGb}GB | Durasi: ${history.durationDays} Hari',
-                  style: GoogleFonts.outfit(
-                    fontSize: 12,
-                    color: Colors.grey[600],
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _orange.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.shopping_cart, size: 12, color: _orange),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Beli Lagi',
+                        style: GoogleFonts.outfit(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: _orange,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                _formatCurrency(history.price),
-                style: GoogleFonts.outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF3E3B3B),
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Beli Lagi',
-                style: GoogleFonts.outfit(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: _orange,
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
