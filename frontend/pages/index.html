@@ -4,148 +4,912 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - TelQ Recommender</title>
+    <title>TelQ - Temukan Paket Telekomunikasi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    // Mendefinisikan 'Outfit' sebagai font sans default
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#FF7D00',
+                    }
+                }
+            }
+        }
+    </script>
 
-    <!-- BACA README -->
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Skala font & line-height berdasarkan golden ratio -->
     <style>
-        /* Style Khusus Dashboard */
-        .questionnaire-box {
-            background: #e3f2fd;
-            border: 1px solid #bbdefb;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            display: none;
-            text-align: center;
+        :root {
+            --phi: 1.618;
         }
 
-        .questionnaire-options {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-            flex-wrap: wrap;
+        /* Base body */
+        body {
+            font-size: 15px;
+            line-height: 1.618;
         }
 
-        .btn-pref {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 20px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
+        /* Hero utama */
+        .golden-h1 {
+            font-size: clamp(2.3rem, 1.5rem + 1.6vw, 3.4rem);
+            line-height: 1.18;
         }
 
-        .btn-pref:hover {
-            transform: scale(1.05);
+        @media (min-width: 768px) {
+            .golden-h1 {
+                font-size: clamp(2.8rem, 2rem + 1.8vw, 3.8rem);
+            }
         }
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+        /* Judul section besar (Keunggulan, Best Deal, dll.) */
+        .golden-section-title {
+            font-size: clamp(2rem, 1.4rem + 1vw, 3rem);
+            line-height: 1.25;
         }
 
-        .best-deal-section {
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px dashed #ccc;
+        /* Subtitle / paragraf pendek penting */
+        .golden-subtitle {
+            font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.35rem);
+            line-height: 1.6;
         }
 
-        .quick-actions {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+        /* Teks kecil / nav / label */
+        .golden-small {
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
 
-        /* Section Hasil Filter Kuesioner */
-        #filter-result-section {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #9b59b6;
-            margin-bottom: 30px;
+        /* Judul kartu / kolom kecil */
+        .golden-card-title {
+            font-size: 1.125rem;
+            line-height: 1.4;
+        }
+
+        /* Isi kartu / paragraf umum di dalam card */
+        .golden-card-body {
+            font-size: 0.95rem;
+            line-height: 1.55;
+        }
+
+        /* Teks footer & link kecil */
+        .golden-footer-text {
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
     </style>
 </head>
 
-<body>
-
-    <!-- Navbar -->
-    <nav class="navbar">
-        <h1>TelQ AI</h1>
-        <div class="nav-user">
-            <span id="user-name">Halo, User!</span>
-            <button onclick="handleLogout()" class="btn-logout">Keluar</button>
-        </div>
-    </nav>
-
-    <!-- Konten Utama -->
-    <div class="main-content">
-
-        <!-- Tombol Aksi Cepat -->
-        <div class="quick-actions">
-            <a href="/products" class="btn-primary"
-                style="text-decoration:none; display:inline-block; width:auto; background-color:#27ae60;">
-                🛒 Simulasi Belanja Produk
+<body class="bg-white font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-1 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="/" aria-label="TelQ Home">
+                <div class="w-24 h-16 bg-[url('../assets/img/Logo_TelQ.png')] bg-contain bg-no-repeat bg-center"></div>
             </a>
-            <button id="btn-pipeline" onclick="handleTriggerPipeline()" class="btn-pipeline">
-                🔄 Perbarui Profil (Pipeline)
-            </button>
-        </div>
-
-        <!-- Kuesioner (Hanya muncul jika Cold Start) -->
-        <div id="questionnaire-box" class="questionnaire-box">
-            <h3>👋 Selamat Datang! Kami ingin mengenal Anda.</h3>
-            <p>Apa yang paling penting bagi Anda dalam memilih paket data?</p>
-            <div class="questionnaire-options">
-                <button onclick="submitPreference('Streaming')" class="btn-pref" style="background:#9b59b6">🎬 Streaming
-                    Video</button>
-                <button onclick="submitPreference('Gaming')" class="btn-pref" style="background:#e67e22">🎮
-                    Gaming</button>
-                <button onclick="submitPreference('Voice')" class="btn-pref" style="background:#2ecc71">📞
-                    Nelpon/Voice</button>
-                <button onclick="submitPreference('Hemat')" class="btn-pref" style="background:#34495e">💰 Hemat
-                    Biaya</button>
-                <button onclick="submitPreference('Travel')" class="btn-pref" style="background:#f1c40f; color:#333;">✈️
-                    Traveling</button>
+            <!-- Center: Desktop Menu -->
+            <div class="flex-grow">
+                <nav class="hidden md:flex items-center justify-center space-x-8">
+                    <a href="/"
+                        class="golden-small md:text-[0.98rem] text-gray-700 font-semibold hover:text-primary">Home</a>
+                    <a href="#best-deal-section"
+                        class="golden-small md:text-[0.98rem] text-gray-700 font-semibold hover:text-primary">Promo</a>
+                    <a href="/products"
+                        class="golden-small md:text-[0.98rem] text-gray-700 font-semibold hover:text-primary scroll-link">Products</a>
+                    <a href="#rekomendasi-section"
+                        class="golden-small md:text-[0.98rem] text-gray-700 font-semibold hover:text-primary scroll-smooth">Recomendation</a>
+                        <button onclick="toggleMobileModal()"
+                            class="flex items-center gap-2 golden-small md:text-[0.98rem] text-gray-700 font-semibold hover:text-primary transition">
+                            <iconify-icon icon="mdi:cellphone-iphone"></iconify-icon> Get App
+                        </button>
+                </nav>
+            </div>
+            <!-- Right side: User & Mobile Menu Button -->
+            <div class="flex items-center space-x-4">
+                <div class="hidden md:flex">
+                    <a class="flex items-center space-x-2 group" aria-label="User Profile" href="/profile">
+                        <div class="p-2 rounded-full bg-orange-50 group-hover:bg-orange-100 transition">
+                            <iconify-icon icon="icon-park-solid:people" class="text-2xl text-primary"></iconify-icon>
+                        </div>
+                        <span id="user-name"
+                            class="hidden lg:inline text-sm font-semibold text-gray-700 group-hover:text-primary transition">User</span>
+                    </a>
+                </div>
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-600 hover:text-primary" aria-label="Open Menu">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="/" class="block py-2 px-6 golden-small text-gray-700 hover:bg-primary">Home</a>
+            <a href="#best-deal-section" class="block py-2 px-6 golden-small text-gray-700 hover:bg-primary">Promo</a>
+            <a href="/products" class="block py-2 px-6 golden-small text-gray-700 hover:bg-primary">Products</a>
+            <a href="#rekomendasi-section"
+                class="block py-2 px-6 golden-small text-gray-700 hover:bg-primary">Rekomendasi</a>
+        </div>
+    </header>
 
-        <!-- 🟢 AREA KHUSUS: Hasil Filter Kuesioner -->
-        <!-- Ini akan muncul setelah user klik tombol di atas -->
-        <div id="filter-result-section" style="display:none;">
-            <div class="section-header">
-                <h2 class="section-title" style="margin:0;">💡 Rekomendasi Kategori Pilihan</h2>
-                <button onclick="closeFilterSection()"
-                    style="background:none; border:none; color:#666; cursor:pointer;">✕ Tutup</button>
+    <main>
+        <!-- Hero Section -->
+        <section class="relative w-full h-screen flex items-center overflow-hidden">
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <div
+                    class="absolute top-40 left-10 w-10 h-10 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+                </div>
+                <div
+                    class="absolute top-[18rem] left-8 w-20 h-20 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+                </div>
+                <div
+                    class="absolute top-[30rem] left-4 w-14 h-14 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+                </div>
+
+                <div
+                    class="absolute -top-10 right-10 w-16 h-16 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+                </div>
+                <div
+                    class="absolute top-20 right-28 w-24 h-24 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+                </div>
             </div>
-            <div id="filter-result-container" class="product-grid">
-                <!-- Hasil filter muncul di sini -->
+
+            <!-- MAIN CONTENT -->
+            <div
+                class="container mb-10 mx-auto px-6 lg:px-20 relative z-10 flex flex-col-reverse md:flex-row items-center justify-between h-full">
+
+                <!-- LEFT TEXT -->
+                <div class="md:w-1/2 text-center md:text-left">
+                    <h1 class="golden-h1 font-bold text-[#3E3B3B]">
+                        Temukan Paket <br>
+                        Telekomunikasi yang <span class="text-primary">Paling Cocok</span><br> Untukmu!
+                    </h1>
+
+                    <p class="mt-5 golden-subtitle text-gray-700 max-w-md">
+                        Dapatkan rekomendasi paket data, telepon, dan hiburan berdasarkan kebiasaanmu.
+                    </p>
+
+                    <a href="#recommendation-container"
+                        class="inline-block font-bold text-[0.98rem] tracking-tight transition duration-300 bg-primary text-white hover:bg-gray-700 mt-10 px-10 py-3.5 rounded-xl">
+                        Mulai Sekarang
+                    </a>
+                </div>
+
+                <!-- RIGHT IMAGE -->
+                <div class="md:w-1/2 flex justify-center md:justify-end mb-10 md:mb-0">
+                    <div
+                        class="bg-[url('../assets/img/hero_index.png')] bg-contain bg-no-repeat w-[280px] h-[280px] md:w-[360px] md:h-[360px]">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kuesioner  -->
+        <section id="questionnaire-box" class="relative w-full py-32 hidden">
+            <div
+                class="p-6 py-32 md:p-10 bg-white max-w-3xl mx-auto transition-transform duration-500 ease-in-out rounded-lg">
+
+                <h3 class="golden-section-title text-center font-bold text-gray-800 mb-3">
+                    Bantu kami mengetahui preferensi anda
+                </h3>
+                <p class="text-center golden-subtitle text-gray-600 mb-8">
+                    Apa yang paling penting bagi Anda dalam memilih paket data?
+                </p>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-stretch">
+                    <button onclick="submitPreference('Streaming')"
+                        class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
+                        style="background-color: #EF4444;" aria-label="Streaming Video Preference">
+                        <iconify-icon icon="si:movie-fill"></iconify-icon>
+                        <span class="golden-small md:text-[1rem]">Streaming</span>
+                    </button>
+
+                    <button onclick="submitPreference('Gaming')"
+                        class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
+                        style="background-color: #FF7D00;" aria-label="Gaming Preference">
+                        <iconify-icon icon="fluent-emoji-high-contrast:video-game"></iconify-icon>
+                        <span class="golden-small md:text-[1rem]">Gaming</span>
+                    </button>
+
+                    <button onclick="submitPreference('Voice')"
+                        class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2"
+                        style="background-color: #5C3E94;" aria-label="Hemat Biaya Preference">
+                        <iconify-icon icon="ion:call"></iconify-icon>
+                        <span class="golden-small md:text-[1rem]">Voice</span>
+                    </button>
+
+                    <div class="md:col-span-3 flex justify-center space-x-4">
+                        <button onclick="submitPreference('Hemat')"
+                            class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2 w-full md:w-1/3"
+                            style="background-color: #060771;" aria-label="Roaming Preference">
+
+                            <iconify-icon icon="fluent-emoji-high-contrast:money-bag"></iconify-icon>
+                            <span class="golden-small md:text-[1rem]">Hemat Biaya</span>
+                        </button>
+
+                        <button onclick="submitPreference('Travel')"
+                            class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2 w-full md:w-1/3"
+                            style="background-color: #F1C40F;">
+
+                            <iconify-icon icon="lucide:plane" class="text-lg md:text-xl text-white"></iconify-icon>
+                            <span class="golden-small md:text-[1rem]">Roaming</span>
+                        </button>
+
+                        <button onclick="submitPreference('Social')"
+                            class="flex flex-row items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 text-white font-semibold text-center space-x-2 w-full md:w-1/3"
+                            style="background-color: #4E56C0;">
+
+                            <iconify-icon icon="lucide:plane" class="text-lg md:text-xl text-white"></iconify-icon>
+                            <span class="golden-small md:text-[1rem]">Social</span>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rekomendasi Kategori Pilihan Section (Filter Result) -->
+        <section id="filter-result-section" class="relative bg-50 py-32" style="display:none;">
+            <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.76)_0%,#F78018_71.63%)] -z-10">
+            </div>
+            <div
+                class="absolute bottom-0 left-0 w-full h-[200px] bg-[url('../assets/img/garis-garis.png')] bg-no-repeat bg-cover [mask-image:linear-gradient(to_top,black_50%,transparent_100%)]">
+            </div>
+
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="golden-section-title font-semibold text-center text-[#3E3B3B] mb-10">
+                    Rekomendasi Kategori Pilihan <span class="float-right cursor-pointer"
+                        onclick="closeFilterSection()">
+                        <iconify-icon icon="material-symbols:close"
+                            class="text-2xl text-gray-700"></iconify-icon></span>
+                </h2>
+
+                <div id="filter-result-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Hasil Filter Masuk Sini -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Keunggulan Section -->
+        <section class="relative bg-50 py-16">
+            <div class="absolute inset-0 bg-[#F78018] -z-10"></div>
+            <div
+                class="absolute bottom-0 left-0 w-full h-full bg-[url('../assets/img/garis-garis.png')] bg-no-repeat bg-cover ">
+            </div>
+            <div class="container mx-auto px-6 relative z-10">
+                <h2
+                    class="golden-section-title font-bold text-center text-white mb-10 [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">
+                    Keunggulan TelQ</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center ">
+        
+                    <!-- Feature 1: AI Personalization -->
+                    <div
+                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
+                        <div class="flex justify-center mb-4">
+                            <!-- Icon Otak/AI -->
+                            <iconify-icon icon="fluent:brain-circuit-24-filled" class="text-5xl text-primary"></iconify-icon>
+                        </div>
+                        <h3 class="golden-card-title font-bold text-gray-800">Rekomendasi AI</h3>
+                        <p class="mt-3 golden-card-body text-gray-600">
+                            Algoritma cerdas yang menganalisis pola penggunaanmu untuk memilihkan paket yang paling pas.
+                        </p>
+                    </div>
+        
+                    <!-- Feature 2: User Profiling -->
+                    <div
+                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
+                        <div class="flex justify-center mb-4">
+                            <!-- Icon Data/Analytics -->
+                            <iconify-icon icon="fluent:data-usage-24-filled" class="text-5xl text-primary"></iconify-icon>
+                        </div>
+                        <h3 class="golden-card-title font-bold text-gray-800">Analisis Akurat</h3>
+                        <p class="mt-3 golden-card-body text-gray-600">
+                            Memahami gaya hidup digitalmu, apakah kamu seorang Streamer, Gamer, atau Traveler sejati.
+                        </p>
+                    </div>
+        
+                    <!-- Feature 3: Cost Efficiency -->
+                    <div
+                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
+                        <div class="flex justify-center mb-4">
+                            <!-- Icon Dompet/Hemat -->
+                            <iconify-icon icon="solar:wallet-money-bold" class="text-5xl text-primary"></iconify-icon>
+                        </div>
+                        <h3 class="golden-card-title font-bold text-gray-800">Jaminan Hemat</h3>
+                        <p class="mt-3 golden-card-body text-gray-600">
+                            Sistem kami mencarikan kombinasi harga terbaik agar kamu tidak boros kuota dan biaya.
+                        </p>
+                    </div>
+        
+                    <!-- Feature 4: Smart Assistant -->
+                    <div
+                        class="relative z-10 bg-white p-6 rounded-lg border border-gray-200 shadow-[5px_5px_4px_rgba(0,0,0,0.25)] transform hover:scale-105 transition duration-300">
+                        <div class="flex justify-center mb-4">
+                            <!-- Icon Chatbot -->
+                            <iconify-icon icon="ri:robot-2-fill" class="text-5xl text-primary"></iconify-icon>
+                        </div>
+                        <h3 class="golden-card-title font-bold text-gray-800">Asisten Pintar</h3>
+                        <p class="mt-3 golden-card-body text-gray-600">
+                            Bingung memilih? Chatbot AI kami siap membantu menjawab pertanyaanmu 24/7.
+                        </p>
+                    </div>
+        
+                </div>
+            </div>
+        </section>
+
+        <!-- BEST DEAL Section -->
+        <section id="best-deal-section" class="best-deal relative py-16">
+            <!-- Background Layers -->
+            <div class="absolute inset-0 bg-[#F78018] -z-10"></div>
+            <div
+                class="absolute bottom-0 left-0 w-full h-full bg-[url('../assets/img/garis-garis.png')] bg-no-repeat bg-cover ">
+            </div>
+
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="text-center mb-10">
+                    <h2
+                        class="golden-section-title text-white font-bold [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">
+                        BEST SELLER</h2>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-end">
+                    <!-- Left Column: Title and Controls -->
+                    <div class="lg:col-span-1">
+                        <div class="mb-10">
+                            <p
+                                class="mt-5 golden-subtitle text-left text-white [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">
+                                Mudah & hemat hanya di TelQ Store. Tarif flat ongkir hanya Rp5.000 untuk kartu SIM</p>
+                        </div>
+                        <div class="flex justify-center">
+                            <div class="bg-white rounded-lg p-4 flex flex-col items-center space-y-2 mb-4 w-full">
+                                <span class="golden-card-title font-medium">Bisa bayar dengan:</span>
+                                <!-- Payment Icons Placeholder -->
+                                <div class="flex justify-between items-center gap-20">
+                                    <div
+                                        class="w-10 h-10 bg-[url('../assets/img/spay.png')] bg-contain bg-no-repeat bg-center">
+                                    </div>
+                                    <div
+                                        class="w-7 h-7 bg-[url('../assets/img/gopay.png')] bg-contain bg-no-repeat bg-center">
+                                    </div>
+                                    <div
+                                        class="w-10 h-10 bg-[url('../assets/img/bca.png')] bg-contain bg-no-repeat bg-center">
+                                    </div>
+                                    <div
+                                        class="w-7 h-7 bg-[url('../assets/img/dana.png')] bg-contain bg-no-repeat bg-center">
+                                    </div>
+                                    <div
+                                        class="w-9 h-9 bg-[url('../assets/img/ovo.png')] bg-contain bg-no-repeat bg-center">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: BEST DEAL Cards -->
+                    <div class="lg:col-span-1">
+                        <div class="relative">
+                            <!-- Left Arrow -->
+                            <button id="scroll-left-btn"
+                                class="absolute top-1/2 -translate-y-1/2 -left-4 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 hover:scale-105 transition-transform duration-300 z-20 hidden">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
+                            <div id="best-deal-container" class="flex space-x-8 overflow-x-auto pb-4 scroll-smooth"
+                                style="scrollbar-width: none; -ms-overflow-style: none;">
+                                <p>Memuat best deals...</p>
+                            </div>
+                            <!-- Right Arrow -->
+                            <button id="scroll-right-btn"
+                                class="absolute top-1/2 -translate-y-1/2 -right-4 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 hover:scale-105 transition-transform duration-300 z-20">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rekomendasi Personal Section -->
+        <section id="rekomendasi-section" class="relative py-32 pb-64">
+            <!-- Background Layers -->
+            <div class="absolute inset-0 bg-[linear-gradient(0deg,rgba(255,255,255,0.76)_0%,#F78018_71.63%)] -z-10">
+            </div>
+            <div
+                class="absolute top-0 left-0 w-full h-[200px] bg-[url('../assets/img/garis-garis.png')] bg-no-repeat bg-cover [mask-image:linear-gradient(to_bottom,black_50%,transparent_100%)] -z-10">
+            </div>
+
+            <div class="container mx-auto px-6 relative">
+                <div class="flex items-start justify-between">
+                    <div class="text-left mb-10">
+                        <h2
+                            class="golden-section-title text-white font-bold [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">
+                            Rekomendasi Personal!</h2>
+                        <p
+                            class="golden-subtitle text-white font-bold [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000]">
+                            berdasarkan kebiasaanmu..</p>
+                    </div>
+                    <div class="my-auto justify-center">
+                        <button onclick="handleTriggerPipeline(this)" class="px-6 py-3 bg-[#EF4444] text-white font-semibold rounded-lg shadow-lg 
+                                hover:bg-gray-700 transition duration-300 flex items-end space-x-2">
+                            <span class="golden-small md:text-[0.98rem]">Perbarui rekomendasi</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="recommendation-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <p>Memuat rekomendasi...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Detail Paket Modal -->
+    <div id="detail-paket-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 w-full max-w-2xl relative ">
+            <div id="detailPaket">
+                <div class="p-8">
+                    <div class="flex items-center mb-6 pb-4 relative">
+                        <!-- Back Button -->
+                        <button id="close-modal-btn" class="text-primary hover:text-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                            </svg>
+                        </button>
+                        <h2 class="golden-section-title text-black-800 flex-grow text-center font-semibold">Detail Paket
+                        </h2>
+                    </div>
+
+                    <h3 class="golden-card-title text-center mb-4 font-semibold">Quicknet 5GB 3 Hari</h3>
+
+                    <div class="space-y-4 text-gray-700">
+                        <div class="flex justify-between items-center">
+                            <iconify-icon icon="material-symbols:timer" class="text-primary text-4xl"></iconify-icon>
+                            <span class="golden-card-title font-semibold flex-grow text-left ml-3">Masa aktif</span>
+                            <span class="font-bold text-primary px-2 py-1 rounded golden-small">3 HARI</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <iconify-icon icon="mdi:internet" class="text-primary text-4xl"></iconify-icon>
+                            <span class="golden-card-title font-semibold flex-grow text-left ml-3">Kuota Internet</span>
+                            <span class="font-bold text-primary px-2 py-1 rounded golden-small">5 GB</span>
+                        </div>
+                        <p class="golden-card-body text-primary pt-8">
+                            Kuota Utama 5GB + Kuota Lokal sesuai kotamu
+                        </p>
+                    </div>
+
+                    <div class=" mt-2 b-2 border-t border-primary">
+                        <div class="flex justify-between items-center pt-4">
+                            <iconify-icon icon="solar:dollar-bold" class="text-primary text-4xl"></iconify-icon>
+                            <span class="golden-card-title font-semibold flex-grow text-left ml-3">Total Harga</span>
+                            <span class="font-bold text-primary px-2 py-1 rounded golden-small">Rp12.900</span>
+                        </div>
+                        <a href="register.html"
+                            class="inline-block font-bold rounded-lg transition duration-300 bg-primary text-white hover:bg-gray-600 w-full py-3 mt-6 text-center golden-small md:text-[0.98rem]">
+                            Beli
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <!-- Bagian Rekomendasi Personal (AI) -->
-        <h2 class="section-title">🤖 Rekomendasi Personal (AI)</h2>
-        <div id="recommendation-container" class="product-grid">
-            <p>Memuat rekomendasi...</p>
-        </div>
-
-        <!-- Bagian Best Deal -->
-        <div class="best-deal-section">
-            <h2 class="section-title">🔥 Penawaran Terlaris (Best Deals)</h2>
-            <div id="best-deal-container" class="product-grid">
-                <p>Memuat best deals...</p>
-            </div>
-        </div>
-
     </div>
 
+    <div id="mobile-app-modal"
+        class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-[60] backdrop-blur-sm p-4 transition-opacity duration-300">
+        <div
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative transform transition-all scale-100">
+    
+            <!-- Tombol Close -->
+            <button onclick="toggleMobileModal()"
+                class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition">
+                <iconify-icon icon="mdi:close" class="text-2xl"></iconify-icon>
+            </button>
+    
+            <!-- Konten Modal -->
+            <div class="p-8 text-center">
+                <div
+                    class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
+                    <iconify-icon icon="mdi:android" class="text-4xl"></iconify-icon>
+                </div>
+    
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Download TelQ Mobile</h3>
+                <p class="text-gray-500 text-sm mb-6">Nikmati pengalaman lebih personal dan notifikasi real-time langsung di
+                    HP kamu.</p>
+    
+                <!-- QR Code Placeholder -->
+                <div class="bg-white p-2 border-2 border-dashed border-gray-300 rounded-xl inline-block mb-6">
+                    <!-- Ganti src ini dengan QR Code asli nanti (bisa generate online arahkan ke link download) -->
+                    <img src=""
+                        alt="Scan QR to Download" class="w-32 h-32" id="qr-image">
+                </div>
+                <p class="text-xs text-gray-400 mb-4">Scan QR code di atas untuk download</p>
+    
+                <div class="flex items-center gap-3">
+                    <div class="h-px bg-gray-200 flex-1"></div>
+                    <span class="text-xs text-gray-400 font-medium">ATAU</span>
+                    <div class="h-px bg-gray-200 flex-1"></div>
+                </div>
+    
+                <!-- Tombol Download Langsung -->
+                <a href="/assets/apk/telq-mobile.apk" download
+                    class="mt-4 flex items-center justify-center gap-2 w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-orange-600 transition shadow-lg shadow-orange-200">
+                    <iconify-icon icon="mdi:download"></iconify-icon> Download APK (v1.0)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative w-full pt-24 pb-36 overflow-hidden">
+        <!-- Background Image Div -->
+        <div
+            class="absolute -bottom-36 right-0 w-full h-[300px] bg-[url('../assets/img/footer_2.png')] bg-contain bg-no-repeat bg-right-bottom -z-10 [mask-image:linear-gradient(100.07deg,#FF7D00_57.46%,#FFA600_89.3%)] hidden md:block">
+        </div>
+        <div
+            class="absolute -bottom-8 right-0 w-full h-[550px] bg-[url('../assets/img/footer_1.png')] bg-contain bg-no-repeat bg-right-bottom -z-10 [mask-image:linear-gradient(90deg,#FF7D00_15.4%,#FFA600_86.61%)] hidden md:block ">
+        </div>
+        <div class="container px-6 relative">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+                <!-- Column 1: Brand -->
+                <div class="lg:col-span-2 pl-4">
+                    <div class="bg-[url('../assets/img/Logo_TelQ.png')] w-24 h-16 bg-no-repeat bg-contain"></div>
+                    <p class="mt-3 text-200 golden-footer-text font-bold max-w-md">
+                        TelQ | Solusi Internet Cerdas & Personal.<br>Rekomendasi AI, Analisis Akurat, & Jaminan Hemat.<br>Dibantu Asisten Pintar 24 Jam.
+                    </p>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon
+                                icon="mdi:instagram"></iconify-icon></a>
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon
+                                icon="ri:facebook-fill"></iconify-icon></a>
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon
+                                icon="mdi:twitter"></iconify-icon></a>
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon
+                                icon="mdi:linkedin"></iconify-icon></a>
+                    </div>
+                    <div class="mt-8 pt-6 text-200 golden-footer-text font-medium">
+                        <p>© 2025 TelQ — Capstone Project (Program Asah Dicoding)</p>
+                    </div>
+                </div>
+                <!-- Column 2: Navigation -->
+                <div class="text-left">
+                    <h4 class="font-bold golden-card-title">Navigation</h4>
+                    <ul class="mt-4 space-y-2 text-200 golden-footer-text">
+                        <li><a href="/" class="hover:text-primary">Home</a></li>
+                        <li><a href="/products" class="hover:text-primary">Products</a></li>
+                        <li><a href="/profile" class="hover:text-primary">Profile</a></li>
+                    </ul>
+                </div>
+                <!-- Column 3: Template -->
+                <div class="text-left">
+                    <h4 class="font-bold golden-card-title">Template</h4>
+                    <ul class="mt-4 space-y-2 text-200 golden-footer-text">
+                        <li><a href="https://www.figma.com/design/gX2yRDWUo8Deq5kVlFJEQR/Capstone---Telco?node-id=0-1&t=hLb939k7jkKsUuab-1" class="hover:text-primary" target="_blank">Style Guide</a></li>
+                        <li><a href="https://www.figma.com/board/Yavux6azRsJ62ol9yr90jn/Design-System?node-id=0-1&t=95Aho0m9QNsLykX5-1" class="hover:text-primary" target="_blank">Architectur</a></li>
+                        <li><a href="#" class="hover:text-primary">Documentation</a></li>
+                        <li><a href="https://github.com/A25-CS012-Capstone-Project/TelQ" class="hover:text-primary" target="_blank">Github</a></li>
+                    </ul>
+                </div>
+                <!-- Column 4: Contact -->
+                <div class="text-left">
+                    <h4 class="font-bold golden-card-title">Contact</h4>
+                    <ul class="mt-4 space-y-2 text-200 golden-footer-text">
+                        <li><a href="mailto:a25-cs012@student.devacademy.id" class="hover:text-primary" target="_blank">A25-CS012</a></li>
+                        <li><a href="mailto:a25-cs012@student.devacademy.id" class="hover:text-primary" target="_blank">Email</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating buttons: Chatbot + Back to Top -->
+    <div class="fixed bottom-6 right-6 flex items-center gap-3 z-50">
+        <!-- Chatbot toggle -->
+        <button type="button" class="p-4 rounded-full bg-white text-primary shadow-lg border border-gray-200
+                   hover:bg-primary hover:text-white transition duration-300" onclick="toggleChat()"
+            aria-label="Buka chatbot">
+            <iconify-icon icon="ri:robot-2-fill" class="text-xl"></iconify-icon>
+        </button>
+    
+        <!-- Back to top -->
+        <button id="back-to-top" class="p-4 rounded-full 
+                bg-primary text-white shadow-lg 
+                hover:bg-[#FFA600] transition duration-300 
+                opacity-0 invisible" aria-label="Kembali ke atas">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+            </svg>
+        </button>
+    </div>
+    
+    <!-- Library untuk notifikasi modern -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Chatbot Window -->
+    <div id="chat-window" class="hidden fixed bottom-24 right-6 w-80 max-w-[calc(100vw-2rem)] h-96
+                bg-white rounded-2xl shadow-[0_18px_40px_rgba(0,0,0,0.25)]
+                flex-col overflow-hidden z-50 text-[0.9rem]">
+    
+        <!-- Header -->
+        <div
+            class="flex items-center justify-between px-4 py-2.5 bg-gradient-to-r from-primary to-[#FFA600] text-white font-semibold">
+            <span>Asisten Paket AI</span>
+            <button type="button" onclick="toggleChat()" class="text-white/80 hover:text-white text-lg leading-none">
+                ✕
+            </button>
+        </div>
+    
+        <!-- Body -->
+        <div id="chat-body" class="flex-1 flex flex-col gap-2 px-3 py-2 overflow-y-auto bg-gray-50">
+            <div
+                class="max-w-[80%] px-3 py-2 rounded-xl bg-orange-50 border border-orange-100 text-[0.8rem] leading-relaxed text-orange-900 self-start">
+                Halo! Ada yang bingung soal rekomendasi paketnya? Tanya aku aja!
+            </div>
+        </div>
+    
+        <!-- Input -->
+        <div class="flex items-center gap-2 px-3 py-2 border-t border-gray-200 bg-white">
+            <input type="text" id="chat-input" placeholder="Ketik pesan..." onkeypress="handleEnter(event)" class="flex-1 px-3 py-2 rounded-full border border-gray-300 text-[0.85rem]
+                       focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+            <button type="button" onclick="sendChat()" class="px-3 py-2 rounded-full bg-primary text-white text-sm font-semibold
+                       hover:bg-[#FFA600] transition">
+                ➤
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when a link inside it is clicked
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Card scroller
+        const scrollContainer = document.getElementById('best-deal-container');
+        const scrollRightBtn = document.getElementById('scroll-right-btn');
+        const scrollLeftBtn = document.getElementById('scroll-left-btn');
+
+        if (scrollContainer && scrollRightBtn && scrollLeftBtn) {
+            const handleScrollButtons = () => {
+                const scrollLeft = scrollContainer.scrollLeft;
+                const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+
+                // Show/hide left button
+                if (scrollLeft > 0) {
+                    scrollLeftBtn.classList.remove('hidden');
+                } else {
+                    scrollLeftBtn.classList.add('hidden');
+                }
+
+                // Show/hide right button
+                if (scrollLeft >= maxScrollLeft - 1) { // -1 for precision issues
+                    scrollRightBtn.classList.add('hidden');
+                } else {
+                    scrollRightBtn.classList.remove('hidden');
+                }
+            };
+
+            const customSmoothScroll = (element, distance, duration) => {
+                const start = element.scrollLeft;
+                let startTime = null;
+
+                function animation(currentTime) {
+                    if (startTime === null) startTime = currentTime;
+                    const timeElapsed = currentTime - startTime;
+                    const progress = Math.min(timeElapsed / duration, 1);
+
+                    // Easing function for a smooth start and end
+                    const easeInOutQuad = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+                    element.scrollLeft = start + distance * easeInOutQuad(progress);
+
+                    if (timeElapsed < duration) {
+                        requestAnimationFrame(animation);
+                    }
+                }
+
+                requestAnimationFrame(animation);
+            };
+
+            scrollRightBtn.addEventListener('click', () => {
+                const cardWidth = scrollContainer.querySelector('div').offsetWidth;
+                const scrollAmount = cardWidth + 32; // 32px is space-x-8
+                customSmoothScroll(scrollContainer, scrollAmount, 1000); // 1000ms duration
+            });
+
+            scrollLeftBtn.addEventListener('click', () => {
+                const cardWidth = scrollContainer.querySelector('div').offsetWidth;
+                const scrollAmount = cardWidth + 32; // 32px is space-x-8
+                customSmoothScroll(scrollContainer, -scrollAmount, 1000); // 1000ms duration
+            });
+
+            scrollContainer.addEventListener('scroll', handleScrollButtons);
+            // Expose function globally so home.js bisa akses
+            window.handleScrollButtons = handleScrollButtons;
+        }
+
+        // Modal logic
+        const modal = document.getElementById('detail-paket-modal');
+        const openModalButtons = document.querySelectorAll('.open-modal-btn');
+        const closeModalButton = document.getElementById('close-modal-btn');
+
+        const openModal = () => {
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        };
+
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        };
+
+        openModalButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal();
+            });
+        });
+
+        closeModalButton.addEventListener('click', closeModal);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        //scroll to page
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Konfigurasi
+            const scrollLinks = document.querySelectorAll('a[href^="#"]');
+
+            // Durasi animasi (dalam milidetik)
+            const DURATION = 600;
+            const OFFSET_TOP = 50; 
+
+
+            // 2. Fungsi Easing: easeInOutQuad 
+            const easeInOutQuad = (t) => {
+                return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+            };
+
+            /**
+             * Melakukan pengguliran halus ke elemen tujuan.
+             */
+            const customSmoothScroll = (targetElement, duration, offset) => {
+                const startPosition = window.scrollY;
+
+                // Hitung posisi target absolut, dikurangi offset (untuk navigasi)
+                const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - offset;
+
+                const distance = targetPosition - startPosition;
+                let startTime = null;
+
+                function animation(currentTime) {
+                    if (startTime === null) startTime = currentTime;
+
+                    const timeElapsed = currentTime - startTime;
+                    const progress = Math.min(timeElapsed / duration, 1);
+                    const easedProgress = easeInOutQuad(progress);
+
+                    const newScrollY = startPosition + distance * easedProgress;
+
+                    window.scrollTo(0, newScrollY);
+
+                    if (timeElapsed < duration) {
+                        window.requestAnimationFrame(animation);
+                    }
+                }
+
+                window.requestAnimationFrame(animation);
+            };
+
+            // 3. Tambahkan Event Listener ke setiap Tautan
+            scrollLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    // Mencegah perilaku default browser (gulir instan)
+                    event.preventDefault();
+
+                    // Ambil ID target dari atribut href
+                    const targetId = link.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        customSmoothScroll(targetElement, DURATION, OFFSET_TOP);
+                    } else {
+                        console.error(`Elemen dengan ID ${targetId} tidak ditemukan.`);
+                    }
+                });
+            });
+            const backToTopButton = document.getElementById('back-to-top');
+            const SCROLL_THRESHOLD = 300; // Tombol akan muncul setelah gulir 300px ke bawah
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > SCROLL_THRESHOLD) {
+                    backToTopButton.classList.remove('opacity-0', 'invisible');
+                    backToTopButton.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopButton.classList.remove('opacity-100', 'visible');
+                    backToTopButton.classList.add('opacity-0', 'invisible');
+                }
+            });
+            backToTopButton.addEventListener('click', () => {
+                customSmoothScroll(document.body, DURATION, 0);
+            });
+        });
+
+        function toggleMobileModal() {
+                const modal = document.getElementById('mobile-app-modal');
+
+                // --- [LOGIKA BARU: GENERATE QR DINAMIS] ---
+                if (modal.classList.contains('hidden')) {
+                    // 1. Ambil URL website saat ini (otomatis deteksi localhost atau render.com)
+                    const currentDomain = window.location.origin;
+
+                    // 2. Gabungkan dengan path APK
+                    const apkUrl = `${currentDomain}/assets/apk/telq-mobile.apk`;
+
+                    // 3. Generate QR Code API dengan URL yang benar
+                    const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(apkUrl)}`;
+
+                    // 4. Pasang ke gambar
+                    document.getElementById('qr-image').src = qrApi;
+
+                    // 5. Update juga tombol download manual (opsional tapi bagus)
+                    const downloadBtn = modal.querySelector('a[download]');
+                    if (downloadBtn) downloadBtn.href = apkUrl;
+
+                    // Tampilkan modal
+                    modal.classList.remove('hidden');
+                    document.body.classList.add('overflow-hidden');
+                } else {
+                    modal.classList.add('hidden');
+                    document.body.classList.remove('overflow-hidden');
+                }
+            }
+
+            // Tutup modal jika klik di luar area putih
+            document.getElementById('mobile-app-modal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    toggleMobileModal();
+                }
+            });
+
+    </script>
     <script src="/assets/js/home.js"></script>
+
 </body>
 
 </html>

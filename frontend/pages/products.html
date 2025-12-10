@@ -4,31 +4,324 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Katalog Produk - TelQ</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>TelQ - Product Catalog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
+                    colors: { 'primary': '#FF7D00' }
+                }
+            }
+        }
+    </script>
 </head>
 
-<body>
+<body class="bg-white font-sans">
 
-    <nav class="navbar">
-        <h1 style="cursor:pointer" onclick="window.location.href='index.html'">TelQ AI</h1>
-        <div class="nav-user">
-            <a href="index.html" style="margin-right:20px; text-decoration:none; color:#333; font-weight:bold;">Kembali
-                ke Dashboard</a>
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+    
+            <!-- Logo -->
+            <a href="/" aria-label="TelQ Home">
+                <div class="w-24 h-12 md:h-16 bg-[url('/assets/img/Logo_TelQ.png')] bg-contain bg-no-repeat bg-center">
+                </div>
+            </a>
+    
+            <!-- Center: Desktop Menu -->
+            <div class="hidden md:flex flex-grow justify-center">
+                <nav class="flex items-center space-x-8">
+                    <a href="/" class="text-gray-700 font-medium hover:text-primary transition">Home</a>
+                    <a href="/#best-deal-section" class="text-gray-700 font-medium hover:text-primary transition">Promo</a>
+                    <a href="/products" class="text-gray-700 font-medium hover:text-primary">Products</a>
+                    <a href="/#rekomendasi-section"
+                        class="text-gray-700 font-medium hover:text-primary transition">Rekomendasi</a>
+                </nav>
+            </div>
+    
+            <!-- Right side: User & Mobile Menu Button -->
+            <div class="flex items-center space-x-4">
+                <!-- User Icon (Desktop) -->
+                <div class="hidden md:flex">
+                    <a class="flex items-center space-x-2 group" aria-label="User Profile" href="/profile">
+                        <div class="p-2 rounded-full bg-orange-50 group-hover:bg-orange-100 transition">
+                            <iconify-icon icon="icon-park-solid:people" class="text-2xl text-primary"></iconify-icon>
+                        </div>
+                        <span id="user-name"
+                            class="hidden lg:inline text-sm font-semibold text-gray-700 group-hover:text-primary transition">User</span>
+                    </a>
+                </div>
+    
+                <!-- Mobile Menu Button (Hamburger) -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-600 hover:text-primary focus:outline-none p-2">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </div>
-    </nav>
+    
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg">
+            <div class="flex flex-col px-6 py-4 space-y-3">
+                <a href="/" class="text-gray-700 hover:text-primary font-medium py-2 border-b border-gray-50">Home</a>
+                <a href="/#best-deal-section"
+                    class="text-gray-700 hover:text-primary font-medium py-2 border-b border-gray-50">Promo</a>
+                <a href="/#rekomendasi-section"
+                    class="text-gray-700 hover:text-primary font-medium py-2 border-b border-gray-50">Rekomendasi</a>
+                <a href="/products" class="text-primary font-bold py-2 border-b border-gray-50">Produk</a>
+                <a href="/profile" class="text-gray-700 hover:text-primary font-medium py-2 flex items-center gap-2">
+                    <iconify-icon icon="icon-park-solid:people"></iconify-icon> Profile Saya
+                </a>
+            </div>
+        </div>
+    </header>
 
-    <div class="main-content">
-        <h2 class="section-title">Katalog Semua Produk</h2>
-        <p>Klik "Beli" untuk mensimulasikan transaksi. Ini akan dicatat di database dan mempengaruhi rekomendasi Anda.
-        </p>
-        <br>
+    <main>
+        <!-- Hero Section -->
+        <section class="relative w-full overflow-hidden min-h-[calc(100vh-5rem)] flex items-center">
+            <div
+                class="absolute top-60 left-7 w-8 h-8 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+            </div>
+            <div
+                class="absolute top-[20em] left-8 w-24 h-24 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+            </div>
+            <div
+                class="absolute top-[30em] left-0 w-16 h-16 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+            </div>
+            <div
+                class="absolute -top-[2.5em] -right-6 w-16 h-16 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+            </div>
+            <div
+                class="absolute top-[3em] right-16 w-24 h-24 bg-[linear-gradient(205.41deg,#FFA600_29.39%,#FF7D00_92.11%)] rounded-full hidden md:block">
+            </div>
 
-        <div id="all-products-container" class="product-grid">
-            <p>Memuat produk...</p>
+            <div
+                class="container mx-auto px-6 lg:px-20 relative z-10 flex flex-col-reverse md:flex-row items-center justify-between h-full">
+                <div class="md:w-1/2 text-center md:text-left">
+                    <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-[#3E3B3B] leading-tight">
+                        Nikmati Dunia Digital <br><span class="text-primary">Tanpa Batas!</span>
+                    </h1>
+                    <p class="mt-4 text-sm md:text-base lg:text-lg text-gray-700 max-w-md">
+                        Streaming lancar, gaming stabil, dan browsing sepuasnya. Pilih paket yang pas buat gaya hidupmu
+                        sekarang.
+                    </p>
+                    <a href="#category-menu"
+                        class="inline-block font-bold transition duration-300 bg-primary text-white hover:bg-gray-700 mt-8 px-8 py-3 rounded-xl">
+                        Jelajahi Produk
+                    </a>
+                </div>
+                <div class="md:w-1/2 flex justify-center md:justify-end mb-10 md:mb-0">
+                    <div
+                        class="bg-[url('/assets/img/hero_product.png')] bg-contain bg-no-repeat w-[280px] h-[280px] md:w-[490px] md:h-[490px]">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Menu Kategori -->
+        <section id="category-menu" class="relative w-full py-16 bg-orange-50/50">
+            <div class="container mx-auto px-6 max-w-4xl">
+                <h3 class="text-center text-2xl md:text-3xl font-bold text-gray-800 mb-2">Pilih Kategori Paket</h3>
+                <p class="text-center text-lg text-gray-600 mb-8">Sesuaikan dengan aktivitas harianmu</p>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <button onclick="scrollToSection('streaming-section')"
+                        class="p-3 rounded-xl bg-[#EF4444] text-white flex flex-col items-center gap-2 hover:scale-105 transition shadow-md">
+                        <iconify-icon icon="si:movie-fill" class="text-2xl"></iconify-icon><span>Streaming</span>
+                    </button>
+                    <button onclick="scrollToSection('gaming-section')"
+                        class="p-3 rounded-xl bg-[#FF7D00] text-white flex flex-col items-center gap-2 hover:scale-105 transition shadow-md">
+                        <iconify-icon icon="fluent-emoji-high-contrast:video-game"
+                            class="text-2xl"></iconify-icon><span>Gaming</span>
+                    </button>
+                    <button onclick="scrollToSection('hemat-section')"
+                        class="p-3 rounded-xl bg-[#5C3E94] text-white flex flex-col items-center gap-2 hover:scale-105 transition shadow-md">
+                        <iconify-icon icon="fluent-emoji-high-contrast:money-bag"
+                            class="text-2xl"></iconify-icon><span>Hemat</span>
+                    </button>
+                    <button onclick="scrollToSection('roaming-section')"
+                        class="p-3 rounded-xl bg-[#060771] text-white flex flex-col items-center gap-2 hover:scale-105 transition shadow-md">
+                        <iconify-icon icon="lucide:plane" class="text-2xl"></iconify-icon><span>Roaming</span>
+                    </button>
+                    <button onclick="scrollToSection('voice-section')"
+                        class="p-3 rounded-xl bg-[#F1C40F] text-white flex flex-col items-center gap-2 hover:scale-105 transition shadow-md">
+                        <iconify-icon icon="ion:call" class="text-2xl"></iconify-icon><span>Voice</span>
+                    </button>
+                    <button onclick="scrollToSection('social-section')"
+                        class="p-3 rounded-xl bg-[#4E56C0] text-white flex flex-col items-center gap-2 hover:scale-105 transition shadow-md">
+                        <iconify-icon icon="mdi:instagram" class="text-2xl"></iconify-icon><span>Social</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sections -->
+        <section id="streaming-section" class="relative bg-50 py-20">
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-4xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span
+                        class="text-primary">Streaming</span> Non-Stop</h2>
+                <div id="streaming-container" class="flex overflow-x-auto space-x-6 pb-8 px-2 snap-x snap-mandatory no-scrollbar cursor-pointer">
+                    <p class="col-span-full text-center text-gray-400">Memuat paket streaming...</p>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="hemat-section" class="relative bg-50 py-16">
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-3xl md:text-4xl font-semibold text-center text-[#3E3B3B] mb-8">Paket <span
+                        class="text-primary">Super Hemat</span></h2>
+                <div id="hemat-container"
+                    class="flex overflow-x-auto space-x-6 pb-8 px-2 snap-x snap-mandatory no-scrollbar cursor-pointer">
+                    <p class="w-full text-center text-gray-400">Memuat paket hemat...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="gaming-section" class="relative bg-white py-20">
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-4xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span
+                        class="text-primary">Gaming</span> Anti Lag</h2>
+                <div id="gaming-container" class="flex overflow-x-auto space-x-6 pb-8 px-2 snap-x snap-mandatory no-scrollbar cursor-pointer">
+                    <p class="col-span-full text-center text-gray-400">Memuat paket gaming...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="voice-section" class="relative bg-50 py-20">
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-4xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span
+                        class="text-primary">Voice</span></h2>
+                <div id="voice-container" class="flex overflow-x-auto space-x-6 pb-8 px-2 snap-x snap-mandatory no-scrollbar cursor-pointer">
+                    <p class="col-span-full text-center text-gray-400">Memuat paket lainnya...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="roaming-section" class="relative bg-white py-20">
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-4xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span
+                        class="text-primary">Roaming</span> Internasional</h2>
+                <div id="roaming-container" class="flex overflow-x-auto space-x-6 pb-8 px-2 snap-x snap-mandatory no-scrollbar cursor-pointer">
+                    <p class="col-span-full text-center text-gray-400">Memuat paket roaming...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="social-section" class="relative bg-white py-20">
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-4xl font-semibold text-center text-[#3E3B3B] mb-10">Paket <span
+                        class="text-primary">Sosmed</span> FYP</h2>
+                <div id="social-container" class="flex overflow-x-auto space-x-6 pb-8 px-2 snap-x snap-mandatory no-scrollbar cursor-pointer">
+                    <p class="col-span-full text-center text-gray-400">Memuat paket sosmed...</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DETAIL PAKET (DITAMBAHKAN) -->
+    <div id="detail-paket-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 w-full max-w-2xl relative ">
+            <div id="detailPaket">
+                <div class="p-8">
+                    <div class="flex items-center mb-6 pb-4 relative">
+                        <button
+                            onclick="document.getElementById('detail-paket-modal').classList.add('hidden'); document.body.classList.remove('overflow-hidden');"
+                            class="text-primary hover:text-gray-600 absolute left-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                            </svg>
+                        </button>
+                        <h2 class="text-3xl font-semibold text-black-800 flex-grow text-center">Detail Paket</h2>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-4">Memuat data...</h3>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="relative w-full pt-24 pb-36 overflow-hidden">
+        <!-- Background Image Div -->
+        <div
+            class="absolute -bottom-36 right-0 w-full h-[300px] bg-[url('../assets/img/footer_2.png')] bg-contain bg-no-repeat bg-right-bottom -z-10 [mask-image:linear-gradient(100.07deg,#FF7D00_57.46%,#FFA600_89.3%)] hidden md:block">
+        </div>
+        <div
+            class="absolute -bottom-8 right-0 w-full h-[550px] bg-[url('../assets/img/footer_1.png')] bg-contain bg-no-repeat bg-right-bottom -z-10 [mask-image:linear-gradient(90deg,#FF7D00_15.4%,#FFA600_86.61%)] hidden md:block ">
+        </div>
+        <div class="container px-6 relative">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+                <!-- Column 1: Brand -->
+                <div class="lg:col-span-2 pl-4">
+                    <div class="bg-[url('../assets/img/Logo_TelQ.png')] w-24 h-16 bg-no-repeat bg-contain"></div>
+                    <p class="mt-3 text-200 golden-footer-text font-bold max-w-md">
+                        TelQ | Kuota Cepat, Murah & Terpercaya.<br>Quick, Quality, Quota, Quantity.<br>Pusat Bantuan &
+                        FAQ tersedia 24 Jam.
+                    </p>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon
+                                icon="mdi:instagram"></iconify-icon></a>
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon
+                                icon="ri:facebook-fill"></iconify-icon></a>
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon icon="mdi:twitter"></iconify-icon></a>
+                        <a href="#" class="text-3xl hover:text-primary"><iconify-icon
+                                icon="mdi:linkedin"></iconify-icon></a>
+                    </div>
+                    <div class="mt-8 pt-6 text-200 golden-footer-text font-medium">
+                        <p>© 2025 TelQ — Capstone Project (Program Asah Dicoding)</p>
+                    </div>
+                </div>
+                <!-- Column 2: Navigation -->
+                <div class="text-left">
+                    <h4 class="font-bold golden-card-title">Navigation</h4>
+                    <ul class="mt-4 space-y-2 text-200 golden-footer-text">
+                        <li><a href="/" class="hover:text-primary">Home</a></li>
+                        <li><a href="/products" class="hover:text-primary">Products</a></li>
+                        <li><a href="/profile" class="hover:text-primary">Profile</a></li>
+                    </ul>
+                </div>
+                <!-- Column 3: Template -->
+                <div class="text-left">
+                    <h4 class="font-bold golden-card-title">Template</h4>
+                    <ul class="mt-4 space-y-2 text-200 golden-footer-text">
+                        <li><a href="https://www.figma.com/design/gX2yRDWUo8Deq5kVlFJEQR/Capstone---Telco?node-id=0-1&t=hLb939k7jkKsUuab-1"
+                                class="hover:text-primary" target="_blank">Style Guide</a></li>
+                        <li><a href="https://www.figma.com/board/Yavux6azRsJ62ol9yr90jn/Design-System?node-id=0-1&t=95Aho0m9QNsLykX5-1"
+                                class="hover:text-primary" target="_blank">Architectur</a></li>
+                        <li><a href="#" class="hover:text-primary">Documentation</a></li>
+                        <li><a href="https://github.com/A25-CS012-Capstone-Project/TelQ" class="hover:text-primary"
+                                target="_blank">Github</a></li>
+                    </ul>
+                </div>
+                <!-- Column 4: Contact -->
+                <div class="text-left">
+                    <h4 class="font-bold golden-card-title">Contact</h4>
+                    <ul class="mt-4 space-y-2 text-200 golden-footer-text">
+                        <li><a href="mailto:a25-cs012@student.devacademy.id" class="hover:text-primary"
+                                target="_blank">A25-CS012</a></li>
+                        <li><a href="mailto:a25-cs012@student.devacademy.id" class="hover:text-primary"
+                                target="_blank">Email</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/assets/js/products.js"></script>
 </body>
 

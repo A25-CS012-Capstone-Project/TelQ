@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Saya - TelQ</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Iconify untuk icon uil:setting dll -->
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+
+  <!-- Google Font Poppins (biar konsisten sama halaman lain) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Optional CSS lama kalau masih dipakai -->
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+  <!-- Konfigurasi Tailwind: warna & font -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Poppins', 'sans-serif'],
+          },
+          colors: {
+            primary: '#FF7D00',
+            secondary: '#FFA600',
+            accent: '#AF5920',
+          },
+        },
+      },
+    };
+  </script>
+</head>
+
+<body class="bg-gray-100 font-sans text-[15px] leading-[1.618]">
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+
+    <!-- BAGIAN 1: HEADER PROFIL -->
+    <div
+      class="bg-white rounded-2xl p-6 shadow-sm mb-6 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden">
+
+      <div
+        class="absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(circle_at_top_left,#FFE3BF,#FFB259)] rounded-full -mr-10 -mt-10 z-0">
+      </div>
+
+      <!-- Avatar -->
+      <div class="z-10">
+        <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff&size=128"
+          class="w-24 h-24 rounded-full border-4 border-white shadow-md" id="avatar-img" alt="Avatar User">
+      </div>
+
+      <!-- Info User -->
+      <div class="flex-1 text-center md:text-left z-10">
+        <h1 class="text-[1.55rem] md:text-[1.85rem] font-semibold text-gray-800 leading-tight tracking-tight"
+          id="user-name">
+          Loading...
+        </h1>
+        <p class="text-[0.95rem] text-gray-500 mb-3 mt-1">
+          No-Telp:
+          <span id="customer-id" class="font-mono align-middle">...</span>
+        </p>
+
+        <div class="flex flex-wrap justify-center md:justify-start gap-2 text-[0.82rem]" id="badge-container">
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div class="z-10 flex flex-col justify-between items-center md:items-end self-stretch gap-4">
+        <div class="flex space-x-3">
+          <a href="/"
+            class="px-7 py-2 rounded-lg bg-primary text-white text-[0.95rem] font-semibold hover:bg-gray-700 text-center transition">
+            Home
+          </a>
+          <button onclick="handleLogout()"
+            class="px-7 py-2 rounded-lg bg-[#F90000] text-white text-[0.95rem] font-semibold hover:bg-gray-700 transition">
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BAGIAN 2: PERSONA & BEHAVIOR -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+      <!-- KIRI: Persona Card -->
+      <div class="md:col-span-1 bg-gradient-to-br from-primary to-accent rounded-2xl p-6 text-white shadow-lg">
+        <h3 class="text-[0.86rem] uppercase tracking-[0.08em] opacity-90 mb-4">
+          Your Persona
+        </h3>
+        <div id="persona-list" class="space-y-4 text-[0.9rem] leading-[1.55]">
+          <!-- Persona Items via JS -->
+        </div>
+      </div>
+
+      <!-- KANAN: Behavior Stats -->
+      <div class="md:col-span-2 bg-white rounded-2xl p-6 shadow-sm">
+        <h3 class="text-[1.35rem] font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <span class="text-[1.4rem]">📊</span>
+          <span>Behavior Summary</span>
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <!-- Item Stat -->
+          <div>
+            <p class="text-[0.9rem] text-gray-500">Rata-rata Data</p>
+            <p class="text-[1.6rem] font-bold text-gray-800">
+              <span id="stat-data">0</span> GB/bln
+            </p>
+          </div>
+          <div>
+            <p class="text-[0.9rem] text-gray-500">Rata-rata Belanja</p>
+            <p class="text-[1.6rem] font-bold text-gray-800" id="stat-spend">
+              Rp 0
+            </p>
+          </div>
+          <div>
+            <p class="text-[0.9rem] text-gray-500">Frekuensi Topup</p>
+            <p class="text-[1.6rem] font-bold text-gray-800">
+              <span id="stat-freq">0</span>x /bln
+            </p>
+          </div>
+          <div>
+            <p class="text-[0.9rem] text-gray-500">Travel Score</p>
+            <div class="flex items-center gap-2">
+              <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div class="h-2.5 rounded-full bg-secondary transition-all duration-1000" id="bar-travel"
+                  style="width: 0%">
+                </div>
+              </div>
+              <span class="text-[0.8rem] font-bold text-gray-700" id="val-travel">0.0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video Usage Progress -->
+        <div class="mt-6">
+          <div class="flex justify-between mb-1 text-[0.9rem]">
+            <span class="text-gray-500">Video Streaming Intensity</span>
+            <span class="font-semibold text-primary" id="val-video">0%</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-3">
+            <div class="h-3 rounded-full bg-primary transition-all duration-1000" id="bar-video" style="width: 0%">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BAGIAN 3: PURCHASE HISTORY & REKOMENDASI -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- KIRI: History List -->
+      <div class="lg:col-span-2">
+        <div class="flex justify-between items-end mb-4">
+          <div>
+            <h2 class="text-[1.35rem] font-semibold text-gray-800 flex items-center gap-1">
+              <span class="text-[1.4rem]">🕒</span>
+              <span>Riwayat Pembelian</span>
+            </h2>
+            <p class="text-[0.86rem] text-gray-500">
+              Transaksi kamu belakangan ini
+            </p>
+          </div>
+          <!-- Filter Dropdown -->
+          <select id="history-filter" onchange="filterHistory()"
+            class="bg-white border border-gray-300 text-gray-700 text-[0.9rem] rounded-lg px-3 py-2 focus:ring-primary">
+            <option value="All">Semua</option>
+            <option value="General">General</option>
+            <option value="Streaming">Streaming</option>
+            <option value="Roaming">Roaming</option>
+            <option value="Voice">Voice</option>
+            <option value="Social">Social</option>
+            <option value="Gaming">Gaming</option>
+          </select>
+        </div>
+
+        <!-- List Container -->
+        <div class="space-y-3 text-[0.9rem] leading-[1.55]" id="history-container">
+          <!-- Card History via JS -->
+          <div class="text-center py-10 text-gray-400">Memuat data...</div>
+        </div>
+      </div>
+
+      <!-- KANAN: Summary & Rekomendasi -->
+      <div class="space-y-6">
+
+        <!-- Summary Card -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+          <h4 class="font-semibold text-gray-800 mb-3 border-b pb-2 text-[1.1rem]">
+            Ringkasan History
+          </h4>
+          <div class="space-y-3 text-[0.9rem]">
+            <div class="flex justify-between">
+              <span class="text-gray-500">Total Transaksi</span>
+              <span class="font-bold" id="sum-trx">0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-500">Total Pengeluaran</span>
+              <span class="font-bold text-primary" id="sum-spend">Rp 0</span>
+            </div>
+            <div class="pt-2">
+              <span class="text-gray-500 block mb-1">Favorit Kamu:</span>
+              <span class="bg-[#FFE9CC] text-accent px-3 py-1 rounded-full text-[0.82rem] font-semibold" id="sum-fav">
+                -
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rekomendasi Pintar -->
+        <div class="bg-gradient-to-b from-[#FFF3E5] to-white p-5 rounded-xl shadow-sm border border-orange-100">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-[1.4rem]">💡</span>
+            <h4 class="font-semibold text-[1.1rem] text-accent">
+              Rekomendasi Pintar
+            </h4>
+          </div>
+          <p class="text-[0.82rem] text-gray-700 mb-4">
+            Berdasarkan pola penggunaanmu:
+          </p>
+
+          <div class="space-y-3 text-[0.9rem]" id="mini-recs-container">
+            <!-- Mini Cards via JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/profile.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TelQ Admin - Super Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Alert cantik -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
+                    colors: { primary: '#FF7D00', dark: '#1E293B' }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 font-sans flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-dark text-white flex-shrink-0 hidden md:flex flex-col shadow-2xl z-20">
+        <div class="p-6 flex items-center gap-3 border-b border-gray-700/50">
+            <div class="w-8 h-8 bg-primary rounded-lg shadow-lg shadow-orange-500/50"></div>
+            <span class="text-2xl font-bold tracking-wider">TelQ Admin</span>
+        </div>
+        <nav class="flex-1 px-4 space-y-2 mt-6">
+            <button onclick="switchView('dashboard')" id="nav-dashboard"
+                class="nav-item w-full flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-xl font-semibold transition-all">
+                <iconify-icon icon="bxs:dashboard" class="text-xl"></iconify-icon> Dashboard
+            </button>
+            <button onclick="switchView('users')" id="nav-users"
+                class="nav-item w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-700 hover:text-white rounded-xl transition-all">
+                <iconify-icon icon="fa6-solid:users" class="text-xl"></iconify-icon> Data User
+            </button>
+            <button onclick="switchView('products')" id="nav-products"
+                class="nav-item w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-700 hover:text-white rounded-xl transition-all">
+                <iconify-icon icon="fa6-solid:box-open" class="text-xl"></iconify-icon> Katalog Produk
+            </button>
+        </nav>
+        <div class="p-6 border-t border-gray-700">
+            <button onclick="window.location.href='/login'"
+                class="flex items-center gap-2 text-gray-400 hover:text-white transition">
+                <iconify-icon icon="ion:log-out-outline" class="text-xl"></iconify-icon> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col h-screen overflow-y-auto relative">
+        <!-- Header -->
+        <header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center sticky top-0 z-10">
+            <h2 class="text-xl font-bold text-gray-800" id="page-title">Business Overview</h2>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p class="font-bold text-gray-800">Admin Utama</p>
+                    <p class="text-xs text-gray-500">Super Administrator</p>
+                </div>
+                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+                    <iconify-icon icon="fa6-solid:user" class="text-lg"></iconify-icon>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT: DASHBOARD VIEW -->
+        <main id="view-dashboard" class="p-8 view-section">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">Total Pendapatan</p>
+                            <h3 class="text-2xl font-bold text-gray-800" id="total-revenue">Loading...</h3>
+                        </div>
+                        <div class="p-2 bg-green-100 text-green-600 rounded-lg"><iconify-icon
+                                icon="fa6-solid:money-bill-trend-up"></iconify-icon></div>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">User Aktif</p>
+                            <h3 class="text-2xl font-bold text-gray-800" id="active-users">-</h3>
+                        </div>
+                        <div class="p-2 bg-blue-100 text-blue-600 rounded-lg"><iconify-icon
+                                icon="fa6-solid:users"></iconify-icon></div>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">Konversi AI</p>
+                            <h3 class="text-2xl font-bold text-gray-800" id="conversion-rate">-%</h3>
+                        </div>
+                        <div class="p-2 bg-purple-100 text-purple-600 rounded-lg"><iconify-icon
+                                icon="fa6-solid:wand-magic-sparkles"></iconify-icon></div>
+                    </div>
+                </div>
+                <!-- Card 4 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">Akurasi Model</p>
+                            <h3 class="text-2xl font-bold text-gray-800" id="model-accuracy">-%</h3>
+                        </div>
+                        <div class="p-2 bg-orange-100 text-orange-600 rounded-lg"><iconify-icon
+                                icon="fa6-solid:bullseye"></iconify-icon></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 lg:col-span-2">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Dampak AI terhadap Penjualan</h3>
+                    <div class="relative h-72 w-full"><canvas id="salesChart"></canvas></div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Segmentasi User</h3>
+                    <div class="relative h-64 w-full flex justify-center"><canvas id="segmentChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Top 5 Produk Laris</h3>
+                <div class="relative h-64 w-full"><canvas id="productChart"></canvas></div>
+            </div>
+        </main>
+
+        <!-- CONTENT: USERS VIEW -->
+        <main id="view-users" class="p-8 view-section hidden">
+            <!-- User Spend Chart -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">🏆 Top Spenders vs Low Spenders</h3>
+                <div class="relative h-72 w-full"><canvas id="userSpendChart"></canvas></div>
+                <p class="text-sm text-gray-500 mt-2 text-center">Grafik ini membantu mengidentifikasi "Whale" (Pembeli
+                    Besar) dan user yang perlu dipromosikan.</p>
+            </div>
+
+            <!-- User Table -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-gray-800">Daftar Semua User</h3>
+                    <button onclick="fetchUsers()" class="text-primary hover:text-orange-600"><iconify-icon
+                            icon="mdi:refresh" class="text-xl"></iconify-icon></button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-600">
+                        <thead class="bg-gray-50 text-gray-800 font-bold">
+                            <tr>
+                                <th class="px-6 py-4">Nama</th>
+                                <th class="px-6 py-4">No Telpon</th>
+                                <th class="px-6 py-4">Persona (AI)</th>
+                                <th class="px-6 py-4">Device</th>
+                                <th class="px-6 py-4">Total Belanja (LTV)</th>
+                                <th class="px-6 py-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- Data injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- CONTENT: PRODUCTS VIEW -->
+        <main id="view-products" class="p-8 view-section hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Manajemen Produk</h3>
+                <button onclick="toggleProductModal()"
+                    class="bg-primary text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-orange-600 transition flex items-center gap-2">
+                    <iconify-icon icon="mdi:plus"></iconify-icon> Tambah Produk
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="products-grid">
+                <!-- Product Cards injected via JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Tambah Produk (UPDATED FORM) -->
+    <div id="product-modal"
+        class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 relative overflow-y-auto max-h-[90vh]">
+            <button onclick="toggleProductModal()"
+                class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl">&times;</button>
+            <h3 class="text-xl font-bold text-gray-800 mb-6">Tambah Produk Baru</h3>
+
+            <form id="add-product-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk</label>
+                    <input type="text" name="product_name" required
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none"
+                        placeholder="Contoh: Super 5G Hemat">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Harga (Rp)</label>
+                        <input type="number" name="price" required
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Kuota Utama (GB)</label>
+                        <input type="number" name="data_gb" required
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none">
+                    </div>
+                </div>
+
+                <!-- Bagian Durasi (Dropdown) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Durasi (Hari)</label>
+                    <div class="relative">
+                        <select name="duration_days" required
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none appearance-none bg-white">
+                            <option value="30">30 Hari (Bulanan)</option>
+                            <option value="7">7 Hari (Mingguan)</option>
+                            <option value="3">3 Hari</option>
+                            <option value="1">1 Hari (Harian)</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <iconify-icon icon="mdi:chevron-down" class="text-gray-500"></iconify-icon>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bagian Bonus Lengkap -->
+                <div class="border-t border-gray-100 pt-4 mt-2">
+                    <p class="text-sm font-bold text-gray-800 mb-3">Bonus Tambahan (Opsional)</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs text-gray-500">Streaming (GB)</label>
+                            <input type="number" name="streaming_gb_bonus" placeholder="0"
+                                class="w-full border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500">Gaming (GB)</label>
+                            <input type="number" name="gaming_gb_bonus" placeholder="0"
+                                class="w-full border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500">Social Media (GB)</label>
+                            <input type="number" name="social_gb_bonus" placeholder="0"
+                                class="w-full border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500">Telepon (Menit)</label>
+                            <input type="number" name="call_minutes_bonus" placeholder="0"
+                                class="w-full border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500">SMS (Qty)</label>
+                            <input type="number" name="sms_bonus" placeholder="0"
+                                class="w-full border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500">Roaming (Hari)</label>
+                            <input type="number" name="roaming_days_bonus" placeholder="0"
+                                class="w-full border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit"
+                        class="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-orange-600 transition shadow-lg shadow-orange-200">
+                        Simpan Produk
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script src="/assets/js/admin.js"></script>
+</body>
+
+</html>

@@ -2,7 +2,7 @@ const API_BASE_URL = "/api/v1/auth";
 
 // --- FUNGSI REGISTER ---
 async function handleRegister(event) {
-  event.preventDefault(); // Mencegah reload halaman
+  event.preventDefault();
 
   // Ambil data dari form
   const firstname = document.getElementById("firstname").value;
@@ -20,6 +20,12 @@ async function handleRegister(event) {
   };
 
   try {
+    // Tampilkan loading state
+    const submitBtn = event.target.querySelector("button[type='submit']");
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = "Memproses...";
+    submitBtn.disabled = true;
+
     const response = await fetch(`${API_BASE_URL}/register`, {
       method: "POST",
       headers: {
@@ -30,15 +36,39 @@ async function handleRegister(event) {
 
     const result = await response.json();
 
+    // Kembalikan tombol ke semula
+    submitBtn.innerHTML = originalBtnText;
+    submitBtn.disabled = false;
+
     if (response.ok) {
-      alert("Registrasi Berhasil! Silakan Login.");
-      window.location.href = "/login";
+      // SWAL SUKSES
+      Swal.fire({
+        icon: "success",
+        title: "Registrasi Berhasil!",
+        text: "Akun Anda telah dibuat. Silakan login.",
+        showConfirmButton: false,
+        timer: 2000,
+      }).then(() => {
+        window.location.href = "/login";
+      });
     } else {
-      alert("Gagal: " + (result.error || "Terjadi kesalahan"));
+      // SWAL ERROR DARI API
+      Swal.fire({
+        icon: "error",
+        title: "Registrasi Gagal",
+        text: result.error || "Terjadi kesalahan saat mendaftar.",
+        confirmButtonColor: "#FF7D00",
+      });
     }
   } catch (error) {
     console.error("Error:", error);
-    alert("Gagal menghubungi server backend.");
+    // SWAL ERROR JARINGAN
+    Swal.fire({
+      icon: "error",
+      title: "Koneksi Bermasalah",
+      text: "Gagal menghubungi server backend.",
+      confirmButtonColor: "#FF7D00",
+    });
   }
 }
 
@@ -55,6 +85,12 @@ async function handleLogin(event) {
   };
 
   try {
+    // Tampilkan loading state
+    const submitBtn = event.target.querySelector("button[type='submit']");
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = "Masuk...";
+    submitBtn.disabled = true;
+
     const response = await fetch(`${API_BASE_URL}/login`, {
       method: "POST",
       headers: {
@@ -65,26 +101,72 @@ async function handleLogin(event) {
 
     const result = await response.json();
 
+    // Kembalikan tombol
+    submitBtn.innerHTML = originalBtnText;
+    submitBtn.disabled = false;
+
     if (response.ok) {
-      // SIMPAN SESI USER DI BROWSER (LocalStorage)
-      // Ini penting agar kita tahu siapa yang sedang login di halaman Dashboard nanti
+      // Simpan data user (termasuk role) ke localStorage
       localStorage.setItem("user", JSON.stringify(result.user));
 
-      alert("Login Berhasil! Mengalihkan ke dashboard...");
-      window.location.href = "/"; // Arahkan ke dashboard
+      // SWAL SUKSES
+      Swal.fire({
+        icon: "success",
+        title: "Login Berhasil!",
+        text: `Selamat datang kembali, ${result.user.firstname || "User"}!`,
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(() => {
+        // --- LOGIKA REDIRECT BERDASARKAN ROLE ---
+        // Jika role admin, ke admin.html. Jika user, ke index (dashboard).
+        if (result.user.role === "admin") {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = "/";
+        }
+      });
     } else {
-      alert("Login Gagal: " + (result.error || "Cek email/password Anda"));
+      Swal.fire({
+        icon: "error",
+        title: "Login Gagal",
+        text: result.error || "Cek email atau password Anda.",
+        confirmButtonColor: "#FF7D00",
+      });
     }
   } catch (error) {
     console.error("Error:", error);
-    alert(
-      "Gagal menghubungi server backend. Pastikan backend/app.py berjalan."
-    );
+    Swal.fire({
+      icon: "warning",
+      title: "Server Tidak Merespon",
+      text: "Pastikan backend/app.py sedang berjalan.",
+      confirmButtonColor: "#FF7D00",
+    });
   }
 }
 
-// --- FUNGSI LOGOUT (Untuk dipanggil nanti) ---
+// --- FUNGSI LOGOUT ---
 function handleLogout() {
-  localStorage.removeItem("user");
-  window.location.href = "/login";
+  Swal.fire({
+    title: "Yakin ingin keluar?",
+    text: "Anda harus login kembali untuk mengakses akun.",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#FF7D00",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Ya, Keluar",
+    cancelButtonText: "Batal",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      localStorage.removeItem("user");
+
+      Swal.fire({
+        title: "Berhasil Keluar",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1000,
+      }).then(() => {
+        window.location.href = "/login";
+      });
+    }
+  });
 }

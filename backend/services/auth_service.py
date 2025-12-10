@@ -10,7 +10,6 @@ class AuthService:
         conn = None
         try:
             # 1. Hash Password
-            # pbkdf2:sha256 adalah standar industri yang aman
             hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
             conn = get_db_connection()
@@ -28,7 +27,6 @@ class AuthService:
             return {"success": True, "message": "Registrasi berhasil!"}
 
         except psycopg2.IntegrityError:
-            # Error ini muncul jika Email atau Customer ID sudah ada (Duplikat)
             if conn: conn.rollback()
             return {"success": False, "error": "Customer ID atau Email sudah terdaftar."}
         except Exception as e:
@@ -46,8 +44,6 @@ class AuthService:
         try:
             conn = get_db_connection()
             
-            # Gunakan RealDictCursor agar hasil query berupa Dictionary (bukan Tuple)
-            # Ini memudahkan kita mengakses user['password_hash']
             cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
             # 1. Cari User berdasarkan Email
@@ -78,8 +74,6 @@ class AuthService:
         finally:
             if conn: conn.close()
 
-# Import extras untuk RealDictCursor di atas
 import psycopg2.extras
 
-# Buat instance agar bisa diimpor controller
 auth_service = AuthService()

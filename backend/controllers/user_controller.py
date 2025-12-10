@@ -1,0 +1,182 @@
+from flask import Blueprint, request, jsonify
+from backend.models.database import get_db_connection
+import pandas as pd
+from backend.services.prediction_service import prediction_service
+import traceback
+
+user_bp = Blueprint('user_bp', __name__)
+
+@user_bp.route('/profile', methods=['GET'])
+def get_user_profile():
+    """
+    Mengambil Profil Pengguna Lengkap
+    ---
+    tags:
+      - User Profile
+    parameters:
+      - in: query
+        name: customer_id
+        type: string
+        required: true
+        description: ID pelanggan yang ingin dilihat profilnya
+        example: CUST-001
+    responses:
+      200:
+        description: Data profil berhasil diambil
+      400:
+        description: Parameter customer_id tidak ada
+      404:
+        description: User tidak ditemukan
+      500:
+        description: Internal Server Error
+    """
+    customer_id = request.args.get('customer_id')
+    
+    if not customer_id:
+        return jsonify({"error": "Parameter customer_id wajib diisi"}), 400
+    
+    conn = get_db_connection()
+    try:
+        # 1. AMBIL DATA FITUR USER (Basic Stats)
+        sql_profile = "SELECT * FROM user_features WHERE customer_id = %s"
+        profile_df = pd.read_sql(sql_profile, conn, params=(customer_id,))
+        
+        if profile_df.empty:
+            return jsonify({"error": "User tidak ditemukan"}), 404
+
+        # 2. AMBIL STATISTIK TAMBAHAN (Untuk Persona Sosmed & Gaming)
+        # Kita hitung manual karena kolom ini tidak ada di tabel user_features
+        sql_persona_stats = """
+            SELECT 
+                COUNT(*) as total_trx,
+                COUNT(CASE WHEN p.social_gb_bonus > 0 THEN 1 END) as social_trx,
+                COUNT(CASE WHEN p.gaming_gb_bonus > 0 THEN 1 END) as gaming_trx
+            FROM purchase_history ph
+            JOIN products p ON ph.product_id = p.product_id
+            WHERE ph.customer_id = %s
+        """
+        cursor = conn.cursor()
+        cursor.execute(sql_persona_stats, (customer_id,))
+        stats_row = cursor.fetchone()
+        
+        total_trx_all = stats_row[0] or 1 # Hindari pembagian nol
+        social_ratio = (stats_row[1] or 0) / total_trx_all
+        gaming_ratio = (stats_row[2] or 0) / total_trx_all
+        cursor.close()
+
+        # 3. AMBIL HISTORY PEMBELIAN (Untuk List)
+        sql_history = """
+            SELECT 
+                p.product_name,
+                p.price,
+                p.data_gb,
+                p.duration_days,
+                ph.purchase_date,
+                p.target_offer AS category 
+            FROM purchase_history ph
+            JOIN products p ON ph.product_id = p.product_id
+            WHERE ph.customer_id = %s
+            ORDER BY ph.purchase_date DESC
+            LIMIT 10
+        """
+        history_df = pd.read_sql(sql_history, conn, params=(customer_id,))
+        
+        # --- LOGIKA PERSONA (Backend Side) ---
+        row = profile_df.iloc[0]
+        personas = []
+        
+        # Rule 1: Streaming Lover
+        if float(row['pct_video_usage']) > 0.6:
+            personas.append({
+                "icon": "🎬", "title": "Streaming Lover", 
+                "desc": "Hampir seluruh kuotamu habis untuk nonton film!"
+            })
+        
+        # Rule 2: Traveler
+        if float(row['travel_score']) > 0.6:
+            personas.append({
+                "icon": "🌍", "title": "Globe Trotter", 
+                "desc": "Sering bepergian dan butuh koneksi roaming."
+            })
+            
+        # Rule 3: Heavy Caller
+        if float(row['avg_call_duration']) > 300: 
+            personas.append({
+                "icon": "📞", "title": "Voice Friendly", 
+                "desc": "Lebih suka nelpon berjam-jam daripada chat."
+            })
+
+        # Rule 4: Si Hemat
+        if row['spending_tier'] == 'low':
+            personas.append({
+                "icon": "🛡️", "title": "Si Hemat", 
+                "desc": "Jago cari promo dan paket paling worth it."
+            })
+
+        # Rule 5: Sosmed Master (Dihitung dari rasio pembelian)
+        if social_ratio > 0.3: # Jika > 30% pembelian adalah paket sosmed
+            personas.append({
+                "icon": "📸", "title": "Sosmed Master", 
+                "desc": "Kamu anaknya Sosmed banget!!"
+            })
+
+        # Rule 6: Gamer (Dihitung dari rasio pembelian)
+        if gaming_ratio > 0.3: # Jika > 30% pembelian adalah paket gaming
+            personas.append({
+                "icon": "🎮", "title": "Robot Push Rank", 
+                "desc": "Kamu butuh kuota Gaming dengan sinyal Stabil!"
+            })
+
+        # Default Persona
+        if not personas:
+            personas.append({"icon": "📱", "title": "Digital Native", "desc": "Pengguna internet aktif sehari-hari."})
+
+        # --- LOGIKA RINGKASAN HISTORY ---
+        total_trx = len(history_df)
+        total_spend = int(history_df['price'].sum()) if not history_df.empty else 0
+        fav_product = history_df['product_name'].mode()[0] if not history_df.empty else "-"
+
+        # --- AMBIL REKOMENDASI ---
+        try:
+            recs_data = prediction_service.get_recommendations(customer_id)
+            recommendations = []
+            if recs_data.get("status") != "COLD":
+                 recommendations = recs_data.get("recommendations", [])[:3]
+        except Exception as e:
+            print(f"Warning ML Recs: {e}")
+            recommendations = []
+
+        # 4. SUSUN RESPONSE FINAL
+        response = {
+            "header": {
+                "customer_id": row['customer_id'],
+                "device": row['device_brand'],
+                "plan": row['plan_type'],
+                "spending_tier": row['spending_tier']
+            },
+            "persona_list": personas,
+            "behavior_stats": {
+                "avg_data_gb": float(row['avg_data_usage_gb']),
+                "monthly_spend": float(row['monthly_spend']),
+                "topup_freq": int(row['topup_freq']),
+                "travel_score": float(row['travel_score']),
+                "pct_video": float(row['pct_video_usage'])
+            },
+            "history_summary": {
+                "total_trx": total_trx,
+                "total_spend": total_spend,
+                "favorite_product": fav_product
+            },
+            "history_list": history_df.to_dict(orient='records'),
+            "recommendations": recommendations
+        }
+
+        return jsonify(response), 200
+
+    except Exception as e:
+        print(f"Error Profile: {e}")
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if conn:
+            conn.close()
