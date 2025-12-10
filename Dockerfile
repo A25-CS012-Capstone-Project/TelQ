@@ -1,31 +1,41 @@
-# --- [PERBAIKAN DISINI] ---
-# Ganti dari python:3.9-slim ke python:3.10-slim
-# Agar support syntax modern "str | None"
+# Gunakan Python 3.10 (Support syntax modern)
 FROM python:3.10-slim
 
-# Set folder kerja di dalam container
+# Set folder kerja
 WORKDIR /app
 
-# Install dependencies sistem
+# Install dependencies sistem (sebagai root)
 RUN apt-get update && apt-get install -y \
     gcc \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements dari folder backend
-COPY backend/requirements.txt .
+# --- [KHUSUS HUGGING FACE] ---
+# Buat user baru dengan ID 1000 karena HF tidak mengizinkan root
+RUN useradd -m -u 1000 user
 
-# Install library Python
-RUN pip install --no-cache-dir -r requirements.txt
+# Pindah ke user tersebut
+USER user
 
-# Copy seluruh kode project
-COPY . .
+# Set Path agar command python/pip terbaca
+ENV PATH="/home/user/.local/bin:$PATH"
 
-# Set PYTHONPATH ke root folder (/app) agar modul 'backend' terbaca
+# Copy requirements dengan kepemilikan user
+COPY --chown=user backend/requirements.txt requirements.txt
+
+# Install library Python (sebagai user)
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy seluruh kode project dengan kepemilikan user
+COPY --chown=user . .
+
+# Set PYTHONPATH ke root folder (/app)
 ENV PYTHONPATH=/app
 
-# Expose port
-EXPOSE 5000
+# --- [KHUSUS HUGGING FACE] ---
+# Wajib expose port 7860 (Bukan 5000)
+EXPOSE 7860
 
-# Gunakan '-m' untuk menjalankan sebagai modul
+# Jalankan aplikasi sebagai modul
 CMD ["python", "-m", "backend.app"]
