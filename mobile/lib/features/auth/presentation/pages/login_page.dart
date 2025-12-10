@@ -2,14 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:telQ_mobile/core/routes/app_route.dart';
+import 'package:telq_mobile/core/routes/app_route.dart';
+import 'package:telq_mobile/core/widgets/glass_button.dart';
 
 import '../cubit/login_cubit.dart';
-import '../widgets/glass_button.dart';
 import '../widgets/widget_bubble.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +93,7 @@ class LoginPage extends StatelessWidget {
                           }
                         },
                         child: BlocBuilder<LoginCubit, LoginState>(
+                          buildWhen: (previous, current) => previous.status != current.status,
                           builder: (context, state) {
                             return Column(
                               mainAxisSize: MainAxisSize.min,
@@ -103,16 +119,22 @@ class LoginPage extends StatelessWidget {
                                 const SizedBox(height: 24),
                                 _Label('Email Address'),
                                 TextField(
+                                  focusNode: _emailFocusNode,
                                   onChanged: context.read<LoginCubit>().emailChanged,
                                   decoration: _inputDecoration('Email'),
                                   keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.next,
+                                  autofocus: false,
+                                  onSubmitted: (_) => _passwordFocusNode.requestFocus(),
                                 ),
                                 const SizedBox(height: 16),
                                 _Label('Password'),
                                 TextField(
+                                  focusNode: _passwordFocusNode,
                                   onChanged: context.read<LoginCubit>().passwordChanged,
                                   decoration: _inputDecoration('Password'),
                                   obscureText: true,
+                                  textInputAction: TextInputAction.done,
                                 ),
                                 const SizedBox(height: 24),
                                 GlassButton(

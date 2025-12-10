@@ -1,4 +1,4 @@
-name: telQ_mobile
+name: telq_mobile
 description: "Ini adalah aplikasi mobile untuk TelQ"
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -31,7 +31,7 @@ dependencies:
   geolocator_android: 4.6.1 
   liquid_glass_easy: ^1.0.0
   quickalert: ^1.1.0
-  fl_chart: ^1.1.0
+  fl_chart: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -45,3 +45,12 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+
+# App icon configuration
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/Logo_TelQ.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/Logo_TelQ.png"

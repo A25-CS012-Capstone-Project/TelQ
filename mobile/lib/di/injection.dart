@@ -28,6 +28,7 @@ import '../features/promo/domain/usecases/get_recommendations.dart';
 import '../features/promo/domain/usecases/get_best_deals.dart';
 import '../features/promo/domain/usecases/submit_cold_start.dart';
 import '../features/promo/domain/usecases/trigger_pipeline.dart';
+import '../features/promo/domain/usecases/simulate_purchase.dart';
 import '../features/promo/presentation/cubit/promo_cubit.dart';
 
 // Profile feature imports
@@ -35,6 +36,10 @@ import '../features/profile/data/datasources/profile_remote_data_source.dart';
 import '../features/profile/data/repositories/profile_repository_impl.dart';
 import '../features/profile/domain/repositories/profile_repository.dart';
 import '../features/profile/presentation/cubit/profile_cubit.dart';
+
+// Chat feature imports
+import '../features/chat/data/datasources/chat_remote_data_source.dart';
+import '../features/chat/presentation/cubit/chat_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -106,6 +111,7 @@ void configureDependencies() {
   getIt.registerLazySingleton<GetBestDeals>(() => GetBestDeals(getIt()));
   getIt.registerLazySingleton<SubmitColdStart>(() => SubmitColdStart(getIt()));
   getIt.registerLazySingleton<TriggerPipeline>(() => TriggerPipeline(getIt()));
+  getIt.registerLazySingleton<SimulatePurchase>(() => SimulatePurchase(getIt()));
 
   // Presentation
   getIt.registerFactory<PromoCubit>(
@@ -131,5 +137,16 @@ void configureDependencies() {
   // Presentation
   getIt.registerFactory<ProfileCubit>(
     () => ProfileCubit(repository: getIt()),
+  );
+
+  // ==================== Chat Feature ====================
+  // Data sources
+  getIt.registerLazySingleton<ChatRemoteDataSource>(
+    () => ChatRemoteDataSource(baseUrl: apiBaseUrl, client: getIt()),
+  );
+
+  // Presentation
+  getIt.registerFactory<ChatCubit>(
+    () => ChatCubit(dataSource: getIt()),
   );
 }

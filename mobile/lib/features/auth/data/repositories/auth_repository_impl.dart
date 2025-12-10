@@ -1,6 +1,5 @@
-
-import 'package:telQ_mobile/core/error/exception.dart';
-import 'package:telQ_mobile/core/error/failure.dart';
+import 'package:telq_mobile/core/error/exception.dart';
+import 'package:telq_mobile/core/error/failure.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';

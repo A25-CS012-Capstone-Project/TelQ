@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/routes/app_route.dart';
 import '../../../../core/widgets/animated_bottom_nav.dart';
+import '../../../../core/helpers/purchase_helper.dart';
 import '../cubit/promo_cubit.dart';
 import '../widgets/recommendation_card.dart';
 import '../widgets/best_deal_card.dart';
@@ -325,11 +326,10 @@ class _PromoPageState extends State<PromoPage> {
                     );
                   },
                   onBuy: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Membeli ${rec.productName}...'),
-                        backgroundColor: const Color(0xFFFF7D00),
-                      ),
+                    PurchaseHelper.buyProduct(
+                      context: context,
+                      productId: rec.productId,
+                      productName: rec.productName,
                     );
                   },
                 ),
@@ -416,11 +416,10 @@ class _PromoPageState extends State<PromoPage> {
                   );
                 },
                 onBuy: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Membeli ${deal.productName}...'),
-                      backgroundColor: const Color(0xFFFFA600),
-                    ),
+                  PurchaseHelper.buyProduct(
+                    context: context,
+                    productId: deal.productId,
+                    productName: deal.productName,
                   );
                 },
               ),
@@ -698,11 +697,10 @@ class _PromoPageContentState extends State<PromoPageContent> {
           child: RecommendationCard(
             recommendation: rec,
             onBuy: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Membeli ${rec.productName}...'),
-                  backgroundColor: const Color(0xFFFF7D00),
-                ),
+              PurchaseHelper.buyProduct(
+                context: context,
+                productId: rec.productId,
+                productName: rec.productName,
               );
             },
             onDetail: () {
@@ -713,11 +711,10 @@ class _PromoPageContentState extends State<PromoPageContent> {
                 builder: (_) => PromoDetailSheet(
                   recommendation: rec,
                   onBuy: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Membeli ${rec.productName}...'),
-                        backgroundColor: const Color(0xFFFF7D00),
-                      ),
+                    PurchaseHelper.buyProduct(
+                      context: context,
+                      productId: rec.productId,
+                      productName: rec.productName,
                     );
                   },
                 ),
@@ -773,11 +770,10 @@ class _PromoPageContentState extends State<PromoPageContent> {
               child: BestDealCard(
                 product: deal,
                 onBuy: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Membeli ${deal.productName}...'),
-                      backgroundColor: const Color(0xFFFFA600),
-                    ),
+                  PurchaseHelper.buyProduct(
+                    context: context,
+                    productId: deal.productId,
+                    productName: deal.productName,
                   );
                 },
                 onDetail: () {
@@ -788,11 +784,10 @@ class _PromoPageContentState extends State<PromoPageContent> {
                     builder: (_) => PromoDetailSheet(
                       product: deal,
                       onBuy: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Membeli ${deal.productName}...'),
-                            backgroundColor: const Color(0xFFFFA600),
-                          ),
+                        PurchaseHelper.buyProduct(
+                          context: context,
+                          productId: deal.productId,
+                          productName: deal.productName,
                         );
                       },
                     ),

@@ -14,6 +14,7 @@ import 'features/product/presentation/cubit/product_cubit.dart';
 import 'features/product/presentation/pages/product_page.dart';
 import 'features/promo/presentation/cubit/promo_cubit.dart';
 import 'features/promo/presentation/pages/promo_page.dart';
+import 'features/promo/presentation/pages/questionnaire_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
               create: (_) => getIt<RegisterCubit>(),
               child: const RegisterPage(),
             ),
+        AppRoute.questionnaire.path: (_) => const QuestionnaireScreen(),
         AppRoute.home.path: (_) => const HomeShell(initialIndex: 0),
         AppRoute.product.path: (_) => BlocProvider(
               create: (_) => getIt<ProductCubit>(),

@@ -10,6 +10,8 @@ import '../../features/promo/presentation/cubit/promo_cubit.dart';
 import '../../features/promo/presentation/pages/promo_page.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/chat/presentation/cubit/chat_cubit.dart';
+import '../../features/chat/presentation/pages/chat_page.dart';
 
 
 class HomeShell extends StatefulWidget {
@@ -26,6 +28,7 @@ class _HomeShellState extends State<HomeShell> {
   late final ProductCubit _productCubit;
   late final PromoCubit _promoCubit;
   late final ProfileCubit _profileCubit;
+  late final ChatCubit _chatCubit;
 
   @override
   void initState() {
@@ -34,6 +37,7 @@ class _HomeShellState extends State<HomeShell> {
     _productCubit = getIt<ProductCubit>();
     _promoCubit = getIt<PromoCubit>();
     _profileCubit = getIt<ProfileCubit>();
+    _chatCubit = getIt<ChatCubit>();
     _initializeData();
   }
 
@@ -49,6 +53,18 @@ class _HomeShellState extends State<HomeShell> {
 
   void _onNavTap(int index) {
     setState(() => _currentIndex = index);
+  }
+
+  void _openChat() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: _chatCubit,
+          child: const ChatPage(),
+        ),
+      ),
+    );
   }
 
   @override
@@ -71,6 +87,32 @@ class _HomeShellState extends State<HomeShell> {
               },
             ),
           ],
+        ),
+        // Gemini AI Chat FAB
+        floatingActionButton: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFFF7D00).withValues(alpha: 0.4),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: FloatingActionButton(
+            onPressed: _openChat,
+            backgroundColor: Colors.white,
+            elevation: 0,
+            shape: const CircleBorder(
+              side: BorderSide(color: Color(0xFFFF7D00), width: 2),
+            ),
+            child: const Icon(
+              Icons.smart_toy,
+              color: Color(0xFFFF7D00),
+              size: 28,
+            ),
+          ),
         ),
         bottomNavigationBar: AnimatedBottomNav(
           currentIndex: _currentIndex,

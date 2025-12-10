@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:telQ_mobile/core/error/exception.dart';
-import 'package:telQ_mobile/core/network/api_client.dart';
+import 'package:telq_mobile/core/error/exception.dart';
+import 'package:telq_mobile/core/network/api_client.dart';
 
 import '../models/user_dto.dart';
 
@@ -72,8 +72,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       final body = jsonDecode(resp.body) as Map<String, dynamic>;
       final success = body['success'] == true;
-      if ((resp.statusCode == 200 || resp.statusCode == 201) && success && body['user'] != null) {
-        return UserDto.fromJson(body['user'] as Map<String, dynamic>);
+      
+      // Backend returns 201 with success:true but no user object
+      // So we create UserDto from input data
+      if ((resp.statusCode == 200 || resp.statusCode == 201) && success) {
+        // If user object is returned, use it. Otherwise create from input.
+        if (body['user'] != null) {
+          return UserDto.fromJson(body['user'] as Map<String, dynamic>);
+        } else {
+          return UserDto(
+            customerId: customerId,
+            firstname: firstname,
+            email: email,
+          );
+        }
       }
 
       final message = body['error']?.toString() ?? 'Registration failed';

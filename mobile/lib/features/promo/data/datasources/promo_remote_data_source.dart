@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:telQ_mobile/core/error/exception.dart';
-import 'package:telQ_mobile/core/network/api_client.dart';
+import 'package:telq_mobile/core/error/exception.dart';
+import 'package:telq_mobile/core/network/api_client.dart';
 
 import '../../../product/data/models/product_dto.dart';
 import '../models/recommendation_dto.dart';
@@ -22,6 +22,12 @@ abstract class PromoRemoteDataSource {
 
   /// pipeline update (aku cuman ngikutin BE)
   Future<void> triggerPipeline(String customerId);
+
+  /// Simulate a purchase (records to DB)
+  Future<void> simulatePurchase({
+    required String customerId,
+    required int productId,
+  });
 }
 
 class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
@@ -118,6 +124,34 @@ class PromoRemoteDataSourceImpl implements PromoRemoteDataSource {
       if (resp.statusCode != 200) {
         final body = jsonDecode(resp.body) as Map<String, dynamic>?;
         final message = body?['error']?.toString() ?? 'Pipeline failed';
+        throw ServerException(message, statusCode: resp.statusCode);
+      }
+    } on SocketException {
+      throw ConnectionException();
+    } on FormatException {
+      throw ServerException('Invalid response format');
+    }
+  }
+
+  @override
+  Future<void> simulatePurchase({
+    required String customerId,
+    required int productId,
+  }) async {
+    try {
+      final resp = await api.post(
+        '/api/v1/simulate-purchase',
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'customer_id': customerId,
+          'product_id': productId,
+        }),
+      );
+
+      // 200 = OK, 201 = Created - both are success
+      if (resp.statusCode != 200 && resp.statusCode != 201) {
+        final body = jsonDecode(resp.body) as Map<String, dynamic>?;
+        final message = body?['error']?.toString() ?? 'Purchase failed';
         throw ServerException(message, statusCode: resp.statusCode);
       }
     } on SocketException {

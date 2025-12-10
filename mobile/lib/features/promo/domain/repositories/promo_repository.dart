@@ -16,4 +16,10 @@ abstract class PromoRepository {
 
   /// Trigger pipeline to update user profile after purchase
   Future<void> triggerPipeline(String customerId);
+
+  /// Simulate a purchase (records to DB)
+  Future<void> simulatePurchase({
+    required String customerId,
+    required int productId,
+  });
 }

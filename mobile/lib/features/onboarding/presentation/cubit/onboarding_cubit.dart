@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:telQ_mobile/features/onboarding/domain/onboarding_repository.dart';
-import 'package:telQ_mobile/features/onboarding/model/onboarding_product.dart';
+import 'package:telq_mobile/features/onboarding/domain/onboarding_repository.dart';
+import 'package:telq_mobile/features/onboarding/model/onboarding_product.dart';
 
 part 'onboarding_state.dart';
 

@@ -1,5 +1,5 @@
-import 'package:telQ_mobile/core/error/exception.dart';
-import 'package:telQ_mobile/core/error/failure.dart';
+import 'package:telq_mobile/core/error/exception.dart';
+import 'package:telq_mobile/core/error/failure.dart';
 
 import '../../domain/entities/product.dart';
 import '../../domain/repositories/product_repository.dart';

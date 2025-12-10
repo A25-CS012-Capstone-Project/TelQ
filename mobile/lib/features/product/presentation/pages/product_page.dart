@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/routes/app_route.dart';
 import '../../../../core/widgets/animated_bottom_nav.dart';
+import '../../../../core/helpers/purchase_helper.dart';
 import '../cubit/product_cubit.dart';
 import '../widgets/product_card.dart';
 import '../widgets/product_detail_sheet.dart';
@@ -241,12 +242,10 @@ class _ProductPageState extends State<ProductPage> {
                   product: product,
                   onTap: () => context.read<ProductCubit>().selectProduct(product),
                   onBuy: () {
-                    // TODO: Implement purchase flow
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Membeli ${product.productName}...'),
-                        backgroundColor: const Color(0xFFFF7D00),
-                      ),
+                    PurchaseHelper.buyProduct(
+                      context: context,
+                      productId: product.productId,
+                      productName: product.productName,
                     );
                   },
                 ),
@@ -490,11 +489,10 @@ class _ProductPageContentState extends State<ProductPageContent> {
                 product: product,
                 onTap: () => context.read<ProductCubit>().selectProduct(product),
                 onBuy: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Membeli ${product.productName}...'),
-                      backgroundColor: const Color(0xFFFF7D00),
-                    ),
+                  PurchaseHelper.buyProduct(
+                    context: context,
+                    productId: product.productId,
+                    productName: product.productName,
                   );
                 },
               ),

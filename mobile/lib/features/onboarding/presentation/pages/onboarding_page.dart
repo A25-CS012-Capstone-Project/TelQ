@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:telQ_mobile/core/routes/app_route.dart';
+import 'package:telq_mobile/core/routes/app_route.dart';
 
-import 'package:telQ_mobile/features/auth/presentation/widgets/glass_button.dart';
-import 'package:telQ_mobile/features/auth/presentation/widgets/widget_bubble.dart';
+import 'package:telq_mobile/features/auth/presentation/widgets/glass_button.dart';
+import 'package:telq_mobile/features/auth/presentation/widgets/widget_bubble.dart';
 import '../cubit/onboarding_cubit.dart';
 import '../widgets/onboarding_cards.dart';
 
@@ -175,8 +175,10 @@ class _PageTwo extends StatelessWidget {
                 style: theme.textTheme.bodySmall?.copyWith(color: Colors.black54),
               ),
               const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 8,
+                runSpacing: 8,
                 children: preferences
                     .map(
                       (p) => ChoicePill(
@@ -283,33 +285,35 @@ class _PageThree extends StatelessWidget {
                 style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800, color: Colors.black87),
               ),
               const SizedBox(height: 14),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Expanded(
-                    child: FeatureCard(
-                      icon: Icons.wifi,
-                      title: 'Sinyal Qenceng',
-                      subtitle: 'Akses internet lancar untuk streaming, chat, & kerja.',
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: const [
+                    Expanded(
+                      child: FeatureCard(
+                        icon: Icons.wifi,
+                        title: 'Sinyal Qenceng',
+                        subtitle: 'Akses internet lancar untuk streaming, chat, & kerja.',
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: FeatureCard(
-                      icon: Icons.signal_cellular_alt,
-                      title: 'Sinyal Stabil',
-                      subtitle: 'Koneksi stabil untuk aktivitas harian.',
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: FeatureCard(
+                        icon: Icons.signal_cellular_alt,
+                        title: 'Sinyal Stabil',
+                        subtitle: 'Koneksi stabil untuk aktivitas harian.',
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: FeatureCard(
-                      icon: Icons.security,
-                      title: 'Keamanan',
-                      subtitle: 'Data aman dengan enkripsi.',
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: FeatureCard(
+                        icon: Icons.security,
+                        title: 'Keamanan',
+                        subtitle: 'Data aman dengan enkripsi.',
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 16),
               Text(

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
-import 'package:telQ_mobile/features/onboarding/model/onboarding_product.dart';
+import 'package:telq_mobile/features/onboarding/model/onboarding_product.dart';
 
 class OnboardingRepository {
   static String get _baseUrl {

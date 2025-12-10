@@ -1,5 +1,5 @@
-import 'package:telQ_mobile/core/error/exception.dart';
-import 'package:telQ_mobile/core/error/failure.dart';
+import 'package:telq_mobile/core/error/exception.dart';
+import 'package:telq_mobile/core/error/failure.dart';
 
 import '../../../product/domain/entities/product.dart';
 import '../../domain/entities/recommendation.dart';
@@ -58,6 +58,22 @@ class PromoRepositoryImpl implements PromoRepository {
   Future<void> triggerPipeline(String customerId) async {
     try {
       await remote.triggerPipeline(customerId);
+    } on ConnectionException catch (e) {
+      throw ConnectionFailure(e.message);
+    } on ServerException catch (e) {
+      throw ServerFailure(e.message, statusCode: e.statusCode);
+    } catch (e) {
+      throw UnexpectedFailure('Unexpected error: $e');
+    }
+  }
+
+  @override
+  Future<void> simulatePurchase({
+    required String customerId,
+    required int productId,
+  }) async {
+    try {
+      await remote.simulatePurchase(customerId: customerId, productId: productId);
     } on ConnectionException catch (e) {
       throw ConnectionFailure(e.message);
     } on ServerException catch (e) {

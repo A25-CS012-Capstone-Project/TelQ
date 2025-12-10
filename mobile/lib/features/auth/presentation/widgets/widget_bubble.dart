@@ -53,50 +53,52 @@ class _BubbleState extends State<Bubble> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     final baseColor = widget.color ?? const Color(0xFFF5821F);
 
-    return Align(
-      alignment: widget.alignment,
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          return Transform.translate(
-            offset: Offset(_floatAnimation.value * 0.3, _floatAnimation.value),
-            child: Transform.rotate(
-              angle: _rotateAnimation.value,
-              child: child,
-            ),
-          );
-        },
-        child: Container(
-          width: widget.size,
-          height: widget.size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-
-            gradient: RadialGradient(
-              colors: [
-                baseColor.withValues(alpha: widget.opacity),
-                baseColor.withValues(alpha: widget.opacity * 0.85),
-                baseColor.withValues(alpha: widget.opacity * 0.6),
-                baseColor.withValues(alpha: widget.opacity * 0.3),
-                baseColor.withValues(alpha: 0),
-              ],
-              stops: const [0.0, 0.3, 0.55, 0.8, 1.0],
-              center: const Alignment(-0.2, -0.2),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: baseColor.withValues(alpha: 0.4),
-                blurRadius: widget.size * 0.25,
-                spreadRadius: widget.size * 0.02,
+    return IgnorePointer(
+      child: Align(
+        alignment: widget.alignment,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: Offset(_floatAnimation.value * 0.3, _floatAnimation.value),
+              child: Transform.rotate(
+                angle: _rotateAnimation.value,
+                child: child,
               ),
-            ],
-          ),
-       
-          child: CustomPaint(
-            size: Size(widget.size, widget.size),
-            painter: _BubbleHighlightPainter(
-              highlightColor: Colors.white.withValues(alpha: 0.15),
-              glowColor: baseColor.withValues(alpha: 0.3),
+            );
+          },
+          child: Container(
+            width: widget.size,
+            height: widget.size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+
+              gradient: RadialGradient(
+                colors: [
+                  baseColor.withValues(alpha: widget.opacity),
+                  baseColor.withValues(alpha: widget.opacity * 0.85),
+                  baseColor.withValues(alpha: widget.opacity * 0.6),
+                  baseColor.withValues(alpha: widget.opacity * 0.3),
+                  baseColor.withValues(alpha: 0),
+                ],
+                stops: const [0.0, 0.3, 0.55, 0.8, 1.0],
+                center: const Alignment(-0.2, -0.2),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: baseColor.withValues(alpha: 0.4),
+                  blurRadius: widget.size * 0.25,
+                  spreadRadius: widget.size * 0.02,
+                ),
+              ],
+            ),
+         
+            child: CustomPaint(
+              size: Size(widget.size, widget.size),
+              painter: _BubbleHighlightPainter(
+                highlightColor: Colors.white.withValues(alpha: 0.15),
+                glowColor: baseColor.withValues(alpha: 0.3),
+              ),
             ),
           ),
         ),

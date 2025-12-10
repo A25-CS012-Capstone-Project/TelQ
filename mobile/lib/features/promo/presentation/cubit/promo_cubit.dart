@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:telQ_mobile/core/error/failure.dart';
+import 'package:telq_mobile/core/error/failure.dart';
 import '../../../product/domain/entities/product.dart';
 import '../../domain/entities/recommendation.dart';
 import '../../domain/usecases/get_recommendations.dart';

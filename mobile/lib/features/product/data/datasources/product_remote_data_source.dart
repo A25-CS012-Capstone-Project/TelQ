@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:telQ_mobile/core/error/exception.dart';
-import 'package:telQ_mobile/core/network/api_client.dart';
+import 'package:telq_mobile/core/error/exception.dart';
+import 'package:telq_mobile/core/network/api_client.dart';
 
 import '../models/product_dto.dart';
 
