@@ -540,8 +540,8 @@
                 <!-- QR Code Placeholder -->
                 <div class="bg-white p-2 border-2 border-dashed border-gray-300 rounded-xl inline-block mb-6">
                     <!-- Ganti src ini dengan QR Code asli nanti (bisa generate online arahkan ke link download) -->
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://localhost:5000/assets/apk/telq-mobile.apk"
-                        alt="Scan QR to Download" class="w-32 h-32">
+                    <img src=""
+                        alt="Scan QR to Download" class="w-32 h-32" id="qr-image">
                 </div>
                 <p class="text-xs text-gray-400 mb-4">Scan QR code di atas untuk download</p>
     
@@ -872,9 +872,28 @@
 
         function toggleMobileModal() {
                 const modal = document.getElementById('mobile-app-modal');
+
+                // --- [LOGIKA BARU: GENERATE QR DINAMIS] ---
                 if (modal.classList.contains('hidden')) {
+                    // 1. Ambil URL website saat ini (otomatis deteksi localhost atau render.com)
+                    const currentDomain = window.location.origin;
+
+                    // 2. Gabungkan dengan path APK
+                    const apkUrl = `${currentDomain}/assets/apk/telq-mobile.apk`;
+
+                    // 3. Generate QR Code API dengan URL yang benar
+                    const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(apkUrl)}`;
+
+                    // 4. Pasang ke gambar
+                    document.getElementById('qr-image').src = qrApi;
+
+                    // 5. Update juga tombol download manual (opsional tapi bagus)
+                    const downloadBtn = modal.querySelector('a[download]');
+                    if (downloadBtn) downloadBtn.href = apkUrl;
+
+                    // Tampilkan modal
                     modal.classList.remove('hidden');
-                    document.body.classList.add('overflow-hidden'); // Matikan scroll body
+                    document.body.classList.add('overflow-hidden');
                 } else {
                     modal.classList.add('hidden');
                     document.body.classList.remove('overflow-hidden');
