@@ -51,8 +51,8 @@ Pastikan kamu sudah menginstall:
 Buat file baru bernama .env di folder paling luar (sejajar dengan docker-compose.yml). Copy isi di bawah ini:
 
 ```env
-SECRET_KEY=calon_best_capstone
-GEMINI_API_KEY=AIzaSyCQT1OUBsBgG_EAjYTP2RW-spyIIrX4jKE
+SECRET_KEY=isi_teks_bebas_untuk_security
+GEMINI_API_KEY=MASUKKAN_API_KEY_DISINI
 
 # Konfigurasi Database (Untuk Docker)
 DB_USER=postgres
@@ -149,13 +149,14 @@ Install semua library yang dibutuhkan project:
 **5.Konfigurasi Environment Lokal**  
 Buat file `.env` di folder root project, tapi sesuaikan isinya untuk lokal (bukan Docker):
 
-```SECRET_KEY=rahasia_lokal
+```
+SECRET_KEY=isi_teks_bebas_untuk_security
 GEMINI_API_KEY=MASUKKAN_API_KEY_DISINI
 
 # Konfigurasi Database LOKAL
 DB_USER=postgres
 DB_PASSWORD=password_postgres_kamu_disini
-DB_HOST=localhost
+DB_HOST=localhost <-- Perhatikan ini beda dengan Docker
 DB_PORT=5432
 DB_NAME=telq_recommender_db
 
@@ -188,12 +189,5 @@ Buka browser di `http://127.0.0.1:5000`
 - **Error ML Model not found**: Pastikan file .pkl model sudah ada di folder backend/models/.
 - **Database Kosong**: Jangan lupa jalankan langkah No. 4 (Isi Database) setelah Docker menyala.
 
-## 📚 Dokumentasi Lengkap
-
-Project ini dilengkapi dengan dokumentasi teknis mendalam:
-
-* **📖 [Dokumentasi API (Swagger/OpenAPI)](API_DOCS.md)** - Panduan lengkap endpoint Backend.
-* **🎨 [Style Guide Figma](https://www.figma.com/...)** - Pedoman desain antarmuka.
-* **🐳 [Panduan Docker](TUTORIAL_DOCKER.md)** - Cara menjalankan menggunakan Docker.
 
 Selamat Mencoba! 🎉
