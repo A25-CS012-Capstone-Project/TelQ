@@ -1,32 +1,11 @@
 import 'dart:convert';
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
+import 'package:telq_mobile/core/config/app_config.dart';
 import 'package:telq_mobile/features/onboarding/model/onboarding_product.dart';
 
 class OnboardingRepository {
-  static String get _baseUrl {
-    if (kIsWeb) {
-      return 'http://localhost:5000/api/v1';
-    }
-    
-    // Windows, macOS, Linux desktop
-    if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-      return 'http://127.0.0.1:5000/api/v1';
-    }
-    
-    // Android Emulator
-    if (Platform.isAndroid) {
-      return 'http://10.0.2.2:5000/api/v1';
-    }
-    
-    // iOS Simulator
-    if (Platform.isIOS) {
-      return 'http://localhost:5000/api/v1';
-    }
-    
-    return 'http://localhost:5000/api/v1';
-  }
+  // Use centralized config - single source of truth!
+  static String get _baseUrl => '${AppConfig.apiBaseUrl}/api/v1';
 
   /// ambil best deal products
   Future<List<OnboardingProduct>> fetchBestDeals() async {
