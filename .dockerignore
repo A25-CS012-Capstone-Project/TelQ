@@ -1,7 +1,13 @@
 venv/
-pycache/
+__pycache__/
 .git/
 .env
 *.pyc
 instance/
 .DS_Store
+mobile/
+*.dart
+*.apk
+ios/
+android/
+build/
