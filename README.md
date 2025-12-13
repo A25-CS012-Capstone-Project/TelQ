@@ -183,9 +183,9 @@ Jalankan server Flask sebagai module:
 
 Buka browser di `http://127.0.0.1:5000`
 
-# 🔧 Alternatif: Akses langsung via link 
+# 🌐 Alternatif: Akses langsung via link 
 
-https://a25-cs012-telq-app.hf.space/
+# https://a25-cs012-telq-app.hf.space/
 
 
 # ❓ Troubleshooting (Masalah Umum)
