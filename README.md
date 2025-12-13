@@ -29,7 +29,7 @@ Project ini dibuat sebagai Capstone Project untuk program Asah led by Dicoding
 | 🎨 **Style Guide** | [Buka di Figma](https://www.figma.com/board/Yavux6azRsJ62ol9yr90jn/Design-System?node-id=0-1&t=DpJtLRRvMaudXn37-1) | Panduan warna, tipografi, dan komponen UI. |
 | 🧩 **Architecture** | [Buka di Figma](https://www.figma.com/design/gX2yRDWUo8Deq5kVlFJEQR/Capstone---Telco?node-id=0-1&t=EPUbDHP5tCjCcNdw-1) | Diagram alur sistem dan arsitektur database. |
 | 📘 **API Docs** | [http://localhost:5000/apidocs/](http://localhost:5000/apidocs/) | Dokumentasi interaktif (Swagger UI) untuk semua endpoint Backend. <br> *(Hanya bisa diakses saat aplikasi berjalan).* |
-| 📁 **Google Drive** | [https://drive.google.com/drive/folders/11SlE5Rj3TE5cLHdbtid7aTj36DfR6888?usp=sharing](https://drive.google.com/drive/folders/11SlE5Rj3TE5cLHdbtid7aTj36DfR6888?usp=sharing) | Dokumentasi Google Drive untuk semua model yang dijadikan percobaan dan model final milik team kita. |
+| 📁 **Google Drive** | [Buka di Gdrive](https://drive.google.com/drive/folders/11SlE5Rj3TE5cLHdbtid7aTj36DfR6888?usp=sharing) | Dokumentasi Google Drive untuk semua model yang dijadikan percobaan dan model final milik team kita. |
 
 
 
