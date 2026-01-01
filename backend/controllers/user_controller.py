@@ -44,13 +44,14 @@ def get_user_profile():
         if profile_df.empty:
             return jsonify({"error": "User tidak ditemukan"}), 404
 
-        # 2. AMBIL STATISTIK TAMBAHAN (Untuk Persona Sosmed & Gaming)
-        # Kita hitung manual karena kolom ini tidak ada di tabel user_features
+        # 2. AMBIL STATISTIK TAMBAHAN (Untuk Persona Streaming, Sosmed & Gaming)
+        # Count by target_offer category instead of bonus columns
         sql_persona_stats = """
             SELECT 
                 COUNT(*) as total_trx,
-                COUNT(CASE WHEN p.social_gb_bonus > 0 THEN 1 END) as social_trx,
-                COUNT(CASE WHEN p.gaming_gb_bonus > 0 THEN 1 END) as gaming_trx
+                COUNT(CASE WHEN p.target_offer = 'Social Offer' THEN 1 END) as social_trx,
+                COUNT(CASE WHEN p.target_offer = 'Gaming Offer' THEN 1 END) as gaming_trx,
+                COUNT(CASE WHEN p.target_offer = 'Streaming Offer' THEN 1 END) as streaming_trx
             FROM purchase_history ph
             JOIN products p ON ph.product_id = p.product_id
             WHERE ph.customer_id = %s
@@ -62,6 +63,7 @@ def get_user_profile():
         total_trx_all = stats_row[0] or 1 # Hindari pembagian nol
         social_ratio = (stats_row[1] or 0) / total_trx_all
         gaming_ratio = (stats_row[2] or 0) / total_trx_all
+        streaming_ratio = (stats_row[3] or 0) / total_trx_all
         cursor.close()
 
         # 3. AMBIL HISTORY PEMBELIAN (Untuk List)
@@ -85,8 +87,8 @@ def get_user_profile():
         row = profile_df.iloc[0]
         personas = []
         
-        # Rule 1: Streaming Lover
-        if float(row['pct_video_usage']) > 0.6:
+        # Rule 1: Streaming Lover (Usage > 60% OR Purchase Ratio > 30%)
+        if float(row['pct_video_usage']) > 0.6 or streaming_ratio > 0.3:
             personas.append({
                 "icon": "🎬", "title": "Streaming Lover", 
                 "desc": "Hampir seluruh kuotamu habis untuk nonton film!"

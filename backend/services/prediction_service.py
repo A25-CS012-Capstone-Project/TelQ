@@ -3,6 +3,10 @@ import traceback
 import joblib
 import pandas as pd
 from sqlalchemy import create_engine
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+import numpy as np
+
 
 from backend.models.database import get_db_connection
 from backend.config import DATABASE_URL, ML_MODEL_PATH, ML_COLUMNS_PATH
@@ -51,7 +55,8 @@ class PredictionService:
                 call_minutes_bonus,
                 sms_bonus,
                 roaming_days_bonus,
-                target_offer
+                target_offer,
+                COALESCE(pop_score, 0.0) as pop_score
             FROM products;
         """
         return pd.read_sql(sql, db_engine)
@@ -238,6 +243,7 @@ class PredictionService:
             "social_gb_bonus",
             "call_minutes_bonus",
             "sms_bonus",
+            "target_offer",
         ]
 
         for c in metadata_cols:
@@ -247,12 +253,33 @@ class PredictionService:
         result_metadata = test_df[metadata_cols].copy()
 
         # 5. Siapkan fitur untuk model ML
+        # 5.1 Compute derived features (price_per_gb, price_per_day, data_gap, video_coverage)
+        test_df["price_per_gb"] = test_df["price"] / test_df["data_gb"].clip(lower=1)
+        test_df["price_per_day"] = test_df["price"] / test_df["duration_days"].clip(lower=1)
+        test_df["data_gap"] = test_df["avg_data_usage_gb"] - test_df["data_gb"]
+        test_df["video_coverage"] = test_df["streaming_gb_bonus"] / (
+            test_df["data_gb"] + test_df["streaming_gb_bonus"]
+        ).clip(lower=1)
+
+        # 5.2 Create *_item columns (duplicate user features)
+        item_cols = [
+            "avg_data_usage_gb", "pct_video_usage", "avg_call_duration",
+            "sms_freq", "monthly_spend", "topup_freq", "travel_score", "complain_count"
+        ]
+        for col in item_cols:
+            if col in test_df.columns:
+                test_df[f"{col}_item"] = test_df[col]
+
+        # 5.3 Ensure behavior_segment exists
+        if "behavior_segment" not in test_df.columns:
+            test_df["behavior_segment"] = 0
+
         drop_cols_ml = [
             "customer_id",
             "product_name",
             "plan_type",
             "target_offer",
-            "duration_days", 
+            "duration_days",
         ]
         test_df_ml = test_df.drop(columns=drop_cols_ml, errors="ignore")
         test_df_enc = pd.get_dummies(test_df_ml)
@@ -272,7 +299,7 @@ class PredictionService:
                 traceback.print_exc()
                 result_metadata["ml_score"] = 0.5  # fallback rata-rata
 
-            # 6.1 Rule-based score (termasuk gaming)
+            # 6.1 Rule-based score (proportional scoring instead of binary thresholds)
             def rule_score(row):
                 score = 0.0
 
@@ -291,35 +318,57 @@ class PredictionService:
                 if entertainment_flags > 0 or p_roam > 0:
                     score += 0.05
 
-                # Non-video user: penalti untuk paket hiburan murni
+                # Non-video user: penalti untuk paket hiburan murni (proportional)
                 if is_non_video_user and entertainment_flags > 0:
-                    # Kalau tidak ada bonus call / roaming → pure entertainment
                     if p_call == 0 and p_roam == 0:
-                        score -= 0.4
+                        score -= 0.2 * (1 - user_pct_video)  # Less penalty if closer to video threshold
                     else:
+                        score -= 0.1 * (1 - user_pct_video)
+
+                # 1. Travel logic (proportional)
+                if p_roam > 0:
+                    score += user_travel_score * 0.8  # Proportional to travel_score
+                else:
+                    score -= user_travel_score * 0.3  # Less penalty for non-travelers
+
+                # 2. Video / Social / Gaming logic (proportional)
+                if entertainment_flags >= 2:
+                    score += user_pct_video * 0.5
+                elif entertainment_flags == 1:
+                    score += user_pct_video * 0.3
+
+                # 3. Voice logic (proportional)
+                if p_call > 0:
+                    voice_score = min(user_avg_call / 300, 1.0)  # Normalize to 0-1
+                    score += voice_score * 0.4
+
+                # 4. Penalty paket mahal untuk low spender (proportional)
+                if user_spend > 0 and price > 0:
+                    price_ratio = price / user_spend
+                    if price_ratio > 2.0:
+                        score -= 0.4
+                    elif price_ratio > 1.5:
                         score -= 0.2
 
-                # 1. Travel logic
-                if user_travel_score > 0.6:
-                    if p_roam > 0:
-                        score += 0.8
-                    else:
-                        score -= 0.3
-
-                # 2. Video / Social / Gaming logic
-                if user_pct_video > 0.5:
-                    if entertainment_flags >= 2:
-                        score += 0.4
-                    elif entertainment_flags == 1:
-                        score += 0.25
-
-                # 3. Voice logic
-                if user_avg_call > 300 and p_call > 0:
+                # 5. Specialization bonus - dedicated products matching user's strongest trait
+                target_offer = row.get("target_offer", "")
+                
+                # Travel specialists get bonus for dedicated roaming packages
+                if user_travel_score > 0.6 and target_offer == "Roaming Offer":
                     score += 0.4
-
-                # 4. Penalty paket mahal untuk low spender
-                if user_spend < 50000 and price > 100000:
-                    score -= 0.8
+                
+                # Streaming lovers get bonus for dedicated streaming packages
+                if user_pct_video > 0.5 and target_offer == "Streaming Offer":
+                    score += 0.4
+                
+                # Voice users get bonus for dedicated voice packages
+                if user_avg_call > 200 and target_offer == "Voice Offer":
+                    score += 0.4
+                
+                # Slight penalty for all-in-one when user has strong preference
+                if target_offer == "Premium Offer":
+                    if user_travel_score > 0.7 or user_pct_video > 0.6 or user_avg_call > 300:
+                        score -= 0.2  # User has strong preference, prefer specialized
 
                 return score
 
@@ -335,16 +384,17 @@ class PredictionService:
                 )
             result_metadata["content_score"] = content_scores
 
-            # 6.3 Normalisasi skor
+            # 6.3 Normalisasi skor (using softmax for smoother distribution)
             def _normalize_series(s, clip_min=0.0, clip_max=1.0):
                 if s is None or len(s) == 0:
                     return s
-                minv = s.min()
-                maxv = s.max()
-                if pd.isna(minv) or pd.isna(maxv) or minv == maxv:
-                    return pd.Series([0.5] * len(s), index=s.index)
-                norm = (s - minv) / (maxv - minv)
-                return norm.clip(clip_min, clip_max)
+                # Softmax normalization - creates probability distribution
+                # Temperature parameter controls spread (higher = more uniform)
+                temperature = 1.0
+                exp_scores = np.exp((s - s.max()) / temperature)  # Numerical stability
+                softmax = exp_scores / exp_scores.sum()
+                # Scale to 0-1 range based on relative position
+                return softmax / softmax.max()
 
             result_metadata["ml_score_n"] = _normalize_series(
                 result_metadata["ml_score"]
@@ -450,6 +500,54 @@ class PredictionService:
                 "items": items,
             }
 
+    # --------------------- BEHAVIOR SEGMENT (K-MEANS) ---------------------
+    def _compute_behavior_segment(self, avg_data_usage_gb: float, monthly_spend: float, pct_video_usage: float) -> int:
+        """
+        Compute behavior_segment using cluster centroids from training.
+        Based on K-Means(n_clusters=5, random_state=42) from notebook.
+        
+        Cluster profiles:
+        - 0: High data (22.3GB), high spend (1.48M), low video (0.34)
+        - 1: Low data (8.5GB), mid spend (518K), high video (0.76) - Streamers
+        - 2: High data (23GB), low spend (471K), mid video (0.51) - Budget users
+        - 3: Mid data (15.6GB), high spend (1.51M), high video (0.80) - Premium streamers
+        - 4: Low data (6.8GB), high spend (1.05M), low video (0.32) - Light users
+        """
+        # Cluster centroids from notebook training (scaled values would be ideal,
+        # but we'll use simple distance-based assignment for robustness)
+        centroids = [
+            (22.28, 1478995, 0.34),  # Segment 0
+            (8.53, 518409, 0.76),    # Segment 1
+            (23.04, 470650, 0.51),   # Segment 2
+            (15.56, 1512580, 0.80),  # Segment 3
+            (6.84, 1045046, 0.32),   # Segment 4
+        ]
+        
+        # Normalize features for comparison (simple min-max style)
+        data_norm = avg_data_usage_gb / 30.0  # Assume max ~30GB
+        spend_norm = monthly_spend / 2000000.0  # Assume max 2M
+        video_norm = pct_video_usage  # Already 0-1
+        
+        best_segment = 0
+        min_distance = float('inf')
+        
+        for i, (c_data, c_spend, c_video) in enumerate(centroids):
+            c_data_norm = c_data / 30.0
+            c_spend_norm = c_spend / 2000000.0
+            c_video_norm = c_video
+            
+            distance = (
+                (data_norm - c_data_norm) ** 2 +
+                (spend_norm - c_spend_norm) ** 2 +
+                (video_norm - c_video_norm) ** 2
+            )
+            
+            if distance < min_distance:
+                min_distance = distance
+                best_segment = i
+        
+        return best_segment
+
     # --------------------- PIPELINE ---------------------
     def trigger_pipeline(self, customer_id):
         conn = None
@@ -487,6 +585,21 @@ class PredictionService:
             """
             cursor.execute(sql, (customer_id,))
             conn.commit()
+            
+            # Compute and store behavior_segment
+            cursor.execute(
+                "SELECT avg_data_usage_gb, monthly_spend, pct_video_usage FROM user_features WHERE customer_id = %s",
+                (customer_id,)
+            )
+            row = cursor.fetchone()
+            if row:
+                behavior_segment = self._compute_behavior_segment(row[0], row[1], row[2])
+                cursor.execute(
+                    "UPDATE user_features SET behavior_segment = %s WHERE customer_id = %s",
+                    (behavior_segment, customer_id)
+                )
+                conn.commit()
+            
             if cursor.rowcount > 0:
                 return {"message": f"Pipeline sukses. Profil {customer_id} diperbarui."}
             else:
