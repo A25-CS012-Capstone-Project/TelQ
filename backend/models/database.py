@@ -49,7 +49,8 @@ CREATE TABLE products (
     call_minutes_bonus INTEGER NOT NULL DEFAULT 0,
     sms_bonus INTEGER NOT NULL DEFAULT 0,
     roaming_days_bonus INTEGER NOT NULL DEFAULT 0,
-    target_offer VARCHAR(50) NOT NULL
+    target_offer VARCHAR(50) NOT NULL,
+    pop_score FLOAT DEFAULT 0.0
 );
 
 -- 3. TABEL PURCHASE_HISTORY
@@ -75,7 +76,8 @@ CREATE TABLE user_features (
     topup_freq INTEGER NOT NULL,
     travel_score FLOAT NOT NULL,
     complain_count INTEGER NOT NULL,
-    spending_tier VARCHAR(10) NOT NULL
+    spending_tier VARCHAR(10) NOT NULL,
+    behavior_segment INTEGER DEFAULT 0
 );
 """
 
